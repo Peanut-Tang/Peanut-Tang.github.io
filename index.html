@@ -1,98 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shengtang Huang - Homepage</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Shengtang Huang (黄盛唐)</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <header>
-        <h1>Welcome to Shengtang Huang's Homepage</h1>
-    </header>
+  <div class="layout">
 
-    <div class="container">
-        <aside class="sidebar">
-            <nav>
-                <a href="#about">About</a>
-                <a href="#research">Research</a>
-                <a href="#education">Education</a>
-                <a href="#publications">Publications</a>
-                <a href="#honours">Honours</a>
-                <a href="#teaching">Teaching</a>
-            </nav>
-        </aside>
-
-        <main class="content">
-            <div class="profile">
-                <img src="profile_photo.jpg" alt="Profile Photo" height="320">
-            </div>
-
-            <h2 id="about">Shengtang Huang (黄盛唐)</h2>
-            <p>
-                My name is Shengtang Huang. I am a senior undergraduate student majoring in computer  
-                science and technology in the 
-                <a href="https://sgy.ustc.edu.cn/" target="_blank">School of the Gifted Young</a>, 
-                <a href="https://www.ustc.edu.cn/" target="_blank">University of Science and Technology of China</a> (USTC). 
-                I'm fortunate to be advised by 
-                <a href="http://staff.ustc.edu.cn/~xuechen1989/" target="_blank">Prof. Xue Chen</a>.
-            </p>
-
-            <p>
-                <strong>Gmail:</strong> peanuttang1320061044@gmail.com <br>
-                <strong>USTC Email:</strong> peanuttang@mail.ustc.edu.cn <br>
-                <strong>Curriculum Vitae:</strong> <a href="https://github.com/Peanut-Tang/CV/blob/main/CV.pdf" target="_blank">Download</a><br>
-                <strong>GitHub:</strong> <a href="https://github.com/Peanut-Tang" target="_blank">Profile</a><br>
-                <strong>Blog:</strong> <a href="https://peanuttang.netlify.app/" target="_blank">Here</a> (mostly in Chinese)
-            </p>
-
-            <h2 id="research">Research Interest</h2>
-            <p>
-                My research interests broadly lie in theoretical computer science, especially pseudorandomness,
-                computational complexity, and cryptography. I have worked on PRG design, hash functions, and coding.
-                I am also passionate about combinatorics and probability in pure mathematics,
-                as well as optimization problems in computational and financial mathematics.
-            </p>
-
-            <h2 id="education">Education Background</h2>
-            <ul>
-                <li>2022.8 – Present: B.S. in Computer Science and Technology, School of the Gifted Young, USTC. Advisor: <a href="http://staff.ustc.edu.cn/~xuechen1989/" target="_blank">Prof. Xue Chen</a>.</li>
-                <li>2020.8 – 2022.6: High School, Affiliate High School of Fujian Normal University.</li>
-                <li>2017.9 – 2020.7: Middle School, Fuzhou Shidai Middle School.</li>
-                <li>2011.9 – 2017.6: Primary School, Fuzhou Gulou No.1 Central Primary School.</li>
-            </ul>
-
-            <h2 id="publications">Publications & Manuscripts</h2>
-            <p><em>Following the convention in theoretical computer science, unless stated otherwise, author names are ordered alphabetically.</em></p>
-            <ul>
-                <li>
-                    <strong>Range Avoidance and Remote Point: New Algorithms and Hardness</strong><br>
-                    <u>Shengtang Huang</u>, Xin Li, Yan Zhong<br>
-                    Submitted to ITCS 2026
-                </li>
-                <li>
-                    <strong>Better Min-wise Hash Families from Pseudorandomness for Combinatorial Rectangles</strong><br>
-                    Xue Chen, <u>Shengtang Huang</u>, Xin Li<br>
-                    To appear in SODA 2026
-                </li>
-            </ul>
-
-            <h2 id="honours">Honours and Awards</h2>
-            <ul>
-                <li><strong>Merit Award</strong>, S.-T. Yau College Student Mathematics Contests 2025 (<em>32nd in Probability & Statistics</em>).</li>
-                <li><strong>Qiangwei Yuanzhi Scholarship</strong>, USTC, Oct 2024 (top 5% of students).</li>
-                <li><strong>Silver Medal</strong>, ICPC East Asia Shanghai 2024; ICPC East Asia Shenyang 2023.</li>
-                <li><strong>First Prize</strong>, National Olympiad in Informatics in Provinces (NOIP) 2020 & 2021.</li>
-            </ul>
-
-            <h2 id="teaching">Teaching</h2>
-            <h4>Teaching Assistant, University of Science and Technology of China</h4>
-            <ul>
-                <li>Foundations of Algorithms (Spring 2024), instructor: <a href="http://staff.ustc.edu.cn/~xuechen1989/" target="_blank">Prof. Xue Chen</a>.</li>
-                <li>Operations Research (Fall 2024), instructor: <a href="https://chenshixiang.github.io/" target="_blank">Prof. Shixiang Chen</a>.</li>
-            </ul>
-        </main>
+    <!-- ===== Left Menu ===== -->
+    <div class="sidebar">
+      <h3>Menu</h3>
+      <ul>
+        <li><a href="#about">About</a>
+        <li><a href="#education">Education</a>
+        <li><a href="#publications">Publications</a>
+        <li><a href="#awards">Honours</a>
+        <li><a href="#teaching">Teaching</a>
+      </ul>
     </div>
+
+    <!-- ===== Main Content ===== -->
+    <div class="main">
+
+      <!-- Header -->
+      <header>
+        <h1>Shengtang Huang (黄盛唐)</h1>
+        <hr>
+
+        <div class="profile">
+          <img src="profile.jpg" alt="Profile photo">
+          <div class="info">
+            <p>
+              Senior Undergraduate Student (本科生)<br>
+              School of the Gifted Young,<br>
+              University of Science and Technology of China (USTC).<br>
+              E-mail: 
+              <a href="mailto:peanuttang@mail.ustc.edu.cn">peanuttang@mail.ustc.edu.cn</a>, <a href="mailto:peanuttang1320061044@gmail.com">peanuttang1320061044@gmail.com</a>.<br>
+              Telephone: <font color="blue">+86 188-0500-6918</font>
+            </p>
+            <p><a href="#">A brief cv</a></p>
+          </div>
+        </div>
+      </header>
+
+      <!-- About -->
+      <section>
+        <h2 id="about">About me</h2>
+        <hr>
+        <p>
+          I am a senior student majoring in computer
+          science and technology in the 
+          <a href="https://sgy.ustc.edu.cn/" target="_blank">School of the Gifted Young</a>,
+          <a href="https://www.ustc.edu.cn/" target="_blank">University of Science and Technology of China</a> (USTC). 
+          I'm fortunate to be advised by 
+          <a href="http://staff.ustc.edu.cn/~xuechen1989/" target="_blank">Prof. Xue Chen</a>.<br>
+          Overall, I have a broad interest in theoretical computer science, particularly in areas related to pseudorandomness,
+          computational complexity and cryptography. I have conducted research on the design of PRGs, hash functions, and coding.
+          At the same time, I am passionate about exploring combinatorics and probability in pure mathematics,
+          as well as optimization problems in computational or financial mathematics.
+        </p>
+      </section>
+
+      <!-- Publications -->
+      <section>
+        <h2 id="publications">Publications</h2>
+        <hr>
+        <p><em>Following the convention in theoretical computer science, unless stated otherwise, author names are ordered alphabetically.</em></p>
+        <ul>
+            <li><strong>Range Avoidance and Remote Point: New Algorithms and Hardness</strong><br>
+                <u>Shengtang Huang</u>, Xin Li, Yan Zhong<br>
+                Submitted to ITCS (Innovations in Theoretical Computer Science), 2026
+            </li>
+            <li><strong>Better Min-wise Hash Families from Pseudorandomness for Combinatorial Rectangles</strong><br>
+                Xue Chen, <u>Shengtang Huang</u> and Xin Li<br>
+                In the 37th Annual ACM-SIAM Symposium on Discrete Algorithms (SODA 2026)
+            </li>
+        </ul>
+      </section>
+
+      <!-- Honours -->
+      <section>
+        <h2 id="honours">Honours</h2>
+        <hr>
+        <ul>
+            <li><strong>Merit Award</strong> in S.-T. Yau College Student Mathematics Contests 2025, <em>ranked 32nd</em> in Probability and Statistics track. The contest's difficulty is comparable to qualifying exams for Ph.D. programs at top U.S. universities.</li>
+            <li><strong>Qiangwei Yuanzhi Scholarship:</strong> Awarded in Oct. 2024, this university-level scholarship is granted to the top 5% of outstanding students at USTC.</li>
+            <li><strong>Silver Awards</strong> in the 2024 ICPC East Asia Shanghai Regional Contest and the 2023 ICPC East Asia Shenyang Regional Contest.</li>
+            <li><strong>First Prize</strong> in National Olympiad in Informatics in Provinces in 2020 and 2021.</li>
+        </ul>
+      </section>
+
+      <!-- Teaching -->
+      <section>
+        <h2 id="teaching">Teaching</h2>
+        <hr>
+        <p><strong>Teaching Assistant at University of Science and Technology of China</strong></p>
+        <ul>
+            <li>Foundations of Algorithms (2024 spring), instructor: <a href="http://staff.ustc.edu.cn/~xuechen1989/">Prof. Xue Chen</a>.</li>
+            <li>Operations Research (2024 Fall), instructor: <a href="https://chenshixiang.github.io/">Prof. Shixiang Chen</a>.</li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
 </body>
 </html>

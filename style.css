@@ -1,121 +1,123 @@
 body {
-    margin: 0;
-    font-family: "宋体", "Times New Roman", serif;
-    background-color: #f5f7fb;
-    color: #222;
+  margin: 0;
+  font-family: "Georgia", serif;
+  background-color: #fafafa;
+  color: #222;
 }
 
-/* 顶部蓝色标题栏 */
-header {
-    background-color: #003366;
-    color: white;
-    padding: 18px 40px;
-    text-align: left;
-    border-bottom: 3px solid #002244;
+/* Layout */
+.layout {
+  display: flex;
+  flex-direction: row;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 180px;
+  background-color: #f3f3f3;
+  padding: 20px;
+  border-right: 1px solid #ccc;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar h3 {
+  margin-top: 0;
+  color: #003366;
+  font-size: 18px;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.sidebar li {
+  margin: 10px 0;
+}
+
+.sidebar a {
+  color: #0044cc;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  text-decoration: underline;
+}
+
+/* Main content */
+.main {
+  flex-grow: 1;
+  padding: 40px;
 }
 
 header h1 {
-    font-size: 26px;
-    margin: 0;
+  font-size: 32px;
+  color: #003366;
+  margin-bottom: 10px;
 }
 
-/* 主体框架：左栏 + 内容 */
-.container {
-    display: flex;
-    max-width: 1200px;
-    margin: 0 auto;
-    background-color: #fff;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-    min-height: calc(100vh - 80px);
+hr {
+  border: none;
+  border-top: 1px solid #aaa;
+  margin: 10px 0 20px 0;
 }
 
-/* 左侧导航栏 */
-.sidebar {
-    width: 200px;
-    background-color: #f2f3f7;
-    border-right: 1px solid #d0d7e2;
-    padding: 40px 20px;
-    box-sizing: border-box;
-}
-
-.sidebar nav {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.sidebar nav a {
-    display: block;
-    color: #003366;
-    font-weight: bold;
-    text-decoration: none;
-    padding: 5px 0;
-    transition: all 0.2s ease-in-out;
-}
-
-.sidebar nav a:hover {
-    color: white;
-    background-color: #003366;
-    padding-left: 8px;
-}
-
-/* 主内容区域 */
-.content {
-    flex: 1;
-    padding: 40px 60px;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-/* 标题样式 */
-.content h2 {
-    color: #003366;
-    border-bottom: 2px solid #003366;
-    padding-bottom: 4px;
-    margin-top: 40px;
-}
-
-.content h4 {
-    color: #003366;
-    margin-bottom: 5px;
-}
-
-/* 右上角照片 */
+/* Profile section */
 .profile {
-    float: right;
-    margin-left: 40px;
-    margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 .profile img {
-    border: 1px solid #ccc;
-    padding: 2px;
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 
-/* 清除浮动问题 */
-.content::after {
-    content: "";
-    display: block;
-    clear: both;
+.info {
+  font-size: 16px;
+  line-height: 1.6;
 }
 
-/* 文本与链接样式 */
+.info a {
+  color: #0044cc;
+  text-decoration: none;
+}
+.info a:hover {
+  text-decoration: underline;
+}
+
+/* Section titles */
+section h2 {
+  font-size: 24px;
+  color: #003366;
+  margin-bottom: 5px;
+}
+
+section h3 {
+  font-size: 20px;
+  color: #003366;
+  margin-top: 20px;
+}
+
+section p, ul, ol {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* Links */
 a {
-    color: #003366;
-    text-decoration: none;
+  color: #0044cc;
 }
-
 a:hover {
-    text-decoration: underline;
-}
-
-ul {
-    line-height: 1.7;
-    padding-left: 20px;
-}
-
-p {
-    line-height: 1.8;
-    text-align: justify;
-    margin-bottom: 15px;
+  text-decoration: underline;
 }
