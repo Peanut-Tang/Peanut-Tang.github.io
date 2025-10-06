@@ -1,68 +1,92 @@
 body {
     margin: 0;
-    font-family: "Times New Roman", Times, serif;
-    background-color: #f6f8fb;
+    font-family: "宋体", "Times New Roman", serif;
+    background-color: #f5f7fb;
     color: #222;
 }
 
+/* 顶部蓝色标题栏 */
 header {
-    background-color: #1a4e9c;
+    background-color: #003366;
     color: white;
     padding: 18px 40px;
     text-align: left;
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: 0.5px;
+    border-bottom: 3px solid #002244;
 }
 
+header h1 {
+    font-size: 26px;
+    margin: 0;
+}
+
+/* 主体框架：左栏 + 内容 */
 .container {
     display: flex;
-    min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
-nav {
+/* 左侧导航栏 */
+.sidebar {
     width: 220px;
-    background-color: #e8edf5;
-    padding-top: 40px;
-    padding-left: 20px;
-    border-right: 1px solid #c9d2e1;
+    background-color: #f0f3f8;
+    border-right: 1px solid #d0d7e2;
+    padding: 30px 20px;
 }
 
-nav a {
+.sidebar nav a {
     display: block;
-    text-decoration: none;
-    color: #1a4e9c;
+    color: #003366;
     font-weight: bold;
-    margin: 12px 0;
+    text-decoration: none;
+    margin: 10px 0;
+    transition: 0.2s;
 }
 
-nav a:hover {
-    text-decoration: underline;
+.sidebar nav a:hover {
+    color: white;
+    background-color: #003366;
+    padding-left: 8px;
 }
 
-main {
+/* 主内容 */
+.content {
     flex: 1;
     padding: 40px 60px;
-    background-color: white;
 }
 
-h3 {
-    color: #1a4e9c;
-    border-bottom: 2px solid #1a4e9c;
-    padding-bottom: 5px;
+.content h2 {
+    color: #003366;
+    border-bottom: 2px solid #003366;
+    padding-bottom: 4px;
+    margin-top: 40px;
 }
 
-h4, h5 {
-    color: #1a4e9c;
+.content h4 {
+    color: #003366;
+    margin-bottom: 5px;
 }
 
-img {
+.profile {
+    float: right;
+    margin-left: 40px;
+}
+
+.profile img {
     border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 2px;
 }
 
-strong {
-    color: #000;
+/* 文本样式 */
+a {
+    color: #003366;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 ul {
@@ -70,5 +94,6 @@ ul {
 }
 
 p {
-    line-height: 1.7;
+    line-height: 1.8;
+    text-align: justify;
 }
