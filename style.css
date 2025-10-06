@@ -26,14 +26,22 @@ header h1 {
     margin: 0 auto;
     background-color: #fff;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    min-height: calc(100vh - 80px);
 }
 
 /* 左侧导航栏 */
 .sidebar {
-    width: 220px;
-    background-color: #f0f3f8;
+    width: 200px;
+    background-color: #f2f3f7;
     border-right: 1px solid #d0d7e2;
-    padding: 30px 20px;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .sidebar nav a {
@@ -41,8 +49,8 @@ header h1 {
     color: #003366;
     font-weight: bold;
     text-decoration: none;
-    margin: 10px 0;
-    transition: 0.2s;
+    padding: 5px 0;
+    transition: all 0.2s ease-in-out;
 }
 
 .sidebar nav a:hover {
@@ -51,12 +59,15 @@ header h1 {
     padding-left: 8px;
 }
 
-/* 主内容 */
+/* 主内容区域 */
 .content {
     flex: 1;
     padding: 40px 60px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
+/* 标题样式 */
 .content h2 {
     color: #003366;
     border-bottom: 2px solid #003366;
@@ -69,9 +80,11 @@ header h1 {
     margin-bottom: 5px;
 }
 
+/* 右上角照片 */
 .profile {
     float: right;
     margin-left: 40px;
+    margin-bottom: 20px;
 }
 
 .profile img {
@@ -79,7 +92,14 @@ header h1 {
     padding: 2px;
 }
 
-/* 文本样式 */
+/* 清除浮动问题 */
+.content::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+/* 文本与链接样式 */
 a {
     color: #003366;
     text-decoration: none;
@@ -91,9 +111,11 @@ a:hover {
 
 ul {
     line-height: 1.7;
+    padding-left: 20px;
 }
 
 p {
     line-height: 1.8;
     text-align: justify;
+    margin-bottom: 15px;
 }
