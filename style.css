@@ -67,6 +67,12 @@ hr {
   margin: 10px 0 20px 0;
 }
 
+.hr-double {
+  border: none;
+  border-top: 1px solid #aaa;
+  margin: 10px 0 20px 0;
+}
+
 /* Profile section */
 .profile {
   display: flex;
@@ -94,11 +100,6 @@ hr {
 }
 .info a:hover {
   text-decoration: underline;
-}
-
-.hr-double {
-    border: 0;
-    border-top: 3px double #d0d0d5;
 }
 
 /* Section titles */
