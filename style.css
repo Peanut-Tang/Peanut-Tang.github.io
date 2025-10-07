@@ -96,6 +96,11 @@ hr {
   text-decoration: underline;
 }
 
+.hr-double {
+    border: 0;
+    border-top: 3px double #d0d0d5;
+}
+
 /* Section titles */
 section h2 {
   font-size: 24px;
