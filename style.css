@@ -15,9 +15,9 @@ body {
 
 /* Sidebar */
 .sidebar {
-  width: 220px;
+  width: 180px;
   background-color: #f3f3f3;
-  padding: 20px;
+  /* padding: 20px; */
   border-right: 1px solid #ccc;
   height: 100vh;
   position: sticky;
@@ -28,7 +28,7 @@ body {
 }
 
 .sidebar-logo {
-  width: 220px;
+  width: 180px;
   height: auto;
   margin: 20px auto 0;
   opacity: 0.9;
