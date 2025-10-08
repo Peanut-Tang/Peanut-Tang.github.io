@@ -30,8 +30,8 @@ body {
 .sidebar-logo {
   width: 180px;
   height: auto;
-  /* margin: 20px auto 0; */
-  /* opacity: 0.9; */
+  margin: 20px auto 20px auto;
+  opacity: 0.9;
 }
 
 .sidebar h3 {
