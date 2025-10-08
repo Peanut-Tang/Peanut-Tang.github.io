@@ -15,13 +15,23 @@ body {
 
 /* Sidebar */
 .sidebar {
-  width: 180px;
+  width: 220px;
   background-color: #f3f3f3;
   padding: 20px;
   border-right: 1px solid #ccc;
   height: 100vh;
   position: sticky;
   top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar-logo {
+  width: 220px;
+  height: auto;
+  margin: 20px auto 0;
+  opacity: 0.9;
 }
 
 .sidebar h3 {
