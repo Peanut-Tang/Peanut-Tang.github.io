@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2024.11.17)  21 NOV 2025 12:37
+This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2024.11.17)  21 NOV 2025 12:58
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -1054,26 +1054,21 @@ LaTeX Font Info:    Font shape `TU/TeXGyrePagellaX(0)/m/it' will be
 (Font)              scaled to size 12.0pt on input line 123.
 Requested font "[TeXGyrePagellaX-Italic.otf]/OT:script=latn;language=dflt;-ss05;+tnum;+lnum;mapping=tex-text;" at 12.0pt
  -> c:/texlive/2022/texmf-dist/fonts/opentype/public/newpx/TeXGyrePagellaX-Italic.otf
-LaTeX Font Info:    Font shape `TU/TeXGyrePagellaX(0)/m/sc' will be
-(Font)              scaled to size 12.0pt on input line 173.
-Requested font "[TeXGyrePagellaX-Regular.otf]/OT:script=latn;language=dflt;-ss05;+tnum;+lnum;+smcp;+pcap;mapping=tex-text;" at 12.0pt
- -> c:/texlive/2022/texmf-dist/fonts/opentype/public/newpx/TeXGyrePagellaX-Regular.otf
  [1
 
 ]
-Overfull \hbox (5.88106pt too wide) in paragraph at lines 214--215
+Overfull \hbox (5.88106pt too wide) in paragraph at lines 211--212
 []\TU/TeXGyrePagellaX(0)/b/n/12 Qiangwei Yuanzhi Scholarship: \TU/TeXGyrePagellaX(0)/m/n/12 Awarded in Oct. 2024, this university-level scholarship is granted
  []
 
-[2]
 Requested font "SimHei/OT:script=hani;language=dflt;" at 12.0pt
  -> C:/windows/fonts/simhei.ttf
 
-Overfull \hbox (53.77863pt too wide) in paragraph at lines 298--299
+Overfull \hbox (53.77863pt too wide) in paragraph at lines 295--296
 [][] 
  []
 
-[3] (./CV.aux)
+[2] [3] (./CV.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -1084,11 +1079,11 @@ Package logreq Info: Writing requests to 'CV.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 25794 strings out of 476179
- 527170 string characters out of 5813071
- 1319946 words of memory out of 5000000
- 46172 multiletter control sequences out of 15000+600000
- 480305 words of font info for 77 fonts, out of 8000000 for 9000
+ 25792 strings out of 476179
+ 527035 string characters out of 5813071
+ 1318946 words of memory out of 5000000
+ 46171 multiletter control sequences out of 15000+600000
+ 480297 words of font info for 76 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  89i,9n,99p,1187b,846s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
