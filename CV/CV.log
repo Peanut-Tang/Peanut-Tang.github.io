@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2024.11.17)  21 NOV 2025 12:18
+This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2024.11.17)  21 NOV 2025 12:30
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -1084,9 +1084,9 @@ Package logreq Info: Writing requests to 'CV.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 25792 strings out of 476179
- 527151 string characters out of 5813071
- 1318946 words of memory out of 5000000
+ 25794 strings out of 476179
+ 527170 string characters out of 5813071
+ 1319946 words of memory out of 5000000
  46172 multiletter control sequences out of 15000+600000
  480305 words of font info for 77 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
