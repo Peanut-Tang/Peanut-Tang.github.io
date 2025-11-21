@@ -143,11 +143,11 @@
 \begin{enumerate}
     \item \textbf{Range Avoidance and Remote Point: New Algorithms and Hardness} \\
            \underline{Shengtang Huang}, Xin Li, Yan Zhong \\
-           Submitted to \textbf{ITCS (Innovations in Theoretical Computer Science)}, 2026
+           In the 17th Innovations in Theoretical Computer Science Conference, \textbf{ITCS 2026}
 
     \item \textbf{Explicit Min-wise Hash Families with Optimal Size} \\
            Xue Chen, \underline{Shengtang Huang}, Xin Li \\
-           In the 37th Annual ACM-SIAM Symposium on Discrete Algorithms \textbf{(SODA 2026)}
+           In the 37th Annual ACM-SIAM Symposium on Discrete Algorithms, \textbf{SODA 2026}
 \end{enumerate}
 
 
@@ -155,18 +155,39 @@
 %Experience
 \section{\textbf{Research Experiences}}
 
+\textbf{Derandomization of load balancing based on linear hashing} \\
+\textit{Advisors: Xue Chen, USTC; Xin Li, JHU; Fernando Granha Jeronimo, UIUC \hfill Jul. 2025 $\sim$ Present}  \vspace{-0.1cm}
+\begin{itemize}
+    \item Tried to find an explicit linear hash family with small size that has nice load balancing properties.
+\end{itemize}
+
+\textbf{Construction of pseudorandom code against insertion-deletion error} \\
+\textit{Advisor: Xin Li, JHU \hfill Oct. 2025 $\sim$ Present}  \vspace{-0.1cm}
+\begin{itemize}
+    \item Tried to construct a pseudorandom code (PRC) against insertion-deletion error. Previous results only construct PRCs against substitution error.
+\end{itemize}
+
+\textbf{New algorithms and hardness for range avoidance and remote point problems} \\
+\textit{Advisor: Xin Li, JHU \hfill Jul. 2025 $\sim$ Sept. 2025}  \vspace{-0.1cm}
+\begin{itemize}
+    \item Proved the equivalence between the existence of $\textbf{FP}^{\textbf{NP}}$ algorithms for $\mathcal{C}$-$\textsc{Avoid}[n, n^{1 + \varepsilon}]$ problem and $2^{\Omega(n)}$ lower bounds against $\mathcal{C}$ circuits for the class $\textbf{E}^{\textbf{NP}}$, for some suitable circuit class $\mathcal{C}$.
+    \item Showed the equivalence between the existence of $\textbf{FP}^{\textbf{NP}}$ algorithms for general $\textsc{RemotePoint}$ problem and $2^{\Omega(n)}$ average-case lower bounds against general circuits for the class $\textbf{E}^{\textbf{NP}}$.
+    \item Designed a fast graph-based algorithm for $\textbf{NC}^0_k$-$\textsc{Avoid}[n, n^{1 + \varepsilon}]$, with time complexity $2^{n^{1 - \frac{\varepsilon}{k - 1} + o(1)}}$.
+    \item Found a greedy algorithm for $\textbf{NC}^0_k$-$\textsc{Avoid}[n, n + 1]$, with time complexity $O(n 2^{\frac{k - 1}{k - 2} n})$.
+    \item The paper has been accepted by \textbf{ITCS 2026}.
+\end{itemize}
+
 \textbf{Construction of the min-wise hash family with short seed length and small multiplicative error} \\
-\textit{Supervisors: Prof. Xue Chen, USTC; Prof. Xin Li, Johns Hopkins University \hfill Sept. 2024 $\sim$ Apr. 2025}  \vspace{-0.1cm}
+\textit{Advisors: Xue Chen, USTC; Xin Li, Johns Hopkins University \hfill Sept. 2024 $\sim$ Apr. 2025}  \vspace{-0.1cm}
 \begin{itemize}
     \item Found the connection between the min-wise hash family and pseudorandomness generator of combinatorial rectangles.  \vspace{-0.25cm}
-    \item Observed that the classical Nisan-Zuckerman framework can be applied to improve the seed length.  \vspace{-0.25cm}
-    \item Designed a $k$-min-wise hash family $\mathcal{H} = \{h : [N] \to [\mathrm{poly}(N)]\}$ with seed length $O(k \log N)$ and multiplicative error $2^{-O\left(\frac{\log N}{\log \log N}\right)}$.  \vspace{-0.25cm}
-    \item Participated in the paper writing and authored approximately half of the technical proof parts.  \vspace{-0.25cm}
-    \item The paper has been submitted to the conference \textbf{SODA (Symposium on Discrete Algorithms)} and is currently under review.
+    \item Constructed an explicit min-wise hash family $\mathcal{H} = \{h : [N] \to [\mathrm{poly}(N)]\}$ with seed length $O(\log N)$ and multiplicative error $2^{-O\left(\frac{\log N}{\log \log N}\right)}$.  \vspace{-0.25cm}
+    \item Designed an explicit $k$-min-wise hash family $\mathcal{H} = \{h : [N] \to [\mathrm{poly}(N)]\}$ with seed length $O(k \log N)$ and multiplicative error $2^{-O\left(\frac{\log N}{\log \log N}\right)}$.  \vspace{-0.25cm}
+    \item The paper has been accepted by \textbf{SODA 2026}.
 \end{itemize}
 
 \textbf{A fast algorithm for $(1 + \varepsilon)$-approximate incremental matching problem on general graphs} \\
-\textit{Supervisor: Prof. Slobodan Mitrović, University of California, Davis \hfill Jul. 2024 $\sim$ Aug. 2024}  \vspace{-0.1cm}
+\textit{Advisor: Slobodan Mitrović, UCD \hfill Jul. 2024 $\sim$ Aug. 2024}  \vspace{-0.1cm}
 \begin{itemize}
     \item Extended the method of solving $(1 + \varepsilon)$-approximate incremental matching problem from bipartite graphs to general graphs.  \vspace{-0.25cm}
     \item Achieved the amortized complexity $\exp(1 / \varepsilon)$ for $(1 + \varepsilon)$-approximate incremental matching problem.  \vspace{-0.25cm}
@@ -189,6 +210,7 @@
 \section{\textbf{Honors \& Awards}}
 \begin{itemize}
     \item \textbf{Merit Award} in S.-T. Yau College Student Mathematics Contests 2025, \textbf{ranked 32nd} in Probability and Statistics track. The contest's difficulty is comparable to qualifying exams for Ph.D. programs at top U.S. universities. \vspace{-0.25cm}
+    \item \textbf{Gold Prize for Outstanding Student Scholarship:} Awarded in Oct. 2025, this university-level scholarship is granted to the top 3\% of outstanding students at USTC. \vspace{-0.25cm}
     \item \textbf{Qiangwei Yuanzhi Scholarship:} Awarded in Oct. 2024, this university-level scholarship is granted to the top 5\% of outstanding students at USTC. \vspace{-0.25cm}
     \item \textbf{Sliver Awards} in the 2024 ICPC East Asia Shanghai Regional Contest and the 2023 ICPC East Asia Shenyang Regional Contest. \vspace{-0.25cm}
     \item \textbf{First Prize} in National Olympiad in Informatics in Provinces in 2020 and 2021.
@@ -202,7 +224,7 @@
 \begin{itemize}
     \item \textbf{Programming:} C, C++, Python, Matlab, R, Verilog. \vspace{-0.25cm}
     \item \textbf{Software:} Git, \LaTeX, Microsoft Office. \vspace{-0.25cm}
-    \item \textbf{Languages:}  English (fluent, TOEFL Score: 99), Chinese (native).
+    \item \textbf{Languages:}  English (fluent), Chinese (native).
 \end{itemize}
 
 
@@ -251,22 +273,28 @@
 % \printbibliography[heading=none]
 % \end{refsection}
 
-% \section{\textbf{References}}
+\section{\textbf{References}}
 
-% \begin{tabularx}{1\textwidth}{
-%     >{\raggedright\arraybackslash}X 
-%     >{\raggedright\arraybackslash}X }
-%         \textbf{Prof. Xue Chen (陈雪)}                              & \textbf{Prof. Xin Li (李新)} \\
-%         Prof.                                                      & Associate Prof. \\
-%         School of Computer Science and Technology                      & Computer Science Department \\
-%         University of Science and Technology of China                  & Johns Hopkins University \\
-%         \href{mailto:xuechen1989@ustc.edu.cn}{xuechen1989@ustc.edu.cn} & \href{mailto:lixints@cs.jhu.edu}{lixints@cs.jhu.edu} \\
-%          & \\
-%         \textbf{Prof. Shixiang Chen (陈士祥)}                       & \textbf{Prof. Slobodan Mitrović} \\
-%         Assistant Prof.                                            & Assistant Prof. \\
-%         School of Mathematical Sciences                                & Department of Computer Science \\
-%         University of Science and Technology of China                  & University of California, Davis \\
-%         \href{mailto:shxchen@ustc.edu.cn}{shxchen@ustc.edu.cn}         & \href{mailto:smitrovic@ucdavis.edu}{smitrovic@ucdavis.edu}
-% \end{tabularx}
+\begin{tabularx}{1.1\textwidth}{
+    >{\raggedright\arraybackslash}X 
+    >{\raggedright\arraybackslash}X }
+        \textbf{Prof. Xue Chen (陈雪)}                                 & \textbf{Prof. Shixiang Chen (陈士祥)} \\
+        Specially Appointed Professor                                  & Assistant Professor \\
+        School of Computer Science and Technology                      & School of Mathematical Sciences \\
+        University of Science and Technology of China                  & University of Science and Technology of China \\
+        \href{mailto:xuechen1989@ustc.edu.cn}{xuechen1989@ustc.edu.cn} & \href{mailto:shxchen@ustc.edu.cn}{shxchen@ustc.edu.cn} \\
+         & \\
+        \textbf{Prof. Xin Li (李昕)}                                   & \textbf{Prof. Slobodan Mitrović} \\
+        Associate Professor                                            & Assistant Professor \\
+        Department of Computer Science                                 & Department of Computer Science \\
+        Johns Hopkins University (JHU)                                 & University of California, Davis (UCD) \\
+        \href{mailto:lixints@cs.jhu.edu}{lixints@cs.jhu.edu}           & \href{mailto:smitrovic@ucdavis.edu}{smitrovic@ucdavis.edu} \\
+         & \\
+        \textbf{Prof. Fernando Granha Jeronimo}                        &  \\
+        Assistant Professor                                            &  \\
+        Department of Computer Science                                 &  \\
+        University of Illinois Urbana-Champaign (UIUC)                 &  \\
+        \href{mailto:granha@illinois.edu}{granha@illinois.edu}         & 
+\end{tabularx}
 
 \end{document}
