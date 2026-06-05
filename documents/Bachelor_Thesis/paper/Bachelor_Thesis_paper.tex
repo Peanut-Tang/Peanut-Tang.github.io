@@ -1,0 +1,110 @@
+\documentclass[UTF8, fontset=windows, 12pt]{ctexart} % 12pt 为小四
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{gbt7714}
+\usepackage{pdfpages}
+\usepackage{physics}
+\usepackage{thmtools}
+\usepackage{thm-restate}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black]{hyperref}
+\usepackage[capitalise,nameinlink]{cleveref}
+\usepackage{refcount}
+\usepackage{pdfpages}
+
+\input{macros}
+
+\bibliographystyle{gbt7714-author-year} % 参考文献格式 按作者名排序
+\citestyle{numbers}
+
+\geometry{a4paper,scale=0.8}
+\setmainfont{Times New Roman} % 英文字体
+\setlength{\baselineskip}{20pt} % 正文行距
+
+\lhead{}
+\chead{\zihao{-5}\songti 中国科学技术大学本科毕业论文} % 页眉
+\rhead{}
+
+\renewcommand\contentsname{\zihao{-2}目录} % 目录字号 
+\renewcommand\refname{\zihao{-2}参考文献} % 参考文献字号 
+
+\numberwithin{equation}{section} % 公式按章节编号
+% 图、表默认为全文编号
+
+\newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}} % 上标参考文献
+\newcommand*{\figref}[1]{\textbf{图\ref{#1}}\;} %图 引用
+\newcommand*{\eqnref}[1]{式(\ref{#1})} % 公式 引用
+
+\ctexset{
+    section={
+        format = \bfseries\zihao{3}\centering,
+        number = 第\arabic{section}章
+    }
+} % 章标题格式
+\ctexset{
+    subsection={
+        format += \bfseries\zihao{-3},
+        number=第\arabic{subsection}节
+    }
+} % 节标题格式
+
+
+\begin{document}
+\pagestyle{fancy}
+
+%-------扉页-------
+\includepdf[pages=-]{figs/title.pdf} % 预先合成扉页
+\newpage
+
+%-------摘要-------
+\newpage
+\fancyfoot{} % 去除页脚页码
+
+\input{abtract}
+
+%-------目录-------
+
+\newpage
+
+\fancyfoot{}
+\cfoot{\zihao{-5}\thepage} % 页脚页码
+
+\setcounter{page}{1}
+
+\tableofcontents
+
+
+%-------正文-------
+
+\newpage
+\input{introduction}
+\newpage
+\input{bounded independence}
+\newpage
+\input{optimal seed length}
+\newpage
+\input{extractors}
+\newpage
+\input{summary}
+\newpage
+
+\phantomsection
+\addcontentsline{toc}{section}{参考文献}
+\bibliography{refer} % 参考文献
+
+\appendix
+\ctexset{section={number=附录~\Alph{section}}}
+\newpage
+\input{omitted calculation in optimal seed length}
+\newpage
+\input{omitted proof in extractors}
+
+\newpage
+\input{acknowledgement}
+
+\end{document}

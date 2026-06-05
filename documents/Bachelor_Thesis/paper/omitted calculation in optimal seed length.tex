@@ -1,0 +1,188 @@
+\section{\ref{sec:optimal_seed_length} 中的省略计算}\label{sec:omitted_calculation}
+
+在本节中，我们将完成 \ref{sec:construction} 中主项求和的分析：
+
+\MinWiseMainTermSummation*
+
+在分析前，我们先来明确一下四个常数 $C_e, C_s, C_g$ 与 $C$ 之间的关系，量级上这四个常数满足：
+$$
+C_e \gtrsim C_s \gtrsim C \cdot C_g \gtrsim C_g \gtrsim C \gtrsim 1,
+$$
+其中 $X \gtrsim Y$ 表示 $Y = O(X)$ 或等价的 $X = \Omega(Y)$。更加具体，取
+$$
+C_e \ge 10 C_s, C_s \ge 10 C \cdot C_g, C_g \ge 200 C, C \ge 5,
+$$
+对于所有证明（也包括正文中的），是够用的。
+
+另一个需要提及的是，在推导中我们反复用到等式 $\prod_{i = 1}^n (1 \pm a_i) = 1 \pm 2 (a_1 + a_2 + \cdots + a_n)$，其中 $a_i = o(1),\ \forall i \in [n]$。多的常数 $2$ 是为了吞掉高次小项。
+
+接下来我们开始正式分析。首先是最后一步转换。这里实际上用了 \cref{lem:k_min_wise_full_random}，配合 $M \ge 4 N / \delta$ 可得 $\Pr_{\sigma \sim U}[\sigma(y) < \min \sigma(X)] = (1 \pm \delta / 4) / (|X| + 1)$。这样便有：
+\begin{align*}
+      & (1 \pm 2^{-2.5 C \cdot t}) \cdot \Pr_{\sigma \sim U}[\sigma(y) < \min \sigma(X)] \pm \frac{2^{-2.5 C \cdot t}}{|X| + 1} \\
+    = & \frac{1 \pm 2 (\delta / 4 + 2^{-2.5 C \cdot t})}{|X| + 1} \pm \frac{2^{-2.5 C \cdot t}}{|X| + 1} = \frac{1 \pm (\delta / 2 + 2^{-2 C \cdot t})}{|X| + 1}.
+\end{align*}
+
+再来则是 $\ell \cdot N^{-0.4 C_e}$ 的这一小项。取 $C_e$ 足够大，则这将是一个比 $1 / N$ 小得多的量，对乘法误差几乎没有影响。在证明中，我们会将剩下部分的加法误差控制在 $2^{-2.6 C \cdot t} / (|X| + 1)$，来保证加上这一小量后乘法误差仍至多是 $2^{-2.5 C \cdot t}$。
+
+分析的重点是期望中的连乘积项对于 $\theta \in [M]$ 求和。这里的方法与 \ref{sec:bounded_independence} 中的上界证明非常相似：我们划定某一阈值，将求和分为两部分分别界定。对于 $\theta$ 小的部分，我们证明其和完全随机概率相差不多，这最终会构成乘法误差项 $(1 \pm 2^{-2.5 C \cdot t}) \cdot \Pr_{\sigma \sim U}[\sigma(y) < \min \sigma(X)]$；而对于 $\theta$ 大的部分，我们证明这一部分求和本身就非常小，直接作为加法误差遗留下来也不会有问题，这部分最终会构成加法误差项 $2^{-2.6 C \cdot t} / (|X| + 1)$。
+
+实际计算取决于 $X$ 的大小。根据 \cref{lem:allocation_small_error}，我们将计算分为三种情况：第一种情况 $|X| \le \ell^{0.9}$、第二种情况 $|X| \in (\ell^{0.9}, \ell^{1.1})$ 与第三种情况 $|X| \ge \ell^{1.1}$。我们会先假定分组函数 $g$ 是好的，这让我们可以更好地分析；而失败概率不大，对乘法误差并不会有显著影响。
+
+\paragraph{第一种情况 $|X| \le \ell^{0.9}$.} \cref{lem:allocation_small_error} 保证以概率 $1 - 1 / \ell^{3 C}$，每个桶 $B_i$ 中至多有 $C_g$ 个 $X$ 中元素。我们先假设分配函数 $g$ 是好的。
+
+首先因为 $C_s \ge C_g$，故第 $j$ 个桶的概率可以被完美还原：
+$$
+\Pr_{\sigma : C_s\text{-wise}}[ \min \sigma(B_j) > \theta] = (1 - \theta / M)^{|B_j|}.
+$$
+
+为了方便分析，我们将和式中连乘积等价重写为（下式中实际上与 $B_j$ 有关的项误差为 $0$）：
+$$
+\Pr_{\sigma : C_s\text{-wise}}[\min \sigma(B_j) > \theta] \cdot \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} \pm \varepsilon \right) = \prod_{i \in [\ell]} \left( (1 - \theta / M)^{|B_i|} \pm \varepsilon \right).
+$$
+
+接下来我们进行分段控制：
+\begin{itemize}
+    \item 当 $\theta$ 较小，满足 $(1 - \theta / M)^{C_g} > 2^{-0.5 C_s \cdot t}$ 时，我们可以直接将加法误差 $\varepsilon$ 转换为乘法误差：
+    \begin{align}
+          & \frac{1}{M} \sum_{(1 - \theta / M)^{C_g} > 2^{-0.5 C_s \cdot t}} \prod_{i \in [\ell]} \left( (1 - \theta / M)^{|B_i|} \pm \varepsilon \right) \notag \\
+        = & \frac{1}{M} \sum_{(1 - \theta / M)^{C_g} > 2^{-0.5 C_s \cdot t}} \prod_{i \in [\ell]} (1 - \theta / M)^{|B_i|} \cdot (1 \pm 2 \cdot 2^{-0.5 C_s \cdot t}) \notag \\
+        = & (1 \pm 4 \ell \cdot 2^{-0.5 C_s \cdot t}) \cdot \frac{1}{M} \sum_{(1 - \theta / M)^{C_g} > 2^{-0.5 C_s \cdot t}} (1 - \theta / M)^{|X|} \notag \\
+        = & (1 \pm 2^{-(0.5 C_s - 1) \cdot t + 2}) \cdot \frac{1}{M} \sum_{(1 - \theta / M)^{C_g} > 2^{-0.5 C_s \cdot t}} (1 - \theta / M)^{|X|}. \label{eq:X1_theta_small}
+    \end{align}
+
+    \item 当 $\theta$ 较大，使得 $(1 - \theta / M)^{C_g} \le 2^{-0.5 C_s \cdot t}$ 时，我们证明这一部分概率求和很小，遗留下来很小的加法误差。首先注意到满足 $(1 - \theta / M)^{C_g} \le 2^{-0.5 C_s \cdot t}$ 的 $\theta$ 只有至多 $M \cdot 2^{-0.5 C_s \cdot t / C_g}$ 个。而不管是对均匀概率 $(1 - \theta / M)^{|X|}$ 的求和，还是对于近似概率的求和，和式中的每一项都是若干概率的乘积，我们可以平凡的使用 $1$ 来放缩，这样便得到：
+    $$
+    \sum_{(1 - \theta / M)^{C_g} \le 2^{-0.5 C_s \cdot t}} (1 - \theta / M)^{|X|}\text{ 和 }\sum_{(1 - \theta / M)^{C_g}\le 2^{-0.5 C_s \cdot t}} \left( (1 - \theta / M)^{|B_i|} \pm \varepsilon \right)\text{ 都 }\le M \cdot 2^{-0.5 C_s \cdot t / C_g}.
+    $$
+
+    于是：
+    \begin{align}
+          & \frac{1}{M} \sum_{(1 - \theta / M)^{C_g} \le 2^{-0.5 C_s \cdot t}} (1 - \theta / M)^{|X|} \notag \\
+        = & \frac{1}{M} \sum_{(1 - \theta / M)^{C_g}\le 2^{-0.5 C_s \cdot t}} \left( (1 - \theta / M)^{|B_i|} \pm \varepsilon \right) \pm 2 \cdot 2^{-0.5 C_s \cdot t / C_g}. \label{eq:X1_theta_big}
+    \end{align}
+\end{itemize}
+
+汇总起来，\eqnref{eq:X1_theta_small} 告诉我们相对于 $\Pr_{\sigma \sim U}[\sigma(y) < \min \sigma(X)]$ 的乘法误差至多是
+$$
+2^{-(0.5 C_s - 1) \cdot t + 2} \le 2^{-2.5 C \cdot t}.
+$$
+而综合 \eqnref{eq:X1_theta_big} 与坏分组函数的影响，加法误差则至多是（下面放缩用到了 $|X| + 1 \le \ell^{0.9} + 1 \le \ell$）：
+$$
+2 \cdot 2^{-0.5 C_s \cdot t / C_g} + \frac{1}{\ell^{3 C}} \le \frac{2^{-(0.5 C_s / C_g - 1) \cdot t + 1}}{|X| + 1} + \frac{\ell^{-3 C + 1}}{|X| + 1} \le \frac{2^{-2.6 C \cdot t}}{|X| + 1}.
+$$
+
+\paragraph{第二种情况 $|X| \in (\ell^{0.9}, \ell^{1.1})$.}
+
+类似地，根据 \Cref{lem:allocation_small_error}，我们先假设 $\max_{i \in [\ell]} |B_i| \le 2 \ell^{0.1}$，失败概率至多为 $1 / \ell^{3 C}$。
+
+我们再次对 $\theta$ 进行分段控制。当 $\theta \le 0.5 M \cdot \ell^{-0.2}$ 时，有 $(1 - \theta / M)^{|B_i|} \ge 1 - |B_i| \cdot \theta / M \ge 1 - \ell^{-0.1} \ge 0.5,\ \forall i \in [\ell]$，这便使得将加法误差转换为乘法误差至多翻倍。
+
+对于 $B_j$，我们像 \ref{sec:bounded_independence} 中上界分析的第一部分一样，使用 Bonferroni 不等式来界定误差。假设 $C_s$ 是一个偶数，经过完全一样的计算，可得：
+\begin{align*}
+    \Pr_{\sigma : C_s\text{-wise}}[\min \sigma(B_j) > \theta] & = (1 - \theta / M)^{|B_j|} \pm 2 \binom{|B_j|}{C_s - 1} \cdot \left( \frac{\theta}{M} \right)^{C_s - 1} \\
+      & = (1 - \theta / M)^{|B_j|} \pm 2 \left( |B_j| \cdot \dfrac{\theta}{M} \right)^{C_s - 1} \\
+      & = (1 - \theta / M)^{|B_j|} \cdot \left( 1 \pm \dfrac{4}{\ell^{0.1 (C_s - 1)}} \right).
+\end{align*}
+
+而对于其余桶则直接有
+$$
+(1 - \theta / M)^{|B_i|} \pm \varepsilon = (1 - \theta / M)^{|B_i|} \cdot \left( 1 \pm 2 \varepsilon \right),\ \forall i \ne j.
+$$
+
+因此，当 $\theta \le 0.5 M \cdot \ell^{-0.2}$ 时，有
+\begin{align}
+      & \dfrac{1}{M} \sum_{\theta \le 0.5 M \cdot \ell^{-0.2}} \Pr_{\sigma : C_s\text{-wise}}[\min \sigma(B_j) > \theta] \cdot \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} \pm \varepsilon \right) \notag \\
+    = & \dfrac{1}{M} \sum_{\theta \le 0.5 M \cdot \ell^{-0.2}} (1 - \theta / M)^{|X|} \cdot \left( 1 \pm \left( \dfrac{8}{\ell^{0.1 (C_s - 1)}} + 4 (\ell - 1) \varepsilon \right) \right) \notag \\
+    = & \dfrac{1}{M} \sum_{\theta \le 0.5 M \cdot \ell^{-0.2}} (1 - \theta / M)^{|X|} \cdot \left( 1 \pm 2^{-0.05 C_s \cdot t} \right). \label{eq:X2_theta_small}
+\end{align}
+
+下面我们处理尾部 $\theta > 0.5 M \cdot \ell^{-0.2}$。我们将证明，这一部分在完全随机和近似独立两种情形下的贡献都极小，从而只带来可忽略的加法误差。
+
+对于近似独立的求和，注意到和式里面的连乘积每项都不超过 $1$，随意丢弃若干项也可以得到上界，我们丢弃与 $B_j$ 有关的复杂项便得到
+$$
+\Pr_{\sigma : C_s\text{-wise}}[\min \sigma(B_j) > \theta] \cdot \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} \pm \varepsilon \right) \le \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} + \varepsilon \right),\ \forall \theta > 0.5 M \cdot \ell^{-0.2}.
+$$
+
+为了界定该表达式对 $\theta$ 的求和，我们将桶按照大小排序。不失一般性，设 $j = \ell$，且
+$$
+|B_1| \ge |B_2| \ge \cdots \ge |B_{\ell-1}|
+$$
+为除去 $B_j$ 后的桶大小排序。令 $T := \lceil \log \log N \rceil$，并将指标集划分为两部分：大的 $T$ 个桶和其余桶。接下来根据第 $T$ 个桶的大小 $|B_T|$ 来分类讨论要使用哪一部分：
+
+\begin{itemize}
+    \item 若 $(1 - \theta / M)^{|B_T|} > \varepsilon \cdot \ell$，则对于所有 $i > T$，都有 $(1 - \theta / M)^{|B_i|} \ge (1 - \theta / M)^{|B_T|} > \varepsilon \cdot \ell$，从而
+    $$
+    (1 - \theta / M)^{|B_i|} + \varepsilon 
+    \le (1 - \theta / M)^{|B_i|} \cdot (1 + 1/\ell),\ \forall i > T.
+    $$
+
+    因此连乘积可以写为
+    \begin{align*}
+        \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} + \varepsilon \right) & \le \prod_{i = T + 1}^{\ell - 1} (1 - \theta / M)^{|B_i|} \cdot (1 + 1 / \ell) \\
+          & \le 3 \cdot (1 - \theta / M)^{|X| - |B_j| - \sum_{i \le T} |B_i|}.
+    \end{align*}
+
+    由于每个桶大小至多为 $2 \ell^{0.1}$，有
+    $$
+    |B_j| + \sum_{i \le T} |B_i| \le (T + 1) \cdot 2 \ell^{0.1} = o(|X|),
+    $$
+    从而
+    $$
+    |X| - |B_j| - \sum_{i \le T} |B_i| \ge 0.9 |X|.
+    $$
+
+    于是，配合 $|X| > \ell^{0.9}$ 与不等式 $(1 - a)^b \le e^{-a b}$ 便可得
+    \begin{align*}
+        \frac{1}{M} \sum_{\theta > 0.5 M \cdot \ell^{-0.2}} 
+        \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} + \varepsilon \right) & \le \frac{3}{M} \sum_{\theta > 0.5 M \cdot \ell^{-0.2}} (1 - \theta / M)^{0.9 |X|} \\
+          & \le \frac{3}{M} \sum_{\theta > 0.5 M \cdot \ell^{-0.2}} \exp(-0.9 |X| \cdot \theta / M) \\
+          & \le 3 \exp(-0.4 |X| \cdot \ell^{-0.2}) \le \exp(-\ell^{0.6}).
+    \end{align*}
+
+    \item 若 $(1 - \theta / M)^{|B_T|} \le \varepsilon \cdot \ell$，则对于前 $T$ 个最大桶，有
+    $$
+    (1 - \theta / M)^{|B_i|} + \varepsilon \le \varepsilon \cdot \ell + \varepsilon \le 2 \varepsilon \cdot \ell,\ \forall i \le T.
+    $$
+
+    则尾部概率可以直接被界定为：
+    $$
+    \frac{1}{M} \sum_{\theta > 0.5 M \cdot \ell^{-0.2}} \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} + \varepsilon \right) \le (2 \varepsilon \cdot \ell)^T.
+    $$
+
+    最后带入 $\varepsilon = 2 \cdot 2^{-C_s \cdot t}$ 与 $T = \lceil \log \log N \rceil$，可得：
+    $$
+    (2 \varepsilon \cdot \ell)^T = 2^{-((C_s - 1) \cdot t - 2) \cdot T} \le 2^{-((C_s - 1) \cdot t - 2) \cdot \log \log N} \le N^{-0.5 C_s}.
+    $$
+\end{itemize}
+
+综上，近似独立的尾部求和至多为
+$$
+\frac{1}{M} \sum_{\theta > 0.5 M \cdot \ell^{-0.2}} \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} + \varepsilon \right) \le \exp(-\ell^{0.6}) + N^{-0.5 C_s}.
+$$
+
+而对于完全随机的求和，亦有
+$$
+(1 - \theta / M)^{|X|} = \prod_{i \in [\ell]} (1 - \theta / M)^{|B_i|} \le \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} + \varepsilon \right),\ \forall \theta > 0.5 M \cdot \ell^{-0.2}.
+$$
+所以上面的分析对于完全随机的尾部求和也完全适用，综上我们可以得到
+\begin{align}
+      & \frac{1}{M} \sum_{\theta > 0.5 M \cdot \ell^{-0.2}} \Pr_{\sigma : C_s\text{-wise}}[\min \sigma(B_j) > \theta] \cdot \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} \pm \varepsilon \right) \notag \\
+    = & \frac{1}{M} \sum_{\theta > 0.5 M \cdot \ell^{-0.2}} (1 - \theta / M)^{|X|} \pm 2 (\exp(-\ell^{0.6}) + N^{-0.5 C_s}). \label{eq:X2_theta_big}
+\end{align}
+
+汇总起来，\eqnref{eq:X2_theta_small} 告诉我们相对于 $\Pr_{\sigma \sim U}[\sigma(y) < \min \sigma(X)]$ 的乘法误差至多是
+$$
+2^{-0.05 C_s \cdot t} \le 2^{-2.5 C \cdot t}.
+$$
+而综合 \eqnref{eq:X2_theta_big} 与坏分组函数的影响，加法误差则至多是（下面放缩用到了 $|X| + 1 \le \ell^{1.1} + 1 \le \ell^{1.2}$）：
+$$
+2 (\exp(-\ell^{0.6}) + N^{-0.5 C_s}) + \frac{1}{\ell^{3 C}} \le o( N^{-2} ) + \frac{\ell^{-3 C + 1.2}}{|X| + 1} \le \frac{2^{-2.6 C \cdot t}}{|X| + 1}.
+$$
+
+\paragraph{第三种情况 $|X| \ge \ell^{1.1}$.}
+
+本情况的证明与第二种情况相同。在这里，根据 \cref{lem:allocation_small_error}，最大负载被 $1.1 \cdot |X| / \ell$ 界定。分析中求和分开的两部分将分别是 $\frac{|X|}{\ell} \cdot \frac{\theta}{M} \le \ell^{-0.1}$ 和 $\frac{|X|}{\ell} \cdot \frac{\theta}{M} > \ell^{-0.1}$，其余计算非常相似，故我们省略这部分的推导。
+
+\bigskip
+
+这样我们便完成了 \cref{lem:minwise_main_term_summation} 的证明。

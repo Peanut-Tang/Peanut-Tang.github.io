@@ -1,0 +1,27 @@
+\section*{\zihao{-2}摘要}
+
+随机化已成为计算机科学的核心方法之一，在算法设计、密码学等领域发挥着重要作用。然而，随机性的使用也带来了理论与实践上的挑战，推动了伪随机理论的发展，其目标是在尽量减少随机性的前提下模拟真实随机行为。
+
+作为伪随机理论的重要应用，本文研究最小哈希族及其扩展 $k$-最小哈希族的显式构造问题。粗略地说，最小哈希族保证：对定义域任意固定子集 $X$，经过哈希映射后，其中每个元素以几乎相等概率成为严格最小值；$k$-最小哈希族将此性质推广到 $X$ 中任意大小至多为 $k$ 的子集。该族最经典的应用是近似计算 Jaccard 相似度，在流式算法与图论算法设计中也发挥关键作用。本质上，它是一类具有乘法误差保证的去随机化问题，核心挑战在于保证误差的同时优化随机性使用。
+
+针对上述挑战，本文首次给出使用有限次独立性构造 $k$-最小哈希族所需独立次数的紧界 $\Theta(k + \log 1/\delta)$。进一步，我们给出首个种子长度最优为 $O(\log N)$，且可以实现亚常数乘法误差的显式最小哈希族构造；并将其扩展到 $k$-最小哈希的情形，得到种子长度为 $O(k \log N)$ 的构造。构造方法基于经典的分桶哈希、随机性回收与域缩减，并引入新的均匀性与直和结构，以处理乘法误差与条件概率。
+
+\
+
+\noindent \textbf{关键词：}
+最小哈希族；伪随机性；去随机化
+
+\newpage
+
+\section*{\zihao{-2} Abstract}
+
+Randomization has become a core methodology in computer science, playing an important role in algorithm design, cryptography, and other fields. However, the use of randomness also brings theoretical and practical challenges, driving the development of pseudorandomness theory, which aims to simulate truly random behavior while using as little randomness as possible.
+
+As an important application of pseudorandomness, this paper studies the explicit construction of min-wise hash families and their generalization, $k$-min-wise hash families. Roughly speaking, a min-wise hash family guarantees that for any fixed subset $X$ of the domain, after hashing, each element of $X$ is almost equally likely to become the strict minimum; the $k$-min-wise hash family extends this property to any subset of $X$ with size at most $k$. The most classic application is estimating Jaccard similarity, and the families also play a key role in streaming and graph algorithms. In essence, this is a derandomization problem with multiplicative error guarantees, where the core challenge is to minimize randomness usage while controlling the error.
+
+To address this challenge, we provide for the first time a tight bound $\Theta(k + \log 1/\delta)$ on the degree of independence required to construct a $k$-min-wise hash family using bounded independence. Furthermore, we give the first explicit construction of a min-wise hash family with optimal seed length $O(\log N)$ and sub-constant multiplicative error; extending to the $k$-min-wise case, we obtain a construction with seed length $O(k \log N)$. Our construction is based on classical bucket hashing, randomness recycling and domain reduction, and introduces new uniformity and direct sum structures to handle multiplicative error and conditional probabilities.
+
+\
+
+\noindent \textbf{Key Words:}
+Min-Wise Hash Family; Pseudorandomness; Derandomization

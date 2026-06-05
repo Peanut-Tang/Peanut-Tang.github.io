@@ -1,0 +1,279 @@
+%!TEX program = xelatex
+\documentclass[aspectratio=169]{ctexbeamer}
+\usepackage[bluetheme]{ustcbeamer}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[round,authoryear]{natbib}
+\bibliographystyle{plainnat}
+\input{ustctheme.tex}
+
+\DeclareMathOperator*{\E}{\mathbb{E}}
+\newcommand{\poly}{\mathsf{poly}}
+
+% 让 beamer 中的参考文献条目使用普通字体颜色
+\setbeamertemplate{bibliography item}[text]
+\setbeamercolor{bibliography item}{fg=black}
+\setbeamercolor{bibliography entry author}{fg=black}
+\setbeamercolor{bibliography entry title}{fg=black}
+\setbeamercolor{bibliography entry journal}{fg=black}
+\setbeamercolor{bibliography entry note}{fg=black}
+
+% 引用链接颜色（亮而不刺眼的学术蓝）
+\definecolor{linkblue}{RGB}{200,40,130}
+\hypersetup{colorlinks=true, linkcolor=., citecolor=linkblue, urlcolor=linkblue}
+% 让 natbib \citet 等命令输出的左右括号也染上引用颜色
+\makeatletter
+\AtBeginDocument{%
+  \renewcommand{\NAT@open}{\textcolor{linkblue}{(}}%
+  \renewcommand{\NAT@close}{\textcolor{linkblue}{)}}%
+}
+\makeatother
+
+
+% 文献缩写别名（用于表格内的紧凑引用，仍可点击跳到参考文献页）
+\defcitealias{BCFM98}{BCFM98}
+\defcitealias{minwise_Indyk}{Ind01}
+\defcitealias{PT_lb_t_wise_min_wise}{PT16}
+\defcitealias{minwise_FPS11}{FPS11}
+\defcitealias{SSZZ00_connection_CR_min_wise}{SSZZ99}
+\defcitealias{GY20_PRG_CR_SOTA}{GY20}
+\defcitealias{xue_shengtang_xin_min_wise}{CHL26}
+
+% 让参考文献条目前显示 [SSZZ00]、[Ind01] 这种缩写标签
+\makeatletter
+\let\NAT@orig@lbibitem\@lbibitem
+\def\@lbibitem[#1]#2{%
+  \NAT@orig@lbibitem[#1]{#2}%
+  \mbox{[\citetalias{#2}]}\hspace{0.5em}%
+}
+\makeatother
+
+% ---------- 彩色定理 / 定义 / 方法环境 ----------
+% 通过自定义 beamercolorbox 实现，与 \pause 完全兼容
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+\definecolor{defcolor}{RGB}{35,90,170}      % 学术蓝：定义
+\definecolor{thmcolor}{RGB}{170,40,40}      % 红色：定理
+\definecolor{appcolor}{RGB}{200,110,20}     % 橙色：已有方法
+
+\newenvironment{definitionbox}[1]{%
+  \setbeamercolor{block title}{bg=defcolor,fg=white}%
+  \setbeamercolor{block body}{bg=defcolor!8!white,fg=black}%
+  \begin{block}{定义\ifx\\#1\\\else\ -- #1\fi}%
+}{\end{block}}
+
+\newenvironment{theorembox}[1]{%
+  \setbeamercolor{block title}{bg=thmcolor,fg=white}%
+  \setbeamercolor{block body}{bg=thmcolor!8!white,fg=black}%
+  \begin{block}{定理\ifx\\#1\\\else\ -- #1\fi}%
+}{\end{block}}
+
+\newenvironment{approachbox}[1]{%
+  \setbeamercolor{block title}{bg=appcolor,fg=white}%
+  \setbeamercolor{block body}{bg=appcolor!8!white,fg=black}%
+  \begin{block}{#1}%
+}{\end{block}}
+
+\title[伪随机理论及其运用：以最小哈希族的构造为例]{伪随机理论及其运用\\以最小哈希族的构造为例}
+\subtitle{\texorpdfstring{\footnotesize 部分结果已被 SODA 2026 接收~\hyperlink{cite.xue_shengtang_xin_min_wise}{\textcolor{white}{(Chen, Huang, and Li, 2026)}}}{部分结果已被 SODA 2026 接收 (Chen, Huang, and Li, 2026)}}
+\author[黄盛唐]{报告人：黄盛唐 (PB22000196) \\ 指导老师：陈雪\ 特任教授}
+\institute[USTC]{中国科学技术大学}
+\date{2026年6月3日}
+
+\begin{document}
+\nocite{BCFM98,xue_shengtang_xin_min_wise}
+
+%--------------------
+% 标题页
+%--------------------
+\maketitleframe
+
+%====================================================
+\section{研究背景}
+%====================================================
+
+%--------------------
+% 第 1 页：伪随机性
+%--------------------
+\begin{frame}
+  \frametitle{伪随机性与去随机化}
+
+  \begin{itemize}
+    \item \textbf{随机化} 是计算机科学的核心方法之一：算法、密码学、概率方法 \ldots
+    \item 真随机比特\textbf{昂贵且稀缺} $\Longrightarrow$ \textbf{去随机化}：用尽量少的随机性模拟真随机的行为。
+  \end{itemize}
+
+  \pause
+  \vspace{0.3em}
+  \begin{definitionbox}{伪随机生成器（PRG）}
+    $G : \{0, 1\}^\ell \to D$ 让任何 $f \in \mathcal{F}$ 都\emph{无法区分} $G(U_\ell)$ 与真随机的 $x \sim D$（误差 $\varepsilon$）。
+    $\ell$ 称为 \textbf{种子长度}。
+    $$
+      \forall f \in \mathcal{F}, \quad \E[f(G(U_\ell))] = \E_{x \sim D}[f(x)] \pm \varepsilon.
+    $$
+  \end{definitionbox}
+
+  \begin{itemize}
+    \item \textbf{哈希函数族 $\Longleftrightarrow$ PRG}：从 $\mathcal{H} = \{h : [N] \to [M]\}$ 中均匀采样 $h$，等价于以 $\log |\mathcal{H}|$ 比特种子在 $[M]^N$ 中生成一个向量。
+    \item 因此哈希族\textbf{规模的对数} = 种子长度 = 随机性使用，是衡量构造质量的核心量。
+  \end{itemize}
+\end{frame}
+
+%--------------------
+% 第 2 页：最小哈希族
+%--------------------
+\begin{frame}
+  \frametitle{最小哈希族（Min-Wise Hash Family）}
+
+  \begin{definitionbox}{\hyperlink{cite.BCFM98}{\textcolor{white}{[Broder, Charikar, Frieze, and Mitzenmacher, 1998]}}}
+    \small
+    $\mathcal{H} = \{h : [N] \to [M]\}$ 是误差为 $\delta$ 的\textbf{最小哈希族}，若对任意 $X \subseteq [N]$ 与 $y \notin X$，
+    $$
+      \Pr_{h \sim \mathcal{H}}\left[h(y) < \min_{x \in X} h(x)\right] = \frac{1 \pm \delta}{|X| + 1}.
+    $$
+    将 $y$ 推广为大小至多 $k$ 的子集 $Y$（$X \cap Y = \varnothing$），即得 $k$-\textbf{最小哈希族}。
+  \end{definitionbox}
+
+  \pause
+  \begin{columns}
+    \begin{column}{0.40\textwidth}
+      \textbf{广泛应用：}
+      \begin{itemize}
+        \item 集合相似度估计、网页去重
+        \item 流式 $\ell_0$ 采样、草图算法
+        \item 图聚类、稀有度近似、数据挖掘
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.60\textwidth}
+      \textbf{最经典应用：Jaccard 相似度}\\[0.2em]
+      对集合 $A, B \subseteq [N]$，
+      $$
+      \Pr_h\left[\min_{a \in A} h(a) = \min_{b \in B} h(b)\right] = (1 \pm \delta) \cdot \frac{|A \cap B|}{|A \cup B|}.
+      $$
+      $\Longrightarrow$ 天然要求\textbf{乘法误差}。
+    \end{column}
+  \end{columns}
+\end{frame}
+
+%--------------------
+% 第 3 页：两条已知路线与局限
+%--------------------
+\begin{frame}
+  \frametitle{已有显式构造的两条路线及其局限}
+
+  \begin{approachbox}{路线一：基于有限次独立性（bounded independence）}
+    \footnotesize
+    \begin{itemize}
+      \itemsep0.1em
+      \item \citet*{minwise_Indyk}：$t = O(\log 1/\delta)$ 次独立 $\Rightarrow$ 误差 $\delta$ 的最小哈希族；
+      \item \citet*{PT_lb_t_wise_min_wise}：$t = \Omega(\log 1/\delta)$ 必要 $\Rightarrow$ 紧致；
+      \item \citet*{minwise_FPS11}：对 $k$-最小哈希给出 $O(\log 1/\delta + k\log\log 1/\delta)$ 次独立上界。
+    \end{itemize}
+    \textbf{局限：}（i）$k$-最小哈希所需独立次数上下界仍有 \textbf{gap}；
+    （ii）$t$ 次独立需 $\Theta(t \log NM)$ 比特，当 $\delta = o(1)$ 时\textbf{无法达到最优种子长度} $O(\log (NM / \delta))$。
+  \end{approachbox}
+
+  \pause
+  \begin{approachbox}{路线二：基于组合矩形（combinatorial rectangles）的 PRG}
+    \footnotesize
+    \begin{itemize}
+      \itemsep0.1em
+      \item \citet*{SSZZ00_connection_CR_min_wise}：归约到组合矩形 PRG，得到 $O(\log^{3/2} NM)$ 种子长度，多项式小的误差（$1 / \mathsf{poly}(N)$）；
+      \item \citet*{GY20_PRG_CR_SOTA}（SOTA）：$O(\log NM \cdot \log\log NM)$ 种子长度，多项式小的误差。
+    \end{itemize}
+    \textbf{局限：}最小哈希要求 $\delta/|X|$ 量级的乘法误差，对应极小加法误差；该路线\textbf{无法消除 $\log\log NM$ 因子}。
+  \end{approachbox}
+\end{frame}
+
+%====================================================
+\section{主要结果}
+%====================================================
+
+%--------------------
+% 第 4 页：结果一 紧致独立次数
+%--------------------
+\begin{frame}
+  \frametitle{结果一：$k$-最小哈希所需独立次数的紧界}
+
+  \begin{theorembox}{非形式化}
+    基于有限次独立性的构造，要实现误差为 $\delta$ 的 $k$-最小哈希族，
+    $$
+      \boxed{\Theta\left(k + \log 1 / \delta \right)} \text{ 次独立性是充分且必要的。}
+    $$
+  \end{theorembox}
+
+  \pause
+  \begin{table}
+    \footnotesize
+    \renewcommand{\arraystretch}{1.35}
+    \begin{tabular}{@{}l l l@{}}
+      \toprule
+      \textbf{哈希族} & \textbf{所需独立次数} & \textbf{来源} \\
+      \midrule
+      最小哈希（$k = 1$）   & $\Theta(\log 1/\delta)$（紧）                          & \citetalias{minwise_Indyk}; \citetalias{PT_lb_t_wise_min_wise} \\
+      $k$-最小哈希        & $O(\log 1/\delta + k \log\log 1/\delta)$（上界，不紧）   & \citetalias{minwise_FPS11} \\
+      $k$-最小哈希        & $\boldsymbol{\Theta(k + \log 1/\delta)}$（紧）         & \textbf{本文} \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+%--------------------
+% 第 5 页：结果二 最优种子长度
+%--------------------
+\begin{frame}
+  \frametitle{结果二：达到最优种子长度的显式构造}
+
+  \begin{theorembox}{非形式化，设 $M = \poly(N)$}
+    存在最小哈希族的显式构造，种子长度为
+    $\boxed{O(\log N)}$（最优），乘法误差为 $2^{-O(\log N / \log\log N)}$（亚常数，几乎多项式小）。
+  \end{theorembox}
+
+  \pause
+  \begin{table}
+    \footnotesize
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.4}
+    \begin{tabular}{@{}l l l l@{}}
+      \toprule
+      \textbf{方法} & \textbf{种子长度} & \textbf{误差} & \textbf{来源} \\
+      \midrule
+      有限次独立性                & $\Theta(\log 1 / \delta \cdot \log N)$ & $\delta$                                   & \citetalias{minwise_Indyk}; \citetalias{minwise_FPS11} \\
+      组合矩形的 PRG             & $O(\log N \cdot \log\log N)$                  & $1/\poly(N)$                               & \citetalias{SSZZ00_connection_CR_min_wise}; \citetalias{GY20_PRG_CR_SOTA} \\
+      非显式构造                & $\Omega(\log (N/\delta))$              & $\delta$                                        & --- \\
+      \textbf{本文}              & $\boldsymbol{O(\log N)}$                      & $\boldsymbol{2^{-O(\log N / \log\log N)}}$ & --- \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \begin{itemize}
+    \item 首次在最优种子长度下，将乘法误差压低至亚常数级别；
+    \item 推广到 $k$-最小哈希：$k = \log^{O(1)} N$ 时，种子长度 $O(k \log N)$，误差量级不变。
+  \end{itemize}
+\end{frame}
+
+%--------------------
+% 致谢（放在参考文献之前）
+%--------------------
+\begin{frame}
+  \frametitle{致谢}
+  \vfill
+  \centerline{\Huge 感谢各位老师的聆听！}
+  \vfill
+  \centerline{\Large 敬请批评指正。}
+  \vfill
+\end{frame}
+
+%--------------------
+% 参考文献（致谢之后）
+%--------------------
+\begin{frame}
+  \frametitle{参考文献}
+  \scriptsize
+  \setlength{\bibsep}{4pt plus 0.3ex}
+  \renewcommand{\bibfont}{\scriptsize\raggedright}
+  \bibliography{refer}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -oh '\\\\\\\\cite{[^}]*}' \"C:/Users/13200/Desktop/毕业论文/introduction.tex\" \"C:/Users/13200/Desktop/毕业论文/bounded independence.tex\" \"C:/Users/13200/Desktop/毕业论文/optimal seed length.tex\" \"C:/Users/13200/Desktop/毕业论文/extractors.tex\" \"C:/Users/13200/Desktop/毕业论文/summary.tex\" \"C:/Users/13200/Desktop/毕业论文/abtract.tex\" \"C:/Users/13200/Desktop/毕业论文/acknowledgement.tex\" \"C:/Users/13200/Desktop/毕业论文/omitted calculation in optimal seed length.tex\" \"C:/Users/13200/Desktop/毕业论文/omitted proof in extractors.tex\")",
+      "Bash(grep -roh '\\\\\\\\cite{[^}]*}' \"C:/Users/13200/Desktop/毕业论文/\"*.tex)",
+      "Bash(grep -o '@[a-z]*{[^,]*' \"C:/Users/13200/Desktop/毕业论文/refer.bib\")",
+      "Bash(grep -oi '@[a-z]*{[^,]*' \"C:/Users/13200/Desktop/毕业论文/refer.bib\")"
+    ]
+  }
+}

@@ -1,0 +1,164 @@
+\section{绪论}\label{sec:introduction}
+
+\subsection{研究背景}
+
+\paragraph{伪随机理论.}
+
+随机化方法在理论计算机科学中扮演着极其重要的角色。无论是在算法设计、密码学，还是在组合结构的构造中，引入随机性往往可以显著简化问题并获得更优的性能。例如，在素性测试、多项式同一性测试以及各种图算法问题中，经典的高效算法最初均依赖随机化技术 \cite{Mitzenmacher_Upfal_Probability_and_Computing}。与此同时，随机性也是密码学安全性的核心来源之一 \cite{Goldreich_crypto_book_1,Goldreich_crypto_book_2,GOLDWASSER1984270}。
+
+在组合数学中，随机性还催生了著名的由 Erd\H{o}s 提出的\emph{概率方法}（probabilistic method \cite{The_Probabilistic_Method}）。该方法的基本思想是：如果可以证明一个随机选择的对象以非零概率满足某种性质，则必然存在一个确定性的对象满足该性质。数学家们利用这一方法证明了诸多重要结构的存在性，例如 Ramsey 图等 \cite{Erdos_Ramsey_prob_method}。然而，这类证明通常仅提供存在性结论，而未给出具体构造。更进一步，随机选择的对象往往需要耗费指数时间来寻找，从而在算法上不可行。因此，在组合结构研究和算法应用中，我们更希望得到\emph{显式构造}，即能够在多项式时间内生成的对象。显式性不仅使得这些结构可用于实际计算，还往往揭示其更深层的结构性质。事实上，如何将概率方法中的存在性结果转化为显式构造，是伪随机理论研究的重要驱动力之一。
+
+从算法的角度来看，另一个核心问题是\emph{去随机化}（derandomization）：即能否在不显著损失效率的前提下，将随机算法转化为确定性算法。这一问题在计算复杂性理论中具有基础性地位，集中体现为著名的 $\mathbf{BPP}\text{ vs }\mathbf{P}$ 问题。伪随机生成器（pseudorandom generator）正是研究这一问题的核心工具。直观而言，伪随机生成器试图用一个较短的随机种子生成一个“看起来随机”的长序列，使得任意高效算法都无法区分其输出与真正的均匀分布。若存在能够“欺骗”所有多项式时间算法的高效伪随机生成器，则可以推出 $\mathbf{BPP} = \mathbf{P}$。这一方向的研究已与复杂性理论中的多个核心问题建立了深刻联系，例如电路下界、难度放大等 \cite{Nisan_Wigderson_Hardness_vs_randomness,IW97_worst_case_to_PRG,Yao_PRG}。
+
+然而，由于证明“所有高效算法均无法区分”这一性质本身具有极高难度，目前的研究通常转向考虑\emph{受限计算模型}下的伪随机性。例如，针对空间受限计算（如单次只读分支程序，这与 $\mathbf{BPL}\text{ vs }\mathbf{L}$ 问题有关，与此有关的研究包括但不局限于 \cite{Nisan90_PRG,INW94_PRG,NZ96_Nisan_Zuckerman_PRG,Saks_Zhou_BPL_L_1_5,MRT_width_3_ROBP,Hoza_RANDOM21_L_1_5_sqrt,Cheng_Wu_WPRG}）、各式各样的受限电路类型（如 \cite{Lyu_AC0_PRG,DHH_read_once_DNF_PRG,DHH_iterated_restrictions}）、代数模型（如 \cite{NN93_almost_k_wise,Viola2009_low_degree_poly_PRG}）、或其他各式各样的布尔函数类的伪随机生成器（如 \cite{ABI86_construction_t_wise,NN93_almost_k_wise,INW94_PRG,GMRTV,GKM_Fourier_shape,GY20_PRG_CR_SOTA}），以及在流式算法和数据结构中的应用等（如 \cite{Indyk_PRG_streaming,CRSW_gradually_increased_independence,RWW_Pseudorandom_graph_in_DS,xue_load_balancing}）。这些研究不仅在理论上取得了丰富成果，也在实践中具有重要意义。有关伪随机理论一个较为完整的论述，我们推荐 Vadhan 的综述 \cite{Vadhan12_survey_pseudorandomness}；而专门针对伪随机生成器理论与构造的讲解，则推荐 Hatami 和 Hoza 的综述 \cite{Hatami_Hoza_PRG_survey}。
+
+形式化地，我们采用如下关于伪随机生成器的定义（我们用 $a = b \pm \delta$ 来表示 $a \in [b - \delta, b + \delta]$）。
+
+\begin{restatable}[伪随机生成器 \cite{Blum_Micali_crypto_pseudorandom, Nisan_Wigderson_Hardness_vs_randomness,Yao_PRG}]{definition}{PseudoRandomGenerator}\label{def:PRG}
+    给定一有限集合 $D$ 和一族从 $D$ 到 $\{0, 1\}$ 的函数 $\mathcal{F} = \{f : D \to \{0, 1\}\}$，我们称一函数 $G : \{0, 1\}^\ell \to D$ 是误差为 $\varepsilon$ 的 $\mathcal{F}$ 伪随机生成器（pseudorandom generator），若它满足
+    $$
+    \E_{s \sim \{0, 1\}^\ell}[f(G(s))] = \E_{x \sim D}[f(x)] \pm \varepsilon,\ \forall f \in \mathcal{F},
+    $$
+    其中 $\ell$ 被称为 $G$ 的种子长度。
+\end{restatable}
+
+上述定义从“不可区分性”的角度刻画了伪随机性：伪随机生成器 $G$ 的输出在函数族 $\mathcal{F}$ 看来与真正的随机分布近似一致（误差至多是 $\varepsilon$）。在不同的分析与应用中，$\mathcal{F}$ 对应不同的计算模型，例如所有的多项式算法、空间受限算法或其他测试函数类。
+
+值得注意的是，伪随机生成器与哈希函数族之间存在紧密联系。在许多应用中，哈希函数族所要求满足的随机性性质，可以等价地表述为对某一类判别函数的期望保持性质。形式化地，设
+$$
+\mathcal{H} = \{h_1, \ldots, h_{|\mathcal{H}|} : [N] \to [M]\}
+$$
+为一哈希函数族，则可以将其视为一个函数
+$$
+G : \{0,1\}^{\log |\mathcal{H}|} \to [M]^N,\quad
+G(s) = (h_s(1), \ldots, h_s(N)),
+$$
+其中 $s$ 对应于函数 $h_s \in \mathcal{H}$ 的编号。这样，关于从 $\mathcal{H}$ 中均匀选取函数的随机性分析，可以转化为对 $G(U)$ 的分布性质分析；反之，针对 $[M]^N$ 上分布的判别问题，也可以理解为对哈希函数族的性质要求。这一等价关系在数据结构与算法分析中尤为常见。
+
+\paragraph{最小哈希族.}
+
+最小哈希（min-wise (independent) hashing）由 Broder、Charikar、Frieze 和 Mitzenmacher \cite{BCFM98} 提出，其目标是在一定程度上模拟均匀随机排列的行为。更具体地说，与完全随机排列相比，最小哈希并不试图刻画所有顺序结构，而仅要求与严格最小值相关的概率性质近似均匀，因此是一种对随机排列的局部模拟。在理想情况下，这一性质要求任意元素在集合中成为严格最小值的概率是均匀的（即下面 \cref{def:k_min_wise} 中误差 $\delta = 0$ 的情形）。然而，\cite{BCFM98} 中证明，实现这一完美性质至少需要 $\Omega(N)$ 比特随机性，在实际算法中代价过高。因此，自然的思路是允许一定的误差，从而构造规模更小、可显式描述的哈希函数族。
+
+\begin{definition}[最小哈希族 \cite{BCFM98}]\label{def:k_min_wise}
+    设 $\mathcal{H} = \{h : [N] \to [M]\}$ 为一族从 $[N]$ 到 $[M]$ 的哈希函数。若对于任意 $X \subseteq [N]$ 与 $y \in [N] \setminus X$，都有
+    $$
+    \Pr_{h \sim \mathcal{H}}\left[ h(y) < \min_{x \in X} h(x) \right]
+    = \frac{1 \pm \delta}{|X| + 1},
+    $$
+    则称 $\mathcal{H}$ 是误差为 $\delta$ 的最小哈希族（min-wise hash family）。
+    
+    进一步地，若对于任意满足 $X \cap Y = \varnothing$ 且 $|Y| \le k$ 的子集 $X, Y \subseteq [N]$，都有
+    $$
+    \Pr_{h \sim \mathcal{H}}\left[ \max_{y \in Y} h(y) < \min_{x \in X} h(x) \right]
+    = \frac{1 \pm \delta}{\binom{|X| + |Y|}{|Y|}},
+    $$
+    则称其是误差为 $\delta$ 的 $k$-最小哈希族（$k$-min-wise hash family）。
+\end{definition}
+
+最小哈希族的核心应用来自集合相似度估计 \cite{BCFM98, CDF+01}。对于两个集合 $A, B \subseteq [N]$，其 Jaccard 相似度为 $|A \cap B| / |A \cup B|$。利用最小哈希，可以通过比较最小哈希值是否相等来估计该相似度：当使用误差为 $\delta$ 的最小哈希族 $\mathcal{H}$ 且值域 $M$ 足够大保证每个哈希函数都是无碰撞时，有
+$$
+\Pr_{h \sim \mathcal{H}}\left[\min_{a \in A} h(a) = \min_{b \in B} h(b)\right]
+= (1 \pm \delta)\cdot \frac{|A \cap B|}{|A \cup B|}.
+$$
+因此，通过重复采样多个哈希函数，可以以乘法误差近似 Jaccard 相似度。这一经典应用表明，最小哈希天然需要乘法误差控制，而非加法误差。
+
+在此基础上，最小哈希已被广泛应用于大规模数据处理与随机化算法中。例如，在图算法中，可以将节点的邻域或子图结构表示为集合，从而利用最小哈希高效估计图之间的相似性 \cite{MinHash_Graph_Similarity}，并计算图聚类 \cite{MinHash_Clustering}。在流式算法中，最小哈希还被用于 $\ell_0$ 采样 \cite{CF14,McG14} 与草图算法（sketching）\cite{Cohen2016}，其空间复杂度通常与哈希函数族的规模成正比。此外，它也被广泛应用于稀有度近似 \cite{DM02}、网页去重 \cite{Hen06} 以及数据挖掘 \cite{HGKI02, Hen06} 等问题。$k$-最小哈希则被用于处理需要更高独立性的工作 \cite{KNP+17}。
+
+从伪随机性的角度来看，构造最小哈希族等价于构造具有乘法误差的伪随机生成器，其中 $\log |\mathcal{H}|$ 即为种子长度，也对应实际应用中的空间复杂度。因此，如何在保证误差 $\delta$ 的前提下最小化种子长度，是该问题的核心。
+
+现有显式构造中，一条主要技术路线是基于有限次独立性（bounded independence）。Indyk \cite{minwise_Indyk} 证明，当哈希族具有 $O(\log 1/\delta)$ 次独立性时，即可得到误差为 $\delta$ 的最小哈希族；P{\u{a}}tra{\c{s}}cu 与 Thorup \cite{PT_lb_t_wise_min_wise} 进一步证明 $\Omega(\log 1/\delta)$ 次独立性是必要的，从而在该模型下刻画了最小哈希的紧致独立次数需求。对于 $k$-最小哈希族，Feigenblat、Porat 与 Shiftan \cite{minwise_FPS11} 证明，$O(\log 1/\delta + k \log \log 1/\delta)$ 次独立性即可保证误差 $\delta$。
+
+然而，这一方法仍存在两个主要局限。首先，对于 $k$-最小哈希，上述结果给出的所需独立次数的上下界之间仍存在差距。其次，当误差为亚常数 $\delta = o(1)$ 时，由于 $t$ 次独立哈希族需要 $\Theta(t \log NM)$ 比特随机性，该方法无法达到最优的种子长度 $O(\log (NM / \delta))$（对于 $k$-最小哈希则是 $O(k \log NM + \log 1 / \delta)$）。
+
+另一方面，Saks、Srinivasan、Zhou 和 Zuckerman \cite{SSZZ00_connection_CR_min_wise} 首先将最小哈希的构造归约为组合矩形（combinatorial rectangle）的伪随机生成器问题，并基于该规约给出了种子长度为 $O(\log^{3/2} NM)$ 的构造。此后，针对组合矩形的伪随机生成器经历了长期的发展与改进，目前最好的结果是 Gopalan 与 Yehudayoff \cite{GY20_PRG_CR_SOTA} 的构造，这给出了 $O(\log NM \cdot \log \log NM)$ 的最小哈希构造。
+
+然而，这一路线的核心瓶颈在于：最小哈希要求形如 $\delta/|X|$ 的乘法误差，这对应于极小的加法误差。即使 $\delta$ 为常数，当 $|X| = \Omega(N)$ 时，该误差也达到 $1/N$ 量级，使得种子长度必须超过 $O(\log N M)$。因此，尽管该方向在加法误差意义下已取得显著进展，但仍难以直接得到具有最优种子长度的最小哈希族。
+
+\subsection{论文的主要贡献}
+
+本文针对上一节提到的目前最小哈希族显式构造的不足之处，进行探索研究，并解决了如下两个问题：
+\begin{itemize}
+    \item 证明了基于有限次独立性构造 $k$-最小哈希的紧致独立次数需求。
+    
+    \item 给出了首个最小哈希族的显式构造，可以在达到最优种子长度 $O(\log N M)$ 的同时，实现亚常数的乘法误差。这一构造也可以扩展到 $k$-最小哈希上。
+\end{itemize}
+
+首先是基于有限次独立性的构造，我们证明了为实现误差为 $\delta$ 的 $k$-最小哈希，需要 $\Theta(k + \log 1 / \delta)$ 次独立性。这改进了此前 \cite{minwise_FPS11} 的上界 $O(\log 1 / \delta + k \log \log 1 / \delta)$，并将上下界匹配在了一起。
+
+\begin{theorem}[\ref{sec:bounded_independence} 结果的非形式化描述]\label{thm:bounded_independence_informal}
+    基于有限次独立性的构造，为实现误差为 $\delta$ 的 $k$-最小哈希，$\Theta(k + \log 1 / \delta)$ 的独立次数是足够且必要的。
+\end{theorem}
+
+接下来则是可以达到最优种子长度 $O(\log N M)$ 的构造。为了表述方便，我们设 $M = \poly(N)$。下面的构造实现了乘法误差 $2^{-O\left( \frac{\log N}{\log \log N} \right)}$，这几乎是多项式小的，除了指数上的 $1 / \log \log N$ 项。
+
+\begin{theorem}[\cref{thm:min_wise_log_seed} 的非形式化描述]\label{thm:min_wise_log_seed_informal}
+    给定任意 $N$，存在种子长度为 $O(\log N)$ 且乘法误差为 $2^{-O\left( \frac{\log N}{\log \log N} \right)}$ 的显式最小哈希族构造。
+\end{theorem}
+
+这一构造可以扩展到 $k$-最小哈希上，当 $k = \log^{O(1)} N$，可以得到种子长度为 $O(k \log N)$ 的构造，且乘法误差还是可以保持为 $2^{-O\left( \frac{\log N}{\log \log N} \right)}$。
+
+\begin{theorem}[\cref{thm:k_min_wise_klog_seed} 的非形式化描述]\label{thm:k_min_wise_klog_seed_informal}
+    给定任意 $N$ 与 $k = \log^{O(1)} N$，存在种子长度为 $O(k \log N)$ 且乘法误差为 $2^{-O\left( \frac{\log N}{\log \log N} \right)}$ 的显式 $k$-最小哈希族构造。
+\end{theorem}
+
+值得注意的是，当 $k = \Omega\left( \frac{\log N}{\log \log N} \right)$ 时，基于有限次独立性的构造 \cref{thm:bounded_independence_informal} 实际上就可以在误差是 $2^{-O\left( \frac{\log N}{\log \log N} \right)}$ 时给出最优的种子长度 $O(k \log N)$ 了。所以实际上，\cref{thm:k_min_wise_klog_seed_informal} 在 $k = o\left( \frac{\log N}{\log \log N} \right)$ 时更加有意义。
+
+\subsection{基础记号规定}
+
+我们使用 $[n]$ 表示集合 $\{1, 2, \ldots, n\}$，使用 ${n \choose k}$ 表示组合数。对于一个有限集合 $S$，我们用 $|S|$ 表示其大小。对于三个实数变量 $a, b$ 和 $\delta$，我们用 $a = b \pm \delta$ 来表示 $a$ 和 $b$ 之间的误差不超过 $\delta$，即 $|a - b| \le \delta$。用不带任何下标的对数符号 $\log$ 表示\emph{以 $2$ 为底数的对数}。
+
+我们使用标准渐进符号 $O(\cdot),\Omega(\cdot),\Theta(\cdot),o(\cdot),\omega(\cdot)$ 分别表示渐进上界、下界、紧界以及严格上/下界；若带有下标（如 $O_C(\cdot)$），则表示在该渐进分析中将参数 $C$ 视为常数，隐含常数可依赖于 $C$。在渐进符号中，任何对于常数的对数，都统一用 $\log$ 表示，这是因为由换底公式这只会影响常数。
+
+在本文中，对于函数 $h:[N]\to[M]$，我们将其视为向量 $[M]^N$ 中的一个元素，反之亦然。更一般地，对于一个哈希函数族
+$$
+\mathcal{H} = \{h_1, \ldots, h_{|\mathcal{H}|} : [N] \to [M]\},
+$$
+我们将其与一个函数
+$$
+G : \{0,1\}^{\log |\mathcal{H}|} \to [M]^N
+$$
+对应，其中 $G(s) = (h_s(1), \ldots, h_s(N))$，$s$ 表示函数在 $\mathcal{H}$ 中的编号。换言之，从 $\mathcal{H}$ 中均匀选取一个哈希函数，等价于从 $\{0,1\}^{\log |\mathcal{H}|}$ 中均匀选取种子并输出 $G(s)$。在后文中，我们将在这两种视角之间自由切换，而不再显式区分。
+
+对于子集 $S \subseteq [N]$，记 $h(S)$ 为其在 $S$ 上的子向量，并定义 $\max h(S):=\max_{x\in S}h(x), \min h(S):=\min_{x\in S}h(x)$，以及事件 $\{h(S)=\theta\} = \{h(x)=\theta,\ \forall x\in S\}$。
+
+对于两个函数 $f, g : [N] \to [M]$，我们定义它们的\emph{加法}为
+$$
+(f + g)(x) = (f(x) + g(x) - 1) \bmod M + 1.
+$$
+同样地，对于两个向量 $f, g \in [M]^N$，$f + g$ 表示对应位置的加法。
+
+对于两个哈希函数族 $\mathcal{H}, \mathcal{G}$，定义它们的\emph{直和}（direct sum）为
+$$
+\mathcal{H} \oplus \mathcal{G} := \{h + g : h \in \mathcal{H},\ g \in \mathcal{G}\}.
+$$
+在上述对应关系下，若 $\mathcal{H}, \mathcal{G}$ 分别对应函数 $G_1, G_2$，则其直和 $G_1 \oplus G_2$ 对应于函数
+$$
+G(s_1, s_2) = G_1(s_1) + G_2(s_2).
+$$
+
+对于一个有限集合 $\Omega$ 和一个变量 $x$，我们用 $x \sim \Omega$ 来表示 $x$ 是从 $\Omega$ 中均匀随机选取的；一般来说，$x$ 这一类型的变量，其所有可能的取值是有限的，而 $\Omega$ 是所有可能的取值的一个真子集，故我们亦会使用 $x \sim U$ 来表示 $x$ 是从其所有可能的值中均匀随机选取的，和 $x \sim \Omega$ 进行区分。而对于一个分布 $\mathcal{D}$，我们亦用 $x \sim \mathcal{D}$ 来表示 $x$ 是从分布 $\mathcal{D}$ 中选取的。对于一个事件 $A$，我们用 $\mathbf{1}(A)$ 来表示它的示性函数。
+
+给定定义在同一有限集合 $\Omega$ 上的随机变量 $X,Y$，其统计距离（statistical distance）定义为
+$$
+\dTV(X,Y)
+= \max_{S\subseteq \Omega} |\Pr[X\in S]-\Pr[Y\in S]|
+= \frac{1}{2}\sum_{\omega\in\Omega} |\Pr[X=\omega]-\Pr[Y=\omega]|.
+$$
+我们用 $X \approx_\varepsilon Y$ 表示 $\dTV(X,Y)\le\varepsilon$，并称 $X$ 和 $Y$ 是 $\varepsilon$-接近的。此外，我们将反复使用联合界不等式（union bound）：
+$$
+\Pr\left[\bigcup_{i=1}^n A_i\right]\le \sum_{i=1}^n \Pr[A_i].
+$$
+
+\subsection{论文的结构安排}
+
+本文共分为五个章节，系统研究了最小哈希族的显式构造问题，并给出了相关理论结果与构造方法。各章节内容安排如下。
+
+\ref{sec:introduction} 绪论。本章介绍伪随机性研究的基本动机，引出伪随机生成器概念，并作为其具体应用，介绍最小哈希族的问题背景、主要应用、已有构造方法及其局限。最后总结本文的研究目标与主要结果，并给出基本记号。
+
+\ref{sec:bounded_independence} 基于有限次独立性的构造。本章研究有限次独立哈希在构造 $k$-最小哈希时的能力边界，证明了 \cref{thm:bounded_independence_informal}。作为补充，还分析了经典的仿射哈希构造在该问题中的表现，并说明其无法达到高精度乘法误差。
+
+\ref{sec:optimal_seed_length} 具有最优种子长度的构造。本章给出了一个最小哈希族的显式构造，在达到最优种子长度 $O(\log N)$ 的同时，实现亚常数级别乘法误差 $2^{-O\left( \frac{\log N}{\log \log N} \right)}$，并将其推广至 $k$-最小哈希情形，证明了 \cref{thm:min_wise_log_seed_informal} 与 \cref{thm:k_min_wise_klog_seed_informal}。主要技术包括经典的分桶哈希、随机性回收与域缩减，并创新性地引入了新的均匀性与直和结构，以分析乘法误差和条件概率。
+
+\ref{sec:extractor} 随机性提取器。本章研究与最优种子长度构造相关的技术问题，讨论随机性提取器在该框架中的作用。我们构造了一类具有额外均匀性性质的提取器，并进一步分析了“乘法误差提取器”的可实现性，证明其在一般意义下是不可能的，从而说明前述构造方法的必要性。
+
+\ref{sec:summary} 总结与展望。本章总结全文的主要结果与贡献，并讨论当前工作的局限性与未来可能的研究方向，包括进一步优化误差与改进构造的计算时间等问题，以及一些技术讨论。

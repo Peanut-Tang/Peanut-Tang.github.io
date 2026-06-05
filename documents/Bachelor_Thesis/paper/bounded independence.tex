@@ -1,0 +1,299 @@
+\section{基于有限次独立性的构造}\label{sec:bounded_independence}
+
+有限次独立性（bounded independence）是哈希函数设计与算法去随机化中的一种核心松弛假设，该性质保证了任意不超过 $t$ 个元素的子集在哈希映射下的联合分布与完全随机函数一致。形式上，其定义如下：
+
+\begin{restatable}[$t$ 次独立哈希族 \cite{WC_bounded_independence}]{definition}{BoundedIndependence}\label{def:t_wise_independence}
+    一个从定义域 $\mathcal{U}$ 到值域 $\mathcal{R}$ 的哈希函数族 $\mathcal{H}$ 被称为 $t$ 次独立的（$t$-wise independent），如果对于任意 $t$ 个互不相同的输入 $x_1, \dots, x_t \in \mathcal{U}$ 以及任意 $t$ 个输出值 $y_1, \dots, y_t \in \mathcal{R}$，均有
+    $$
+    \Pr_{h \sim \mathcal{H}}\big[h(x_1)=y_1, \dots, h(x_t)=y_t\big] = |\mathcal{R}|^{-t}.
+    $$
+\end{restatable}
+
+相比于完全随机哈希需要的 $\Theta(|\mathcal{U}| \cdot \log |\mathcal{R}|)$ 个随机比特，$t$ 次独立哈希族仅需 $\Theta\big(t \cdot (\log |\mathcal{U}| + \log |\mathcal{R}|)\big)$ 个随机比特，并且实现十分简单（具体构造可参见如 Alon、Babai 和 Itai \cite{ABI86_construction_t_wise}），在理论推导与实际系统实现中均具有重要价值。
+
+$t$ 次独立性实际上也是一种伪随机生成器。具体地，它是所有 \emph{$t$-集团函数}的伪随机生成器，并且误差为 $0$。这里的 $t$-集团函数是指所有依赖于至多 $t$ 个输入位置的布尔函数。由于 $t$-集团函数族的大小为 $2^{O(|\mathcal{U}|^t)}$，因此 $t$ 次独立哈希族作为其伪随机生成器的种子长度至少为 $\Omega(t \cdot \log |\mathcal{U}|)$，而上述构造的种子长度也正好匹配了这一下界。
+
+本章聚焦于如何利用有限次独立哈希族来构造 $k$-最小哈希族。我们首先建立独立次数需求的紧致边界：在 \ref{sec:upper_bound} 中，我们证明仅需 $O(k + \log 1 / \delta)$ 次独立性即可将乘法误差控制在 $\delta$ 以内；在 \ref{sec:lower_bound} 中，我们则又反过来证明了 $\Omega(k + \log 1 / \delta)$ 次独立性是不可避免的。最后，在 \ref{sec:affine_hash} 中，我们深入分析一类具体且广泛使用的有限次独立构造——随机仿射哈希族 $h(x) = Ax \oplus b$，揭示其代数结构导致的相关性将不可避免地引入 $\Omega(\log n)$ 的乘法误差，从而无法胜任高精度的 $k$-最小哈希任务。
+
+\subsection{上界的证明}\label{sec:upper_bound}
+
+我们先来证明上界：使用有限次独立性构造 $k$-最小哈希，所需的独立次数至多为 $O(k + \log 1 / \delta)$。该结果改进了 \cite{minwise_FPS11} 的 $O(\log 1 / \delta + k \log \log 1 / \delta)$ 独立次数上界。具体来说，我们要证明如下定理：
+
+\begin{theorem}\label{thm:k_log_1_eps_upper_bound}
+    存在常数 $c > 0$，使得如果 $M \ge N / \delta$，则任何从 $[N]$ 到 $[M]$ 的 $c \cdot (k + \log 1 / \delta)$ 次独立哈希族都满足误差为 $3 \delta$ 的 $k$-最小哈希性质。
+\end{theorem}
+
+设 $X, Y \subseteq [N]$ 满足 $X \cap Y = \varnothing$，令 $|X| = s$，并且不失一般性只考虑 $|Y| = k$ 的情形。我们用 $\Pr_\ell$ 表示在 $\ell$ 次独立哈希下的概率测度，而不带下标的 $\Pr$ 表示在完全随机哈希下的概率测度。
+
+现在我们考虑 $(\ell + k)$ 次独立性。直接分析联合概率 $\Pr[\max h(Y) < \min h(X \setminus Y)]$ 较为困难，因为 $X, Y$ 中的不同元素的哈希值存在强相关性。为此，我们枚举 $\theta := \max h(Y)$，进行如下概率分解：
+$$
+\Pr_{\ell + k}[\max h(Y) < \min h(X)] = \sum_{\theta = 1}^M \frac{\theta^k - (\theta - 1)^k}{M^k} \cdot \Pr_\ell[A_\theta],
+$$
+$$
+\Pr[\max h(Y) < \min h(X)] = \sum_{\theta = 1}^M \frac{\theta^k - (\theta - 1)^k}{M^k} \cdot \Pr[A_\theta],
+$$
+其中 $A_\theta = \{\min h(X) > \theta\}$，我们设其对应的值为 $Z_\theta = \big| h(X) \cap [1, \theta] \big|$。注意对于 $(\ell + k)$ 次独立测度，我们首先枚举 $\max h(Y) = \theta$，这消耗了 $k$ 次独立性。
+
+设定一个阈值 $T = \frac{c \ell M}{s} \in \N$，其中 $c < 1$ 是待确定的常数，并将求和分成两部分：
+$$
+\Pr_{\ell + k}[\max h(Y) < \min h(X)] = \sum_{\theta \le T - 1} \frac{\theta^k - (\theta - 1)^k}{M^k} \cdot \Pr_\ell[A_\theta] + \sum_{\theta \ge T} \frac{\theta^k - (\theta - 1)^k}{M^k} \cdot \Pr_\ell[A_\theta].
+$$
+
+\paragraph{第一部分.}
+
+考虑 $\Pr_\ell[A_\theta]$。我们使用 Bonferroni 不等式：
+
+\begin{lemma}[Bonferroni 不等式]
+    设 $A_1, \ldots, A_n$ 为 $n$ 个事件，则有如下不等式：
+    $$
+    \forall k = 0, 1, \ldots, n,\ \Pr\left[ \bigcap_{i = 1}^n A_i \right]
+    \begin{cases}
+        \le \sum_{t = 0}^k (-1)^t \sum_{\mathcal{I} \subseteq [n], |\mathcal{I}| = t} \Pr\left[ \bigcap_{j \in \mathcal{I}} \overline{A_j} \right], & k\text{ 是偶数}; \\
+        \ge \sum_{t = 0}^k (-1)^t \sum_{\mathcal{I} \subseteq [n], |\mathcal{I}| = t} \Pr\left[ \bigcap_{j \in \mathcal{I}} \overline{A_j} \right], & k\text{ 是奇数}.
+    \end{cases}
+    $$
+\end{lemma}
+
+设 $\ell$ 是偶数，则我们有
+$$
+\sum_{j = 0}^{\ell - 1} (-1)^j \sum_{X' \subseteq X, |X'| = j} \Pr_\ell[h(X') \subseteq [1, \theta]] \le \Pr_\ell[A_\theta] \le \sum_{j = 0}^\ell (-1)^j \sum_{X' \subseteq X, |X'| = j} \Pr_\ell[h(X') \subseteq [1, \theta]].
+$$
+
+因此
+$$
+\Pr_\ell[A_\theta] = \sum_{j = 0}^{\ell - 2} (-1)^j \sum_{X' \subseteq X, |X'| = j} \Pr_\ell[h(X') \subseteq [1, \theta]] \pm \Delta,
+$$
+其中误差项 $\Delta$ 为
+$$
+\begin{aligned}
+    \Delta & \le \sum_{j = \ell - 1}^\ell \sum_{X' \subseteq X, |X'| = j} \Pr_\ell[h(X') \subseteq [1, \theta]] \\
+     & \le 2 \binom{s}{\ell - 1} \cdot \left( \frac{\theta}{M} \right)^{\ell - 1} \le 2 \left( \frac{\e s \theta}{M (\ell - 1)} \right)^{\ell - 1}.
+\end{aligned}
+$$
+
+注意上述分析只涉及大小至多为 $\ell$ 的子集；在这种情况下，完全随机概率测度 $\Pr$ 与 $\ell$ 次独立测度 $\Pr_\ell$ 之间没有区别，故上述分析也给出了 $\Pr[A_\theta]$ 的表达式：
+$$
+\Pr[A_\theta] = \sum_{j = 0}^{\ell - 2} (-1)^j \sum_{X' \subseteq X, |X'| = j} \Pr_\ell[h(X') \subseteq [1, \theta]] \pm \Delta.
+$$
+
+结合以上我们得到
+$$
+\Pr_\ell[A_\theta] = \Pr[A_\theta] \pm 2 \Delta = \Pr[A_\theta] \pm 4 \left( \frac{\e s \theta}{M (\ell - 1)} \right)^{\ell - 1}.
+$$
+
+代回到求和中得到
+$$
+\begin{aligned}
+    \sum_{\theta \le T - 1} \frac{\theta^k - (\theta - 1)^k}{M^k} \Pr_\ell[A_\theta] & = \sum_{\theta \le T - 1} \frac{\theta^k - (\theta - 1)^k}{M^k} \cdot \left( \Pr[A_\theta] \pm 4 \left( \frac{\e s \theta}{M (\ell - 1)} \right)^{\ell - 1} \right) \\
+     & = \sum_{\theta \le T - 1} \frac{\theta^k - (\theta - 1)^k}{M^k} \Pr[A_\theta] \pm \frac{4 T^k}{M^k} \cdot \left( \frac{\e s T}{M (\ell - 1)} \right)^{\ell - 1}.
+\end{aligned}
+$$
+
+\paragraph{第二部分.}
+
+再次考虑 $\Pr_\ell[A_\theta]$，这次我们使用集中不等式来界定它。我们直接使用 \cite{Bellare_Rompel_94} 中的尾界。
+
+\begin{restatable}[$t$ 次独立尾不等式，\cite{Bellare_Rompel_94} 中的 引理 2.3]{lemma}{TWiseTailBound}\label{lem:tail_bound_t_wise_BR94}
+    设 $t \ge 4$ 为偶数。假设 $X_1, \ldots, X_n$ 是取值于 $[0, 1]$ 的 $t$ 次独立随机变量。令 $X = X_1 + \cdots + X_n$，$\mu = \E[X]$ 且 $A > 0$。则
+    $$
+    \Pr[|X - \mu| \ge A] \le 8 \cdot \left( \frac{t \mu + t^2}{A^2} \right)^{t / 2}.
+    $$
+\end{restatable}
+
+这里我们设一个待定的参数 $4 \le \ell' < \ell$，且 $2 \mid \ell'$。使用上面的集中不等式，并假设对所有 $\theta \ge T$ 有 $\E[Z_\theta] \ge \ell'$，则得到
+$$
+\text{$\Pr_\ell[A_\theta]$ 和 $\Pr[A_\theta]$ 都 } \le 8 \left( \frac{2 \ell' \E[Z_\theta]}{(\E[Z_\theta])^2} \right)^{\ell' / 2} = 8 \left( \frac{2 \ell' M}{\theta s} \right)^{\ell' / 2}.
+$$
+
+代回到求和中，我们得到
+$$
+\begin{aligned}
+    \sum_{\theta \ge T} \frac{\theta^k - (\theta - 1)^k}{M^k} \Pr_\ell[A_\theta] & \le \Pr_\ell[A_T] \sum_{\theta \in [T, 2 T]} \frac{\theta^k - (\theta - 1)^k}{M^k} + \Pr_\ell[A_{2 T}] \sum_{\theta \in [2 T, 4 T]} \frac{\theta^k - (\theta - 1)^k}{M^k} + \cdots \\
+     & \le 8 \left( \frac{2 \ell' M}{T s} \right)^{\ell' / 2} \cdot \left( \frac{2 T}{M} \right)^k + 8 \left( \frac{2 \ell' M}{2 T s} \right)^{\ell' / 2} \cdot \left( \frac{4 T}{M} \right)^k + \cdots \\
+     & = 8 \left( \frac{2 \ell' M}{T s} \right)^{\ell' / 2} \cdot \left( \frac{2 T}{M} \right)^k \cdot \left( 1 + \left( \frac{1}{2} \right)^{\frac{\ell'}{2} - k} + \cdots \right) \\
+     & \le 16 \left( \frac{2 \ell' M}{T s} \right)^{\ell' / 2} \cdot \left( \frac{2 T}{M} \right)^k,
+\end{aligned}
+$$
+其中最后一步要求几何级数至多为 $2$，这需要 $\frac{\ell'}{2} - k \ge 1$。
+
+同样的分析适用于完全随机的概率测度 $\Pr$，所以
+$$
+\sum_{\theta \ge T} \frac{\theta^k - (\theta - 1)^k}{M^k} \Pr_\ell[A_\theta] = \sum_{\theta \ge T} \frac{\theta^k - (\theta - 1)^k}{M^k} \Pr[A_\theta] \pm 32 \left( \frac{2 \ell' M}{T s} \right)^{\ell' / 2} \cdot \left( \frac{2 T}{M} \right)^k.
+$$
+
+\paragraph{合并结果.}
+
+将第一部分和第二部分相加，我们得到总误差：
+\begin{align*}
+    \sum_{\theta = 1}^M \frac{\theta^k - (\theta - 1)^k}{M^k} \Pr_\ell[A_\theta] & = \sum_{\theta = 1}^M \frac{\theta^k - (\theta - 1)^k}{M^k} \Pr[A_\theta] \\
+     & \pm \left( \frac{4 T^k}{M^k} \cdot \left( \frac{\e s T}{M (\ell - 1)} \right)^{\ell - 1} + 32 \left( \frac{2 \ell' M}{T s} \right)^{\ell' / 2} \cdot \left( \frac{2 T}{M} \right)^k \right).
+\end{align*}
+
+接下来，我们设定具体参数。定义辅助误差 $\delta' = \delta / 2^z$，其中 $z \in \N$ 待定。
+
+令 $\ell' = \ell / 30$（假设 $60 \mid \ell$ 使得 $\ell'$ 为偶数）。再设 $c = 1 / 6$，则 $T = \frac{\ell M}{6 s}$（假设 $6 \mid \ell$ 使得 $T \in \N$）。这可以满足对所有 $\theta \ge T$ 有 $\E[Z_\theta] = \frac{\theta s}{M} \ge \ell'$ 的假设。此外（假设 $\ell \ge 40$），
+$$
+\frac{\e s T}{M (\ell - 1)} = \frac{\e \ell}{6 (\ell - 1)} < 1/2, \quad \frac{2 \ell' M}{T s} = \frac{2}{5} < \frac{1}{2}.
+$$
+
+进一步假设 $\frac{\ell' }{2} \ge \log \frac{32}{\delta'}$ 和 $\ell - 1 \ge \log \frac{4}{\delta'}$，则
+$$
+\text{总加性误差} \le \frac{T^k}{M^k} \delta' + \frac{(2 T)^k}{M^k} \delta'.
+$$
+
+我们考虑如何设置 $z$ 和 $\ell$ 来满足之前的所有约束（总结如下）：
+\begin{equation}\label{eq:constraints}
+    \begin{cases}
+        60 \mid \ell, \ell \ge 120; \\
+        \ell \ge 60 k + 60; \\
+        \ell \ge 60 (z + \log 1 / \delta + 5).
+    \end{cases}
+\end{equation}
+并且这样的设置可以确保误差项满足
+$$
+\frac{T^k}{M^k} \delta' \le \frac{(2 T)^k}{M^k} \cdot \frac{\delta}{2^z} \le \frac{(k / \e)^k}{(s + k)^k} \delta \le \frac{\delta}{\binom{s + k}{k}}.
+$$
+
+我们只关心 $s \ge k$ 的情形。剩余的情形可以用 $2k$ 次独立哈希族处理，是平凡的。因此可以将要求放宽为
+$$
+\frac{(2 T)^k}{M^k} \cdot \frac{\delta}{2^z} \le \frac{(k / \e)^k}{(2 s)^k} \delta.
+$$
+代入 $T = \frac{\ell M}{6 s}$，这等价于
+$$
+\left( \frac{2 \e}{3} \right)^k \cdot \ell^k \le k^k \cdot 2^z.
+$$
+取对数得到
+\begin{equation}\label{eq:z_ell_relation}
+    z \ge k \log \frac{2 \e}{3} + k \log \frac{\ell}{k}.
+\end{equation}
+
+令 $L = \lceil \log 1 / \delta \rceil$。我们设 $z = 15 k + L + 5$ 和 $\ell = 60 (z + L + 5)$。展开得 $\ell = 900k + 120L + 600$，这显然满足 \eqnref{eq:constraints} 中的所有约束。
+
+为了验证误差保证，将 $\ell = 900k + 120L + 600$ 代入 \eqnref{eq:z_ell_relation} 的右边，并使用不等式 $\log(1+x) \le 1.45 x\ (x \ge 0)$ 进行界定：
+\begin{align*}
+    k \log\left( \frac{\ell}{k} \right) &= k \log\left( 900 \cdot \left( 1 + \frac{120L + 600}{900k} \right) \right) \\
+    &= k \log 900 + k \log\left( 1 + \frac{120L + 600}{900k} \right) \\
+    &\le 9.82 k + k \cdot 1.45 \cdot \left(\frac{120L + 600}{900k}\right) \\
+    &\le 9.82 k + 0.194 L + 0.968.
+\end{align*}
+
+加上常数项 $k \log(2 \e/3) \le 0.86 k$，\eqnref{eq:z_ell_relation} 的右边严格小于
+$$
+\text{RHS} \le 0.86 k + 9.82 k + 0.194 L + 0.968 = 10.68 k + 0.194 L + 0.968.
+$$
+
+与我们选择的 $z = 15 k + L + 5$ 逐项比较，显然 \eqnref{eq:z_ell_relation} 成立。
+
+\paragraph{收尾.}
+
+现在我们证明了 $\Pr_{\ell + k}[\max h(Y) < \min h(X)]$ 与 $\Pr[\max h(Y) < \min h(X)]$ 之间最多相差 $2 \delta$。最后，我们还需要证明完全均匀随机哈希自动满足误差为 $\delta$ 的 $k$-最小哈希性质。如 Indyk \cite{minwise_Indyk} 所述，当 $M \ge N / \delta$ 时，这一性质成立。以下是严格的证明。
+
+\begin{lemma}\label{lem:k_min_wise_full_random}
+    设 $X, Y \subseteq [N]$ 是两个不相交的集合，满足 $|X| = s$ 和 $|Y| = k$。令 $\sigma: [N] \to [M]$ 是一个完全随机函数，则 $Y$ 中的元素严格小于 $X$ 中的元素的哈希值的概率 $P$ 满足
+    $$
+    \frac{1}{\binom{s + k}{k}} \left( 1 - \frac{s + k}{M} \right) \le P \le \frac{1}{\binom{s+k}{k}},
+    $$
+    
+    特别地，由于 $s+k \le N$，当 $M \ge \frac{N}{\delta}$ 时，误差至多是 $\delta$。
+\end{lemma}
+
+\begin{proof}
+    精确概率 $P = \Pr_{\sigma}\left[ \max \sigma(Y) < \min \sigma(X) \right]$ 可以如下计算：
+    \begin{align*}
+        P & = \sum_{\theta = 1}^M \frac{\theta^k - (\theta - 1)^k}{M^k} \left( 1 - \frac{\theta}{M} \right)^s \\
+         & = \sum_{\theta = 1}^M \int_{(\theta - 1) / M}^{\theta / M} k x^{k-1} \left( 1 - \frac{\theta}{M} \right)^s \dd x.
+    \end{align*}
+    
+    无哈希碰撞的理想概率由 Beta 积分给出：
+    $$
+    I = \int_0^1 k x^{k-1} (1-x)^s \dd x = \frac{1}{\binom{s+k}{k}}.
+    $$
+    
+    对于任意 $x \in [(\theta - 1) / M, \theta / M]$，上界 $1 - \theta / M \le 1 - x$ 立即给出
+    $$
+    P \le \sum_{\theta = 1}^M \int_{(\theta - 1) / M}^{\theta / M} k x^{k-1} (1-x)^s \dd x = I.
+    $$
+    
+    对于下界，我们使用 $1 - \theta / M \ge 1 - x - 1 / M$ 以及凸性不等式：
+    $$
+    \left( 1 - \frac{\theta}{M} \right)^s \ge (1-x)^s - \frac{s}{M}(1-x)^{s-1}.
+    $$
+    
+    在所有区间上积分这个下界得到
+    \begin{align*}
+        P & \ge I - \frac{s}{M} \int_0^1 k x^{k-1}(1-x)^{s-1} \dd x \\
+         & = I - \frac{s}{M} \cdot \frac{1}{\binom{s + k - 1}{k}} = I \left( 1 - \frac{s + k}{M} \right).
+    \end{align*}
+    
+    结合这些界，我们得到 $I \left( 1 - \frac{s+k}{M} \right) \le P \le I$。这证明了乘法误差被 $(s + k) / M$ 所控制。由于 $X$ 和 $Y$ 是 $[N]$ 的不交子集，$s+k \le N$，这意味着 $\frac{s+k}{M} \le \frac{N}{M}$。因此，如果 $M \ge N / \delta$，误差至多是 $\delta$。
+\end{proof}
+
+因此，综合以上所有，与 $1 / \binom{s + k}{k}$ 相比的乘法误差至多为 $3 \delta$，并且 $\ell + k = \Theta(k + \log 1 / \delta)$，这完成了 \cref{thm:k_log_1_eps_upper_bound} 的证明。
+
+\subsection{下界的证明}\label{sec:lower_bound}
+
+在这一节我们继续来探讨下界的论述，证明：使用有限独立哈希族来构造 $k$-最小哈希，所需的独立性次数至少为 $\Omega(k + \log 1 / \delta)$。这和我们上一节得到的上界是相吻合的。
+
+证明分为两步。首先我们证明，任何 $k$-最小哈希严格地至少需要 $k$ 次独立性。为了看出这一点，假设 $X$ 独立均匀分布在 $[0, 1/2)$ 中，而 $Y$ 均匀分布在 $[0, 1)$ 中，但条件是其落入 $[1/2, 1)$ 的元素个数为奇数。这个条件保持了 $Y$ 的 $(k-1)$ 次独立性，然而它却确定性地迫使 $Y$ 中至少有一个元素落入 $[1/2, 1)$。由于 $X$ 的所有元素严格在 $[0, 1/2)$ 中，概率 $\Pr[\max h(Y) < \min h(X)] = 0$，产生 $100\%$ 的乘法误差。
+
+其次，我们将此与 P{\u{a}}tra{\c{s}}cu 和 Thorup \cite{PT_lb_t_wise_min_wise} 为最小哈希建立的下界相结合：
+
+\begin{theorem}[\cite{PT_lb_t_wise_min_wise} 中的定理 3.1]\label{thm:PT_lb_t_wise_min_wise}
+    存在一个常数 $c > 0$，对于任意大小为 $n$ 的键集 $X$ 和另一个键 $y$，存在一个 $t$ 次独立的哈希族 $\mathcal{H} = \{h : X \cup \{y\} \to [0, 1)\}$ 使得
+    $$
+    \Pr_{h \sim \mathcal{H}}[h(y) < \min h(X)] = \frac{1 + 2^{-c t}}{n + 1}.
+    $$
+\end{theorem}
+
+这个定理本质上要求了，使用有限次独立哈希族来做最小哈希，所需的独立次数至少是 $\Omega(\log 1 / \delta)$。由于 $k$-最小哈希是比标准的最小哈希更强的性质，为了达到乘法误差 $\delta$，它必然继承这个 $\Omega(\log 1 / \delta)$ 次独立性的下界。
+
+结合这两个约束，我们得到 $k$-最小哈希的所需的独立次数下界为 $\Omega(\max\{k, \log 1 / \delta\}) = \Omega(k + \log 1 / \delta)$。
+
+\subsection{随机仿射哈希族}\label{sec:affine_hash}
+
+为具体考察有限次独立哈希族在最小哈希中的应用，我们首先回顾最经典的构造：一维模线性哈希族 $h(x) = (ax + b) \bmod p$。Broder、Charikar、Frieze、Mitzenmacher \cite{BCFM98} 与 P{\u{a}}tra{\c{s}}cu、Thorup \cite{PT_lb_t_wise_min_wise} 已严格证明，此类哈希族在实现最小哈希时，其乘法误差不可避免地达到 $\Omega(\log n)$。本节我们将研究其高维推广形式——随机仿射哈希族 $h(x) = Ax \oplus b$。显然，该高维仿射族是一维经典线性哈希族在多维向量空间上的直接推广，自然涵盖了一维情形的核心结构。我们将证明，即便在更高维度的设定下，随机仿射哈希族用于最小哈希时同样无法避免 $\Omega(\log n)$ 的乘法误差。此外，由于 $k$-最小哈希是比标准最小哈希更强的性质，若哈希族连基础的最小哈希都无法满足，则必然也无法胜任 $k$-最小哈希族的要求。如下定理定量刻画了这一局限性：
+
+\newcommand{\msb}{\mathsf{msb}}
+
+\begin{theorem}\label{thm:min_wise_random_affine_not_good}
+    设 $h(x) = Ax \oplus b$ 为从 $\F_2^u$ 到 $\F_2^\ell$ 的随机仿射哈希函数，其中 $\ell = 2u$，$A \sim \F_2^{\ell \times u}$，且 $b \sim \F_2^\ell$。对任意整数 $k \le u - 1$，存在一个大小为 $n = 2^k$ 的集合 $S \subseteq \F_2^u \setminus \{0\}$，使得查询元素 $q = 0$ 有严格最小哈希值的概率满足以下下界：
+    $$
+    \Pr_{A,b}[h(0) < \min h(S)] \ge (1 - 2^{-u}) \frac{\log n + 1}{4n - 2} = \Theta\left(\frac{\log n}{n}\right).
+    $$
+\end{theorem}
+
+\begin{proof}
+    设 $V \subseteq \F_2^u$ 为一个 $(k+1)$ 维子空间（因为 $k+1 \le u$，故必然存在）。固定一个非零向量 $z \in V$，并定义仿射超平面 $S = \{ x \in V \mid z^\top x = 1 \}$。显然集合 $S$ 的大小为 $2^k = n$ 且不包含 $0$。我们将 $q = 0$ 指定为查询元素。
+    
+    对任意 $x \in V \setminus \{0\}$，$Ax = 0$ 的概率为 $2^{-\ell} = 2^{-2u}$。对 $V$ 中所有非零元素应用联合界，限制映射 $A|_V$ 为单射的概率为 $\Pr[\mathcal{E}] \ge 1 - 2^{k+1} 2^{-2u} \ge 1 - 2^{-u}$。我们在 $A|_V$ 是单射的这个事件（记作 $\mathcal{E}$）成立的条件下进行分析。在 $\mathcal{E}$ 条件下，$U = A(V) := \{A v : v \in V\}$ 是 $\F_2^\ell$ 中的一个 $(k+1)$ 维子空间。此外，由于 $0 \notin S$ 且 $A|_V$ 是单射，像集 $Y = A(S)$ 严格不包含 $0$。由于 $Y$ 是仿射超平面的单射像，它构成了 $U$ 中由一个非平凡线性约束所定义的仿射超平面。
+    
+    对任意非零向量 $y \in \F_2^\ell$，令 $\msb(y)$ 表示其最高位 1 的索引。因为在 $\mathcal{E}$ 条件下 $Y$ 中的每个 $y$ 均严格非零，故索引 $\msb(y)$ 是良定义的。事件 $h(0) < \min h(S)$ 等价于在标准字典序下，对所有 $s \in S$ 均有 $b < As \oplus b$。由于 $y = As \neq 0$，该条件成立当且仅当对每个 $y \in Y$ 均有 $b_{\msb(y)} = 0$。令 $\msb(Y) = \{ \msb(y) \mid y \in Y \}$。由于 $b$ 均匀分布且独立于 $A$，在给定 $A$ 的条件下，该事件发生的条件概率恰好为 $2^{-|\msb(Y)|}$。
+    
+    设 $e_1, \dots, e_{k+1}$ 为通过高斯消元法（列消元）得到的 $U$ 的一组基，满足 $\msb(e_1) < \dots < \msb(e_{k+1})$。定义 $Y$ 的线性约束可表示为 $\sum_{i=1}^{k+1} c_i \alpha_i = 1$，其中 $\alpha_i$ 是 $y = \sum_{i=1}^{k+1} \alpha_i e_i \in U$ 的坐标。如 \cref{rmk:QR_induce_constraint_uniform} 所推导，系数向量 $c = (c_1, \dots, c_{k+1})$ 在 $\F_2^{k+1} \setminus \{0\}$ 上均匀分布。
+    
+    $y = \sum_{i = 1}^{k + 1} \alpha_i e_i \in U$ 的最高有效位为 $\msb(e_t)$，其中 $t$ 是满足 $\alpha_t = 1$ 的最小索引。因此，索引 $\msb(e_t)$ 属于 $\msb(Y)$ 当且仅当存在一个坐标向量 $\alpha$，其首个非零分量位于第 $t$ 位。这要求方程 $c_t + \sum_{i = t + 1}^{k + 1} c_i \alpha_i = 1$ 关于 $\alpha_{t + 1}, \dots, \alpha_{k + 1}$ 有解，当且仅当 $c_t, \dots, c_{k + 1}$ 不全为零时成立。令 $T = \max \{ i : c_i = 1 \}$，该可解条件恰好等价于 $t \le T$。因此，$|\msb(Y)| = T$。
+    
+    事件 $T = j$ 要求 $c_j = 1$ 且对所有 $i > j$ 有 $c_i = 0$。在 $\mathcal{E}$ 条件下，其发生的概率为 $\Pr[T = j \mid \mathcal{E}] = \frac{2^{j-1}}{2^{k+1}-1}$。计算条件期望可得
+    $$
+    \E[2^{-|\msb(Y)|} \mid \mathcal{E}] = \sum_{j=1}^{k+1} \frac{2^{j-1}}{2^{k+1}-1} 2^{-j} = \frac{k+1}{2(2^{k+1}-1)}.
+    $$
+    
+    最后，由全期望公式可得
+    $$
+    \Pr[h(0) < \min h(S)] \ge \Pr[\mathcal{E}] \cdot \E[2^{-|\msb(Y)|} \mid \mathcal{E}] \ge (1 - 2^{-u}) \frac{k+1}{2(2^{k+1}-1)} = (1 - 2^{-u}) \frac{\log n + 1}{4 n - 2}.
+    $$
+\end{proof}
+
+\begin{remark}\label{rmk:QR_induce_constraint_uniform}
+    线性约束系数 $c$ 的均匀性可直接由高斯消元法下随机矩阵的性质得出。固定 $V$ 的一组基后，单射映射 $A|_V$ 对应于左乘一个均匀随机选取的列满秩矩阵 $W \in \F_2^{\ell \times (k+1)}$。通过在 $\F_2$ 上进行列消元，$W$ 可唯一分解为 $W = E R$，其中 $E \in \F_2^{\ell \times (k+1)}$ 是 $U$ 的唯一标准阶梯形基（其列的 $\msb$ 索引严格递增），而 $R \in \mathrm{GL}(k+1, \F_2)$ 是记录列操作的可逆坐标变换矩阵。由随机矩阵理论可知，$R$ 在一般线性群上均匀分布。对任意映射后的向量 $y = Wx = E(Rx)$，令 $\alpha = Rx$ 为其在基 $E$ 下的坐标。原始约束 $z^\top x = 1$ 可重写为 $((R^{-1})^\top z)^\top \alpha = 1$。令 $c = (R^{-1})^\top z$。由于 $R$ 是均匀随机的可逆矩阵且 $z \neq 0$，向量 $c$ 在 $\F_2^{k+1} \setminus \{0\}$ 上严格均匀分布。
+\end{remark}
+
+\subsection{总结}
+
+本章系统研究了利用有限次独立哈希族构造 $k$-最小哈希族的理论边界与具体构造的局限性，主要结论与技术路线可归纳为以下三个方面：
+
+首先，我们确立了有限次独立性与 $k$-最小哈希之间紧致的定量关系。\cref{thm:k_log_1_eps_upper_bound} 的上界证明，与下界分析共同表明，为实现 $k$-最小哈希，$\Theta(k + \log 1 / \delta)$ 次独立性是足够且必要的，完整刻画了独立次数与近似精度之间的最优权衡。在技术层面，上界证明将目标概率按哈希值阈值分解，并分别控制；下界证明则通过构造保持对抗分布，结合 P{\u{a}}tra{\c{s}}cu 与 Thorup \cite{PT_lb_t_wise_min_wise}的经典结果（ \cref{thm:PT_lb_t_wise_min_wise}），完成了必要性论证。这样紧致的上下界结果，大大改进了此前 Feigenblat、Porat 和 Shiftan \cite{minwise_FPS11} 给出的 $O(\log 1 / \delta + k \log \log 1 / \delta)$ 的上界。
+
+其次，我们对随机仿射哈希族这一经典代数构造进行了理论分析。尽管该族在有限域 $\F_2$ 上具备优良的代数性质，\cref{thm:min_wise_random_affine_not_good} 严格证明了其用于最小哈希族时存在 $\Omega(\log n)$ 的固有乘法误差。证明过程中，我们通过高斯消元提取标准阶梯形基，将最小值事件转化为对最高有效位集合大小的精确计数，最终完成误差下界的定量刻画。
+
+本章结果对哈希函数的理论设计与工程选型具有突出意义。一方面，它表明在追求 $k$-最小哈希时，盲目提高哈希族的独立次数不仅浪费存储空间，且在代数构造（如仿射映射）中仍受限于内在的线性相关性；另一方面，紧致的上下界为实际系统中随机源的精简提供了理论依据，即在给定误差容忍度 $\delta$ 与查询规模 $k$ 时，仅需配置 $\Theta(k + \log 1 / \delta)$ 的独立性即可达到所需效果。

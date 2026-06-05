@@ -1,0 +1,66 @@
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{property}[theorem]{性质}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{notation}[theorem]{记号}
+%\newtheorem{proof}[theorem]{Proof}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\newtheorem{conjecture}[theorem]{猜想}
+\newtheorem{assumption}[theorem]{假设}
+\newtheorem{observation}[theorem]{观察}
+\newtheorem{fact}[theorem]{事实}
+\newtheorem{question}[theorem]{问题}
+\newtheorem{remark}[theorem]{注记}
+\newtheorem{claim}[theorem]{声明}
+\newtheorem{example}[theorem]{例子}
+\newtheorem{open}[theorem]{开放性问题}
+
+\crefname{theorem}{定理}{定理}
+\crefname{lemma}{引理}{引理}
+\crefname{property}{性质}{性质}
+\crefname{definition}{定义}{定义}
+\crefname{notation}{记号}{记号}
+\crefname{proposition}{命题}{命题}
+\crefname{corollary}{推论}{推论}
+\crefname{conjecture}{猜想}{猜想}
+\crefname{assumption}{假设}{假设}
+\crefname{observation}{观察}{观察}
+\crefname{fact}{事实}{事实}
+\crefname{question}{问题}{问题}
+\crefname{remark}{注记}{注记}
+\crefname{claim}{断言}{断言}
+\crefname{example}{例子}{例子}
+\crefname{open}{开放性问题}{开放性问题}
+% \crefname{section}{章节}{章节}
+% \crefname{subsection}{章节}{章节}
+% \crefname{subsubsection}{章节}{章节}
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\F}{\mathbb{F}}
+
+\newcommand{\e}{\mathrm{e}}
+
+\DeclareMathOperator*{\E}{\mathbb{E}}
+
+\newcommand{\poly}{\mathsf{poly}}
+
+\newcommand{\Ext}{\mathsf{Ext}}
+\newcommand{\ExtErr}{\mathrm{ExtErr}}
+\newcommand{\Con}{\mathsf{Con}}
+\newcommand{\Hmin}{\mathrm{H}_\infty}
+\newcommand{\dTV}{\Delta_{\mathrm{TV}}}
+\newcommand{\PRG}{\mathsf{PRG}}
+
+\newif\ifshownotes
+\shownotestrue
+
+\ifshownotes
+  \newcommand{\hstnote}[1]{\textcolor{red}{\textbf{[Shengtang: #1]}}}
+  \newcommand{\AIsuggestion}[1]{\textcolor{blue}{\textbf{[AI: #1]}}}
+\else
+  \newcommand{\hstnote}[1]{}
+  \newcommand{\AIsuggestion}[1]{}
+\fi

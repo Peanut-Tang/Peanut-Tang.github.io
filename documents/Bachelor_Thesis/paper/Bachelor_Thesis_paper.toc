@@ -1,0 +1,44 @@
+\contentsline {section}{\numberline {第1章}绪论}{2}{section.1}%
+\contentsline {subsection}{\numberline {第1节}研究背景}{2}{subsection.1.1}%
+\contentsline {paragraph}{伪随机理论.}{2}{paragraph*.4}%
+\contentsline {paragraph}{最小哈希族.}{3}{paragraph*.5}%
+\contentsline {subsection}{\numberline {第2节}论文的主要贡献}{5}{subsection.1.2}%
+\contentsline {subsection}{\numberline {第3节}基础记号规定}{5}{subsection.1.3}%
+\contentsline {subsection}{\numberline {第4节}论文的结构安排}{7}{subsection.1.4}%
+\contentsline {section}{\numberline {第2章}基于有限次独立性的构造}{8}{section.2}%
+\contentsline {subsection}{\numberline {第1节}上界的证明}{8}{subsection.2.1}%
+\contentsline {paragraph}{第一部分.}{9}{paragraph*.6}%
+\contentsline {paragraph}{第二部分.}{10}{paragraph*.7}%
+\contentsline {paragraph}{合并结果.}{11}{paragraph*.8}%
+\contentsline {paragraph}{收尾.}{12}{paragraph*.9}%
+\contentsline {subsection}{\numberline {第2节}下界的证明}{13}{subsection.2.2}%
+\contentsline {subsection}{\numberline {第3节}随机仿射哈希族}{14}{subsection.2.3}%
+\contentsline {subsection}{\numberline {第4节}总结}{15}{subsection.2.4}%
+\contentsline {section}{\numberline {第3章}具有最优种子长度的构造}{16}{section.3}%
+\contentsline {subsection}{\numberline {第1节}记号约定与基本理论}{16}{subsection.3.1}%
+\contentsline {subsection}{\numberline {第2节}方法概述}{20}{subsection.3.2}%
+\contentsline {subsection}{\numberline {第3节}具体构造与证明}{22}{subsection.3.3}%
+\contentsline {paragraph}{分组函数的负载均衡性质.}{23}{paragraph*.10}%
+\contentsline {paragraph}{概率分解为组合矩形.}{24}{paragraph*.11}%
+\contentsline {paragraph}{组合矩形伪随机生成器的域缩减.}{25}{paragraph*.12}%
+\contentsline {paragraph}{单层 Nisan-Zuckerman 伪随机生成器的连乘积分析.}{27}{paragraph*.13}%
+\contentsline {paragraph}{误差项分析与汇总.}{29}{paragraph*.14}%
+\contentsline {subsection}{\numberline {第4节}往 $k$-最小哈希族的扩展}{30}{subsection.3.4}%
+\contentsline {subsection}{\numberline {第5节}总结}{33}{subsection.3.5}%
+\contentsline {section}{\numberline {第4章}随机性提取器}{34}{section.4}%
+\contentsline {subsection}{\numberline {第1节}带有特殊性质的提取器}{34}{subsection.4.1}%
+\contentsline {subsection}{\numberline {第2节}乘法误差提取器的下界分析}{35}{subsection.4.2}%
+\contentsline {subsection}{\numberline {第3节}总结}{37}{subsection.4.3}%
+\contentsline {section}{\numberline {第5章}总结与展望}{38}{section.5}%
+\contentsline {subsection}{\numberline {第1节}本文工作总结}{38}{subsection.5.1}%
+\contentsline {subsection}{\numberline {第2节}讨论与展望}{38}{subsection.5.2}%
+\contentsline {section}{参考文献}{41}{section*.15}%
+\contentsline {section}{\numberline {附录\nobreakspace {}A}\ref {sec:optimal_seed_length} 中的省略计算}{47}{appendix.A}%
+\contentsline {paragraph}{第一种情况 $|X| \le \ell ^{0.9}$.}{48}{paragraph*.17}%
+\contentsline {paragraph}{第二种情况 $|X| \in (\ell ^{0.9}, \ell ^{1.1})$.}{49}{paragraph*.18}%
+\contentsline {paragraph}{第三种情况 $|X| \ge \ell ^{1.1}$.}{51}{paragraph*.19}%
+\contentsline {section}{\numberline {附录\nobreakspace {}B}\cref {lem:extractor_unif} 的详细证明}{52}{appendix.B}%
+\contentsline {paragraph}{基本组件.}{52}{paragraph*.20}%
+\contentsline {paragraph}{种子长度与熵同量级的提取器.}{54}{paragraph*.21}%
+\contentsline {paragraph}{最终的迭代构造.}{55}{paragraph*.22}%
+\contentsline {section}{致谢}{58}{section*.23}%

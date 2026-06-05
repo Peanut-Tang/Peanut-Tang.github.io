@@ -1,0 +1,207 @@
+\section{\cref{lem:extractor_unif} 的详细证明}\label{sec:omitted_proof_extractor}
+
+我们在这里补全 \ref{sec:extractor} 中省略的 \cref{lem:extractor_unif} 的证明。首先重述随机提取器的定义和引理本身：
+
+\Extractor*
+
+\ExtractorUniform*
+
+由于这一节中的构造中使用的是各种各样的线性函数，所以我们在本节剩余部分都使用 $\F_2$ 来代替 $\{0, 1\}$。
+
+\paragraph{基本组件.}
+
+我们需要两个基本组件。第一个组件是\emph{随机性凝结器}（randomness condenser），它实际上是随机性提取器定义的泛化。
+
+\begin{definition}[随机性凝结器 \cite{RSW06_condenser_def}]\label{def:condenser}
+    我们称一函数 $\Con : \F_2^n \times \F_2^d \to \F_2^m$ 是一个 $(k, k', \varepsilon)$-凝结器，如果对任意最小熵至少为 $k$ 的随机源 $X$，分布 $\Con(X, U_d)$ 与某个最小熵至少为 $k'$ 的分布是 $\varepsilon$-接近的。更进一步，称 $\Con$ 是 $(k, k', \varepsilon)$-强凝结器（strong condenser），若 $(U_d, \Con(X, U_d))$ 与某个最小熵至少为 $k' + d$ 的分布是 $\varepsilon$-接近的他。
+\end{definition}
+
+我们使用来自 Cheraghchi 博士论文 \cite{Cheraghchi11_phd_thesis} 的一个显式强凝结器构造，该构造修改自 Guruswami、Umans 和 Vadhan \cite{GUV_extractor} 中的强凝结器构造，并多了一个线性性质。
+
+\begin{lemma}[\cite{Cheraghchi11_phd_thesis} 中的 推论 2.23]\label{cor:linear_condenser_not_full_rank}
+    设 $\alpha>0$ 为任意常数。对任意 $n \in \N$、$k \le n$ 与误差 $\varepsilon > 0$，存在显式的 $(k, k,\varepsilon)$-强凝结器 $\Con : \F_2^n \times \F_2^d \to \F_2^m$，满足 $d = (1 + 1 / \alpha) \cdot \log (n k / \varepsilon) + O(1)$ 且 $m = d + (1 + \alpha)k$。并且对于任意固定的种子 $s \in \F_2^d$，$\Con(\cdot, s)$ 是 $\F_2$ 上的线性函数。
+\end{lemma}
+
+对于线性函数，我们可以通过很简单的修改使得其满足均匀性性质。
+
+\begin{corollary}\label{cor:linear_condenser}
+    设 $\alpha>0$ 为任意常数。对任意 $n \in \N$、$k \le n$ 与误差 $\varepsilon > 0$，存在显式的 $(k, k,\varepsilon)$-凝结器 $\Con : \F_2^n \times \F_2^d \to \F_2^m$，满足 $d = (1 + 1 / \alpha) \cdot \log (n k / \varepsilon) + O(1)$ 且 $m = d + (1 + \alpha)k$。更进一步，对于任意固定的种子 $s \in \F_2^d$，$\Con(\cdot, s)$ 是 $\F_2$ 上的线性函数，且 $\Con(U_n, s) = U_m$。
+\end{corollary}
+
+\begin{proof}
+    使用 \cref{cor:linear_condenser_not_full_rank} 中的显式强凝结器 $\Con : \F_2^n \times \F_2^d \to \F_2^m$，并将其修改为 $\Con' : \F_2^n \times \F_2^d \to \F_2^m$ 以满足需求。
+
+    (1) 先给出 $\Con'$ 的构造并说明均匀性。对于任意固定的种子 $s \in \F_2^d$，由于 $\Con(\cdot ,s)$ 是 $\F_2$ 上的线性函数，存在矩阵 $M_s \in \F_2^{m \times n}$ 使得 $\Con(x,s) = M_s \cdot x$。若 $M_s$ 的秩为 $m$，则 $\Con(U_n, s) = U_m$ 已满足要求；否则，将 $M_s$ 中所有线性相关的行替换为线性无关的向量，从而得到满秩矩阵 $M'_s$。定义 $\Con'(x, s) = M'_s \cdot x$，则对于任意固定的种子 $s$，$\Con'(\cdot ,s)$ 仍然是 $\F_2$ 上的线性函数，并且 $\Con'(\cdot, s)$ 是满射，从而 $\Con'(U_n, s) = U_m$。
+
+    (2) 显式性如下。对于每个 $s$，将基底 $e_1, \ldots, e_n$ 代入 $\Con(\cdot, s)$，得到矩阵 $M_s$，进而计算 $M'_s$ 并输出 $\Con'(x, s) = M'_s \cdot x$。上述过程均为多项式时间可计算，因此 $\Con'$ 为显式可算。
+
+    (3) 最后证明熵性质。由强凝结器的定义，对于任意最小熵至少为 $k$ 的随机源 $X$，存在分布 $Z$ 满足 $\Hmin(Z) \ge k + d$ 且 $\dTV\big((U_d, \Con(X, U_d)), Z\big) \le \varepsilon$。
+
+    对于任意固定的 $s$，由于 $M'_s$ 的行空间包含 $M_s$ 的行空间，存在仅依赖于 $s$ 的矩阵 $R_s \in \F_2^{m \times m}$，使得 $M_s = R_s M'_s$。因此可定义确定性函数 $g : (s, y) \mapsto (s, R_s \cdot y)$，其满足
+    $g(s, \Con'(x, s)) = (s, M_s \cdot x) = (s, \Con(x, s))$。
+    由于确定性函数不会增加最小熵，因此
+    $\Hmin\big((U_d, \Con'(X, U_d))\big) \ge \Hmin\big((U_d, \Con(X, U_d))\big)$。
+
+    构造 $\F_2^d \times \F_2^m$ 上的分布 $W$，定义为
+    $$
+    \Pr[W = x'] = \Pr[Z = x'] \cdot \frac{\Pr[(U_d, \Con'(X, U_d)) = x']}{\Pr[(U_d, \Con(X, U_d)) = g(x')]}.
+    $$
+    可验证 $g(W) = Z$，从而 $\Hmin(W) \ge \Hmin(Z) \ge k + d$。并且
+    $$
+    \dTV\big((U_d, \Con'(X, U_d)), W\big) = \dTV\big((U_d, \Con(X, U_d)), Z\big) \le \varepsilon,
+    $$
+    因此 $\Con'$ 仍为 $(k, k, \varepsilon)$-强凝结器。
+
+    但 $(s, \Con'(x, s))$ 不能直接作为最终的凝结器，因为种子作为输出的一部分会破坏对于固定 $s$ 的均匀性性质。考虑投影 $\pi : \F_2^d \times \F_2^m \to \F_2^m$，其输出后 $m$ 位。令 $W' = \pi(W)$，则
+    $$
+    \Pr[W' = y] = \sum_{s \in \F_2^d} \Pr[W = (s, y)] \le \sum_{s \in \F_2^d} 2^{-k - d} = 2^{-k},\ \forall y \in \F_2^m,
+    $$
+    即 $\Hmin(W') \ge k$。
+
+    同理，作用同一个确定性函数不会增大统计距离，故
+    $$
+    \dTV(\Con'(X, U_d), W') = \dTV\big( \pi(U_d, \Con'(X, U_d)), \pi(W) \big) \le \dTV\big((U_d, \Con'(X, U_d)), W\big) \le \varepsilon,
+    $$
+    从而 $\Con'$ 是一个 $(k, k, \varepsilon)$-凝结器。
+\end{proof}
+
+第二个组件则是一个种子长度等于输入源长度的随机性提取器，我们再次使用 Cheraghchi 博士论文 \cite{Cheraghchi11_phd_thesis} 中基于剩余哈希引理（Leftover Hash Lemma \cite{ILL89_leftover_hash_lemma}）的构造。
+
+\begin{lemma}[\cite{Cheraghchi11_phd_thesis} 中 命题 2.16 与 定理 2.17 的结合]\label{cor:extractor_leftover_hash_lemma_not_full_rank}
+    对于任意 $n \in \N$、$k \le n$ 与误差 $\varepsilon > 0$，若 $m \le k - 2 \log 1 / \varepsilon$，则存在一个显式的 $(k, \varepsilon)$-强提取器（strong extractor，定义和强凝结器类似）$\Ext : \F_2^n \times \F_2^n \to \F_2^m$。并且对于任意固定的 $s \in \F_2^n$，$\Ext(\cdot, s)$ 是一个 $\F_2$ 上的线性函数。
+\end{lemma}
+
+同样，我们可以进行和此前一样的修改使得其满足均匀性性质。
+
+\begin{corollary}\label{cor:extractor_leftover_hash_lemma}
+    对于任意 $n \in \N$、$k \le n$ 与误差 $\varepsilon > 0$，若 $m \le k - 2 \log 1 / \varepsilon$，则存在一个显式的 $(k, \varepsilon)$-提取器$\Ext : \F_2^n \times \F_2^n \to \F_2^m$。更进一步，对于任意固定的 $s \in \F_2^n$，$\Ext(\cdot, s)$ 是一个 $\F_2$ 上的线性函数，且 $\Ext(U_n, s) = U_m$。
+\end{corollary}
+
+\paragraph{种子长度与熵同量级的提取器.}
+
+随机性凝结器的核心作用在于提升\emph{熵率}（entropy rate），即随机源的熵与其长度之比。在构造随机性提取器时，可以首先使用凝结器将随机源 $X$ 转换为一个熵率更高的随机源 $X' := \Con(X, U_d)$，随后再对 $X'$ 进行提取。熵率较高的随机源在统计意义上更接近均匀分布，从而更易于进行随机性提取；相较之下，熵率较低的随机源其随机性较为分散，提取难度更大。
+
+形式化地，该构造可写为
+$$
+\Ext'(X, s) = \Ext(\Con(X, s_1), s_2),
+$$
+其中 $s = (s_1, s_2)$。在分析中，首先利用凝结器的性质刻画 $\Con(X, s_1)$ 的分布，再据此分析 $\Ext(\Con(X, s_1), s_2)$ 的输出分布。此外，该组合构造可以继承所需的均匀性性质，即
+$$
+\Ext(\Con(U_n, s_1), s_2) = \Ext(U_n, s_2) = U.
+$$
+
+基于上述思路，将 \cref{cor:extractor_leftover_hash_lemma} 中的提取器 $\Ext$ 与 \cref{cor:linear_condenser} 中的凝结器 $\Con$ 进行组合，可以得到一个种子长度与熵同量级的提取器。
+
+\begin{proposition}
+    设 $\alpha>0$ 为任意常数。对任意 $n \in \N$、$k \le n$ 与误差 $\varepsilon > 0$，存在显式的 $(k, \varepsilon)$-提取器 $\Ext: \F_2^n \times \F_2^d \to \F_2^m$，满足 $d = (1 + \alpha) k + O_\alpha(\log (n / \varepsilon))$ 且 $m = k - 2 \log 1 / \varepsilon$。并且对于任意固定种子 $s \in \F_2^d$，都有 $\Ext(U_n, s) = U_m$。
+\end{proposition}
+
+进一步地，种子长度可以被缩短为熵的任意小常数倍。为实现这一目标，需要引入\emph{分块随机源}（block source）的概念。
+
+\begin{definition}[分块随机源 \cite{CG_block_source}]
+    称 $X = (X_1, X_2, \ldots, X_t)$ 为一个 $(k_1, k_2, \ldots, k_t)$-源，如果对任意 $i \in [t]$ 以及任意固定的 $x_1, \ldots, x_{i-1}$，条件分布 $X_i \mid (X_1 = x_1, \ldots, X_{i - 1} = x_{i - 1})$ 的最小熵至少为 $k_i$。特别地，当 $k_1 = k_2 = \cdots = k_t = k$ 时，称 $X$ 为一个 $t \times k$-源。
+\end{definition}
+
+显然，一个 $t \times k$-源的最小熵至少为 $t k$，但其结构更为规整：每一块都保证提供一定量的熵。因此，从分块随机源中提取随机性通常更为简单直接。对应地，有如下结果：
+
+\begin{lemma}[\cite{GUV_extractor} 中的 引理 5.7]\label{lem:multi_ext}
+    假设对于 $i = 1, \ldots, t$，均存在一个 $(k_i, \varepsilon_i)$-提取器 $\Ext_i : \F_2^{n_i} \times \F_2^{d_i} \to \F_2^{m_i}$，并满足 $m_i \ge d_{i - 1}$（约定 $d_0 = 0$）。定义 $\Ext'((x_1, \ldots, x_t), y_t) = (z_1, \ldots, z_t)$，其中对 $i = t, \ldots, 1$ 递归地令 $(y_{i - 1}, z_i)$ 分别为 $\Ext_i(x_i, y_i)$ 的前 $d_{i - 1}$ 位与后 $(m_i - d_{i - 1})$ 位。
+    
+    则对于任意取值于 $\F_2^{n_1} \times \cdots \times \F_2^{n_t}$ 上的 $(k_1, \ldots, k_t)$-源 $X = (X_1, \ldots, X_t)$，分布 $\Ext'(X, U_{d_t})$ 与 $U_m$ 是 $\varepsilon$-接近的，其中 $\varepsilon = \sum_{i = 1}^t \varepsilon_i$ 且 $m = \sum_{i=1}^t (m_i - d_{i-1})$。
+\end{lemma}
+
+\begin{proof}
+    该结论为标准结果，这里略去详细证明。需要指出的是，该构造同样可以继承所需的均匀性性质。具体而言，若对所有 $i \in [t]$ 均有 $\Ext_i(U_{n_i}, y_i) = U_{m_i}$，则有
+    \begin{align*}
+        \Ext'(U_{n_1 + \cdots + n_t}, y_t)
+        &= \big(z_1, \ldots, \Ext_t(U_{n_t}, y_t)\text{ 的后 }(m_t - d_{t - 1})\text{ 位} \big) \\
+        &= \big(z_1, \ldots, \Ext_{t - 1}(U_{n_{t - 1}}, U_{d_{t - 1}})\text{ 的后 }(m_{t - 1} - d_{t - 2})\text{ 位}, U_{m_t - d_{t - 1}}\big) \\
+        &= (z_1, \ldots, U_{m_{t - 1} - d_{t - 2}}, U_{m_t - d_{t - 1}}) = \cdots = U_m.
+    \end{align*}
+\end{proof}
+
+接下来考虑如何将一般随机源转化为分块随机源。下述结果表明，当随机源的熵率接近 $1$ 时，其自然具有分块结构，这进一步体现了凝结器在构造中的关键作用。
+
+\begin{lemma}[\cite{GUV_extractor} 中的 推论 5.9]\label{lem:convert_to_block_source}
+    设 $X$ 为长度为 $n$ 且最小熵至少为 $n - \Delta$ 的随机源，将其划分为 $t$ 块 $X = (X_1, \ldots, X_t)$，且每一块长度均至少为 $n'$。则 $(X_1, \ldots, X_t)$ 与某个 $t \times (n' - \Delta - \log 1 / \varepsilon)$-源是 $t\varepsilon$-接近的。
+\end{lemma}
+
+综合上述工具，可以得到如下构造思路：首先利用 \cref{cor:linear_condenser} 将随机源的熵率提升至接近 $1$，随后将其划分为 $t$ 块，并对每一块分别应用 \cref{cor:extractor_leftover_hash_lemma} 中的提取器进行提取。该过程使得种子长度约为熵的 $1/t$ 倍。形式化表述如下（证明略）：
+
+\begin{lemma}\label{lem:extractor_d_k_t}
+    设 $t > 0$ 为任意正整数。则对于任意 $n \in \N$、$k \le n$ 与误差 $\varepsilon > 0$，存在显式的 $(k, \varepsilon)$-提取器 $\Ext : \F_2^n \times \F_2^d \to \F_2^m$，满足 $m = \lceil k / 2 \rceil$ 且 $d = k / t + O(\log (n / \varepsilon))$。并且对于任意固定种子 $s \in \F_2^d$，都有 $\Ext(U_n, s) = U_m$。
+\end{lemma}
+
+\paragraph{最终的迭代构造.}
+
+在完成上述准备后，可以给出 \cref{lem:extractor_unif} 的构造思路。当熵 $k$ 较小，如 $k \le O(\log (n / \varepsilon))$ 时，可直接应用 \cref{lem:extractor_d_k_t}。对于较大的 $k$，通过重复提取以增加输出长度，即构造
+$$
+\Ext(X, (s_1, s_2)) = (\Ext_1(X, s_1), \Ext_2(X, s_2)).
+$$
+
+关键观察在于：设 $\Ext_1$ 的输出长度为 $m_1$，且 $\Hmin(X) \ge k$，则在第一轮提取之后，对于绝大多数输出值 $z$，条件分布 $X \mid (\Ext_1(X, s_1) = z)$ 的最小熵仍然接近 $k - m_1$，从而可以继续进行提取。形式化结果如下：
+
+\begin{lemma}[\cite{Vadhan12_survey_pseudorandomness} 中的 引理 6.38]\label{lem:two_ext}
+    设 $\Ext_1 : \F_2^n \times \F_2^{d_1} \to \F_2^{m_1}$ 是一个 $(k_1, \varepsilon_1)$-提取器，$\Ext_2 : \F_2^n \times \F_2^{d_2} \to \F_2^{m_2}$ 是一个 $(k_2, \varepsilon_2)$-提取器，其中 $k_2 = k_1 - m_1 - \log 1 / \varepsilon_3$。则 $\Ext'(x, (s_1, s_2)) = (\Ext_1(x, s_1), \Ext_2(x, s_2))$ 是一个 $(k_1, \varepsilon_1 + \varepsilon_2 + \varepsilon_3)$-提取器。
+\end{lemma}
+
+直接迭代上述构造会导致种子每次都几乎翻倍，这不可接受。利用前述凝结器与分块提取技术，可以在每一步将种子长度减少任意常数，从而在迭代过程中保证种子长度保持不变。
+
+此外，由于本构造还需满足均匀性性质，不能直接对同一随机源重复应用提取器。为此，将利用线性结构与正交投影，将已提取的部分与剩余部分解耦，从而实现多轮提取，同时保持均匀性。
+
+
+\begin{proof}[\cref{lem:extractor_unif} 的证明]
+    固定 $n \in \N$ 和 $\varepsilon_0 > 0$。设 $d = c \log (n / \varepsilon_0)$，其中 $c$ 是足够大的常数（以下所有 $O(\cdot)$ 均隐藏与 $c$ 无关的常数）。对于任意 $k = 0,1,\ldots,n$，设 $i(k)$ 为满足 $k \le 2^i \cdot 8d$ 的最小整数 $i$，注意 $i(k) \le \log k \le \log n$。
+
+    设 $\varepsilon_0 \le \varepsilon_1 \le \cdots$ 为一列误差参数，满足 $\varepsilon_i = 2^{O(i)} \cdot \varepsilon_0$。对于任意 $n' \le n$ 与 $k \le n'$，按 $i(k)$ 归纳构造如下两类提取器：
+    \begin{enumerate}
+        \item 显式的 $(k, \varepsilon_{i(k)})$-提取器 $\Ext_{(n', k)} : \F_2^{n'} \times \F_2^d \to \F_2^{k/2}$，且对任意固定种子 $s$，有 $\Ext_{(n', k)}(U_{n'}, s) = U_{k/2}$；
+        
+        \item 显式的 $(k, \varepsilon_{i(k)}/6)$-提取器 $\overline{\Ext}_{(n', k)} : \F_2^{n'} \times \F_2^{d'} \to \F_2^{k/6}$，其中 $d' = d/8 + O(\log(n/\varepsilon_0))$，且对任意固定种子 $s$，有 $\overline{\Ext}_{(n', k)}(U_{n'}, s) = U_{k/6}$。
+    \end{enumerate}
+
+    \textbf{基础情形：} 当 $i(k) = 0$，即 $k \le 8d$ 时，直接应用 \cref{lem:extractor_d_k_t}。当 $c$ 充分大时，取 $t=9$ 得到 $\Ext_{(n',k)}$，取 $t=72$ 得到 $\overline{\Ext}_{(n',k)}$。
+
+    \medskip
+
+    \textbf{归纳步骤：} 当 $i(k) \ge 1$ 时，假设所有满足 $i(k') < i(k)$ 的情形已构造完成。
+
+    (1) 构造 $\overline{\Ext}_{(n', k)}$。设 $X$ 为最小熵至少为 $k$ 的随机源。首先应用 \cref{cor:linear_condenser}，取 $\alpha = 1 / 8$ 得到随机源 $X'$，其长度为 $9k/8 + O(\log(n/\varepsilon_0))$，且 $X'$ 与某个最小熵至少为 $k$ 的分布 $\varepsilon_0$-接近。
+
+    将 $X'$ 均分为长度相等的两块 $(X'_1, X'_2)$。由 \cref{lem:convert_to_block_source}（取 $t=2$）可知，该分布与某个 $2 \times k'$-源 $O(\varepsilon_0)$-接近，其中 $k' = k/2 - k/8 - O(\log(n/\varepsilon_0))$。注意 $i(k') < i(k)$，且当 $c$ 足够大时有 $k' \ge 2d$。
+
+    接下来对该分块源应用 \cref{lem:multi_ext}：对 $X'_1$ 使用归纳假设中的 $\Ext_{(n', k')}$，对 $X'_2$ 使用 \cref{lem:extractor_d_k_t} 中参数为 $(2d, \varepsilon_0)$ 的提取器（取 $t=16$）。
+
+    由构造可得：在 $X'_2$ 部分，种子长度为 $(2d)/16 + O(\log(n/\varepsilon_0)) = d / 8 + O(\log (n / \varepsilon_0)) \le d'$；在 $X'_1$ 部分，输出长度满足 $k'/2 \ge k/6$（当 $c$ 足够大时）；总误差为 $\varepsilon_{i(k')} + O(\varepsilon_0) \le \varepsilon_{i(k)}/6$。由于两个提取器作用于不同块，均匀性性质保持。对于显式性，该构造要递归计算一个子提取器，以及一个凝结器和另一个提取器，故时间复杂度递推式为 $T(i(k)) = T(i(k')) + \poly(n, d)$，可解得总时间复杂度为 $\poly(n, d)$。
+
+    (2) 构造 $\Ext_{(n', k)}$。首先使用 $\overline{\Ext}_{(n', k)}$ 提取 $m_1 = k/6$ 比特。设 $\overline{\Ext}_{(n', k)}(x, s_1) = M_1 \cdot x$，其中 $M_1$ 为满秩矩阵。
+
+    此时已提取的随机性为 $M_1 \cdot X$。为保持均匀性，接下来在正交补空间上进行提取。定义 $\overline{X} := M_1^\bot \cdot X \in \F_2^{n' - m_1}$。取
+    $$
+    \Ext_2 = \overline{\Ext}_{(n' - m_1, k - m_1 - \log 1 / \varepsilon_0)},
+    $$
+    即对 $\overline{X}$ 使用对应参数的提取器。设 $\Ext_2(x, s_2) = M_2 \cdot x$，其中 $m_2 = (k - m_1 - \log 1 / \varepsilon_0) / 6$ 且 $M_2 \in \F_2^{m_2 \times (n' - m_1)}$ 满秩，则最终构造为
+    $$
+    \Ext(X, (s_1, s_2)) = (M_1 \cdot X,\; M_2 M_1^\bot \cdot X).
+    $$
+
+    由线性代数可知 $\begin{pmatrix} M_1 \\ M_2 M_1^\bot \end{pmatrix} \in \F_2^{(m_1 + m_2) \times n'}$ 为满秩矩阵，从而保持均匀性。
+
+    在熵分析中，对任意 $v \in \F_2^{m_1}$，有
+    $$
+    \Pr[\overline{X} = u \mid M_1 \cdot X = v]
+    = \frac{\Pr[M_1^\bot \cdot X = u,\; M_1 \cdot X = v]}{\Pr[M_1 \cdot X = v]},\ \forall u \in \F_2^{n' - m_1}.
+    $$
+
+    记 $M = \begin{pmatrix} M_1 \\ M_1^\bot \end{pmatrix} \in \F_2^{n' \times n'}$，则由正交补的定义，$M$ 为可逆矩阵，从而
+    $$
+    \Pr[\overline{X} = u \mid M_1 \cdot X = v]
+    = \frac{\Pr\left[X = M^{-1} \cdot \begin{pmatrix} v \\ u \end{pmatrix}\right]}{\Pr[M_1 \cdot X = v]},\ \forall u.
+    $$
+
+    由 $M$ 可逆可得 $\Hmin(\overline{X} \mid M_1 \cdot X = v) = \Hmin(X \mid M_1 \cdot X = v)$，因此剩余随机性仍可用于提取。类似 \cref{lem:two_ext} 的分析可得，该构造为一个 $(k, 2 \varepsilon_{i(k)}/6 + \varepsilon_0)$-提取器，并额外提取出至少 $(k - m_1 - \log 1 / \varepsilon_0)/6 \le (5k/6 - \log 1 / \varepsilon_0)/6$ 比特的随机性。
+
+    重复该过程四次，则未提取的熵至多为 $(5/6)^4 k + O(\log 1 / \varepsilon_0) \le k/2$，从而得到输出长度为 $k/2$ 的提取器。此时种子长度为 $4 \cdot (d/8 + O(\log(n/\varepsilon))) \le d$（当 $c$ 足够大时成立）。
+
+    显式性方面，这一递归构造需要计算四个子提取器，故总时间复杂度为 $4^{O(i(k))} \cdot \poly(n,d) = \poly(n,d)$。误差满足 $\varepsilon_{i(k)} = 2^{O(i(k))} \cdot \varepsilon_0$，因此取 $\varepsilon_0 = \varepsilon / \poly(n)$ 即可。
+\end{proof}

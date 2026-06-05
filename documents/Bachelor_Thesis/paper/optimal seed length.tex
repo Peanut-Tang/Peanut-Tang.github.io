@@ -1,0 +1,559 @@
+\section{具有最优种子长度的构造}\label{sec:optimal_seed_length}
+
+上一章中基于有限次独立性的构造，可以得到一个种子长度为 $O(\log 1 / \delta \cdot \log N)$ 的显式最小哈希族。但当乘法误差 $\delta$ 是一个亚常数时，该种子长度就不是最优的 $O(\log (N / \delta))$。另一种方法是使用组合矩形的伪随机生成器，但这种方法不可避免地需要种子长度 $O(\log N \log \log N)$（除非组合矩形伪随机生成器的种子长度被改进到最优 $O(\log N)$），其局限性的具体论述在 \ref{sec:overview}。
+
+我们在本章中将给出一个构造，首次在种子长度是最优 $O(\log N)$ 时，让乘法误差 $\delta$ 可以达到亚常数级别，更具体的，乘法误差是\emph{几乎多项式小的}：$\delta = 2^{-O\left( \frac{\log N}{\log \log N} \right)}$。
+
+\begin{restatable}{theorem}{MinWiseLogSeed}\label{thm:min_wise_log_seed}
+    给定足够大的 $N$ 和任意常数 $C = \Omega(1)$，设乘法误差为 $\delta = 2^{-C \cdot \frac{\log N}{\log \log N}}$，而 $M = \poly(N) \ge 4 N / \delta$，则存在一个显式的误差为 $\delta$ 的最小哈希族 $\mathcal{H} = \{h : [N] \to [M]\}$，其种子长度为 $O_C(\log N)$。
+\end{restatable}
+
+同样的问题对于 $k$-最小哈希的构造也存在。当 $\delta = o(2^{-k})$ 时，使用 $O(k + \log 1 / \delta)$ 次独立性的构造，种子长度都不是最优的 $O(k \log N + \log 1 / \delta)$。我们的构造也可以扩展到 $k$-最小哈希族上。
+
+\begin{restatable}{theorem}{KMinWiseKLogSeed}\label{thm:k_min_wise_klog_seed}
+    给定足够大的 $N$、任意 $k = \log^{O(1)} N$ 和任意常数 $C = \Omega(1)$，设乘法误差为 $\delta = 2^{-C \cdot \frac{\log N}{\log \log N}}$，而 $M = \poly(N) \ge 4 N / \delta$，则存在一个显式的误差为 $\delta$ 的 $k$-最小哈希族 $\mathcal{H} = \{h : [N] \to [M]\}$，其种子长度为 $O_C(k \log N)$。
+\end{restatable}
+
+我们的构造使用了众多伪随机中的经典技术，如分桶哈希、建模为单次只读分支程序进行桶间随机性回收，以及 Lu \cite{Lu02_domain_reduction} 的域缩减技术等。此外，我们还提出了一些新的技术框架，如带有一个特殊均匀性性质的随机性提取器，以及将一个函数与单层 Nisan-Zuckerman 伪随机生成器进行直和的想法，以此来处理条件概率与乘法误差。
+
+我们在 \ref{sec:prelim_construction} 中先介绍一些基本理论与记号约定，然后在 \ref{sec:overview} 中详细阐述构造的核心技术路线。最后在 \ref{sec:construction} 与 \ref{sec:extending_to_k_minwise} 中分别给出最小哈希族与 $k$-最小哈希的构造细节与分析，证明 \cref{thm:min_wise_log_seed} 与 \cref{thm:k_min_wise_klog_seed}。
+
+\subsection{记号约定与基本理论}\label{sec:prelim_construction}
+
+本节中我们介绍若干基本理论，并约定一些记号。首先是我们证明中用于建模抽象的两类核心函数。
+
+第一类核心函数是\emph{单次只读分支程序}（read-once branching program），它可以很好地建模空间受限的随机计算模型，在伪随机理论的研究中具有重要地位。在我们这一节可以以它来建模分桶哈希函数的选择过程。
+
+\begin{definition}[单次只读分支程序]\label{def:ROBP}
+    字母表 $\Gamma$ 上的宽度为 $w$、长度为 $n$ 的单次只读分支程序（read-once branching program）是一个分层有向图 $M$，该图包含 $n + 1$ 层，每层有 $w$ 个顶点，并具有以下性质：
+    \begin{itemize}
+        \item 第一层仅包含一个起始节点，且最后一层的顶点标记为 $0$ 或 $1$。
+
+        \item 第 $i$ 层（$0 \le i < n$）的每个顶点 $v$ 都有 $|\Gamma|$ 条指向第 $i + 1$ 层的边，每条边均用 $\Gamma$ 中的一个元素进行标记。
+    \end{itemize}
+
+    同时，如上所述的图 $M$ 天然地定义了一个函数 $f_M : \Gamma^n \to \{0, 1\}$：当输入为 $(x_1, \ldots, x_n) \in \Gamma^n$ 时，根据边的标记遍历图，并输出最终到达顶点的标记。我们把这样的函数也叫做单次只读分支程序。
+\end{definition}
+
+第二类核心函数是\emph{组合矩形}（combinatorial rectangle），它是单次只读分支程序的一种特殊类型，在各分量上具有独立结构。
+
+\begin{definition}[组合矩形]\label{def:comb_rect}
+    给定字母表 $[M]$，我们取其上的任意 $N$ 个子集 $S_1, \ldots, S_N \subseteq [M]$，其组合矩形（combinatorial rectangle）是定义为 $N$ 个集合示性函数的乘积：
+    $$
+    f(x_1, \ldots, x_N) = \prod_{i = 1}^N \mathbf{1}(x_i \in S_i).
+    $$
+    等价地，它是由 $N$ 个任意函数 $f_1, \ldots, f_N:[M] \to \{0,1\}$ 定义的函数：
+    $$
+    f(x_1, \ldots, x_N) = \prod_{i = 1}^N f_i(x_i).
+    $$ 
+\end{definition}
+
+而为了进行去随机化，我们当然需要构造伪随机生成器（pseudorandom generator），来针对单次只读分支程序和组合矩形。我们在此陈述相关定义，并回顾一些经典结果。首先回顾伪随机生成器本身的定义：
+
+\PseudoRandomGenerator*
+
+构造伪随机生成器的一个基本组件是 $t$ 次独立哈希函数族，其本身也可以视作是误差为 $0$ 的 $t$-集团函数的伪随机生成器。
+
+\BoundedIndependence*
+
+我们的证明中会再一次用到上一章用过的关于 $t$ 次独立性的集中不等式。
+
+\TWiseTailBound*
+
+因为我们的构造是分层的，故在证明中我们会不断切换哈希函数的记号，这时候还用上一节的简略记号 $\Pr_t$ 来表示 $t$ 次独立测度就不合适了。因此，在本章的其余部分，我们用 $\Pr_{\sigma : t\text{-wise}}$ 与 $\E_{\sigma : t\text{-wise}}$ 来表示 $\sigma$ 是 $t$ 次独立函数时的概率测度与期望。
+
+接下来我们陈述有关组合矩形的伪随机生成器的结果。组合矩形的伪随机生成器在过去几十年中得到了广泛研究 \cite{ASWZ96_PRG_rect_comb, LLSZ95,SSZZ00_connection_CR_min_wise, Lu02_domain_reduction, GMRTV, GY20_PRG_CR_SOTA}。目前最新最优的结果，是 Gopalan 和 Yehudayoff \cite{GY20_PRG_CR_SOTA} 给出的：
+
+\begin{theorem}[\cite{GY20_PRG_CR_SOTA} 中的 定理 1.9]\label{thm:PRG_comb_rect}
+    对于任意误差 $\varepsilon$、维数 $N$ 和字母表 $[M]$，均存在显式的误差为 $\varepsilon$ 的组合矩形伪随机生成器，其种子长度为
+    $$
+    O\big(\left( \log (M / \varepsilon) + \log \log N \right) \cdot \log \log (M/\varepsilon)\big).
+    $$
+\end{theorem}
+
+该定理的一个直接推论是：存在一个种子长度为 $O(\log NM)$ 且误差几乎为多项式级小 $2^{-O\left(\frac{\log NM}{\log \log NM}\right)}$ 的组合矩形伪随机生成器。该结果基于 Lu \cite{Lu02_domain_reduction} 在组合矩形伪随机生成器之间的归约。具体而言，Lu 通过一系列归约构造了组合矩形的伪随机生成器。\cite{Lu02_domain_reduction} 的第 3 章中，Lu 使用 $O(\log (N M / \varepsilon))$ 个随机比特，在误差 $\varepsilon$ 内将原始问题归约到 $[1/\varepsilon^{O(1)}]^{1/\varepsilon^{O(1)}}$ 上的问题。在这一规约后的问题上使用 \cref{thm:PRG_comb_rect}，可以得到一个种子长度为 $O(\log  1/\varepsilon \log \log 1/\varepsilon)$ 的组合矩形伪随机生成器。故若 $\varepsilon = 2^{-O\left(\frac{\log NM}{\log \log NM}\right)}$，种子长度便只有 $O(\log NM)$。
+
+\begin{corollary}\label{cor:almost_poly_small_error}
+    对于任意常数 $C$ 和误差 $\varepsilon = 2^{-C \cdot \frac{\log NM}{\log \log NM}}$，均存在一个显式的误差为 $\varepsilon$ 的组合矩形伪随机生成器，其种子长度为 $O_C(\log NM)$。
+\end{corollary}
+
+最后我们则来阐述单次只读分支程序的伪随机生成器，最经典的有 Nisan 伪随机生成器 \cite{Nisan90_PRG}、Impagliazzo-Nisan-Wigderson 伪随机生成器 \cite{INW94_PRG}、Nisan-Zuckerman 伪随机生成器 \cite{NZ96_Nisan_Zuckerman_PRG} 等。我们在这里给出\emph{单层 Nisan-Zuckerman 伪随机生成器}的定义与分析结果。首先需要引入随机性提取器（randomness extractor）的概念：
+
+\begin{restatable}[随机性提取器 \cite{NZ96_Nisan_Zuckerman_PRG}]{definition}{Extractor}\label{def:extractor}
+    对于一个支撑集为 $\Omega$ 的随机源 $X$，其最小熵定义为
+    $$
+    \Hmin(X) = \min_{x \in \Omega} \log \left( \frac{1}{\Pr[X = x]} \right).
+    $$
+
+    而若 $\Ext : \{0, 1\}^n \times \{0, 1\}^d \to \{0, 1\}^m$ 满足：对于任意最小熵至少为 $k$ 的随机源 $X$，均有 $\Ext(X, U_d) \approx_{\varepsilon} U_m$，则称其为 $(k,\varepsilon)$-提取器（对于任何 $\ell \in \N$，$U_\ell$ 表示 $\{0, 1\}^\ell$ 上的均匀分布）。
+\end{restatable}
+
+对于我们最小哈希族的构造，随机性提取器需要有一个额外的特殊性质：对于任何固定的种子 $s$，均有 $\Ext(U_n, s) = U_m$，其证明推迟至 \ref{sec:extractor}。
+
+\begin{restatable}{lemma}{ExtractorUniform}\label{lem:extractor_unif}
+    给定任意的 $n$，熵 $k \le n$ 与 $m \ge k / 2$，和任意误差 $\varepsilon$，均存在一个显式的 $(k, \varepsilon)$-提取器 $\Ext : \{0, 1\}^n \times \{0, 1\}^d \to \{0, 1\}^m$，满足 $d = O(\log (n / \varepsilon))$。此外，$\Ext$ 满足一个额外性质：对于任意固定种子 $s \in \{0, 1\}^d$，均有 $\Ext(U_n, s) = U_m$。 
+\end{restatable}
+
+下面我们正式阐述单层 Nisan-Zuckerman 伪随机生成器的定义：
+
+\begin{definition}[单层 Nisan-Zuckerman 伪随机生成器]\label{def:NZ_PRG}
+    对于 $\{0, 1\}$ 上长度为 $n$、宽度为 $w$ 的单次只读分支程序，以及一个随机性提取器 $\Ext : \{0, 1\}^{3 \log w} \times \{0, 1\}^d \to \{0, 1\}^{\log w}$，设 $\ell = n / \log w$，则单层 Nisan-Zuckerman 伪随机生成器的定义如下：
+    $$
+    G(x, s_1, \ldots, s_\ell) = \big(\Ext(x, s_1), \Ext(x, s_2), \cdots, \Ext(x, s_\ell)\big).
+    $$
+\end{definition}
+
+Nisan 和 Zuckerman 基于类似 \cref{lem:extractor_unif} 的显式提取器构造，将如上的单层构造迭代运用若干次，最终得到了一个可以针对长度很短的单次只读分支程序的伪随机生成器。在我们的证明中并不需要这一分析，我们仅将其列于此处以供欣赏参考。
+
+\begin{lemma}[\cite{Hatami_Hoza_PRG_survey} 中的 引理 3.4.9]
+    对于任意误差 $\varepsilon$，若 \cref{def:NZ_PRG} 中的 $\Ext$ 是一个 $(2 \log w, \varepsilon / (3 \ell))$-提取器，$d = O(\log (n / \varepsilon))$，并且计算 $\Ext$ 的输出只需要 $O(\log (w / \varepsilon))$ 的空间。则对于 $\{0, 1\}$ 上长度为 $n$、宽度为 $w$ 的单次只读分支程序，$G$ 是一个误差为 $\varepsilon$ 的显式伪随机生成器，并且种子长度为
+    $$
+    O\left( \log w + \frac{\log (n / \varepsilon)}{\log w} \right).
+    $$
+    而且更进一步，计算 $G(x, s_1, \ldots, s_\ell)$ 只需要空间 $O(\log (n / \varepsilon))$，并且只需要读取输入 $x, s_1, \ldots, s_\ell$ 一次。
+\end{lemma}
+
+\begin{theorem}[Nisan-Zuckerman 伪随机生成器 \cite{NZ96_Nisan_Zuckerman_PRG}]
+    设 $\nu > 0$ 和 $c \ge 1$ 是常数。对于任意 $w \in \N$，存在一个显式的伪随机生成器，针对 $\{0, 1\}$ 上宽度为 $w$、长度为 $\log^c w$ 的单次只读分支程序，其种子长度为 $O(\log w)$，误差为 $2^{-\log^{1 - \nu} w}$。
+\end{theorem}
+
+\subsection{方法概述}\label{sec:overview}
+
+本节将详细阐述构造显式最小哈希族的核心技术路线。我们的构造可将种子长度压缩至最优的 $O(\log N)$，同时保持次常数级的乘法误差 $\delta = 2^{-O\left(\frac{\log N}{\log \log N}\right)}$。
+
+回顾最小哈希族的定义（可参见 \cref{def:k_min_wise}），其要求对任意集合 $X \subseteq [N]$ 和任意目标元素 $y \in [N] \setminus X$，满足
+$$
+\Pr_{h \sim \mathcal{H}}[h(y) < \min h(X)] = \frac{1 \pm \delta}{|X| + 1}.
+$$
+若将哈希族 $\mathcal{H}$ 视为伪随机生成器 $G: \{0,1\}^r \to [M]^N$，则上述条件等价于要求 $G$ 能够以极小的误差模拟均匀哈希的统计行为。与此前相同，我们枚举 $\theta := h(y)$，进行如下概率分解：
+\begin{equation}\label{eq:overview_decomp}
+\Pr_{h \sim \mathcal{H}}[h(y) < \min h(X)] = \sum_{\theta \in [M]} \Pr_{h \sim \mathcal{H}}[h(y) = \theta \wedge \min h(X) > \theta].
+\end{equation}
+分解后，示性函数 $\mathbf{1}(h(y) = \theta \wedge \min h(X) > \theta)$ 对于各分量的约束是独立的，这恰好构成一个组合矩形（可参见 \cref{def:comb_rect}）。Saks、Srinivasan、Zhou 和 Zuckerman 的早期工作 \cite{SSZZ00_connection_CR_min_wise} 正是基于此观察，直接调用组合矩形的伪随机生成器进行去随机化。而后 Gopalan 与 Yehudayoff \cite{GY20_PRG_CR_SOTA} 又将参数和构造进行了改进与简化。
+
+然而，这一路径存在根本性障碍：目标乘法误差 $\delta$ 是相对于公平概率 $1/(|X| + 1)$ 而言的，而且和式中一共会累计 $M$ 次加法误差。因此，若要求最终结果具有乘法误差 $\delta$，则每一项允许的加法误差至多为 $\varepsilon = \delta / (M (|X| + 1))$，这使得 $\varepsilon$ 是多项式级别的小量。已知能达到如此小加法误差的组合矩形伪随机生成器都需要 $O(\log N \log \log N)$ 的种子长度（可参见 \cref{thm:PRG_comb_rect}），无法达到 $O(\log N)$ 的最优长度。
+
+为绕过这一从加法误差转换到乘法误差所产生的瓶颈，我们引入“分而治之”的思想。首先，通过一个常数次独立的哈希函数将全集 $[N]$ 随机划分至 $\ell$ 个桶中。设 $y$ 落入第 $j$ 个桶，$X$ 中的元素被分配至各桶 $B_1, \ldots, B_\ell$。根据经典的投球入箱（Balls-into-Bins）模型，以高概率每个桶的大小均约为 $|X|/\ell$。
+
+关键观察在于：若各桶使用相互独立的哈希函数 $\sigma_1, \ldots, \sigma_\ell$，则事件 $\{h(y) = \theta \wedge \min h(X) > \theta\}$ 可严格分解为各桶独立事件的乘积：
+\begin{align}
+    \Pr_{h \sim \mathcal{H}}[h(y) = \theta \wedge \min h(X) > \theta] = & \Pr_{\sigma_j \sim \mathcal{G}}[\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta] \notag \\
+     & \cdot \prod_{i \ne j} \Pr_{\sigma_i \sim \mathcal{G}}[\min \sigma_i(B_i) > \theta]. \label{eq:bucket_decomp}
+\end{align}
+此时，每个子问题仅涉及单个桶内的少量元素。由于桶规模显著缩小，我们可用一个规模较小的显式哈希族 $\mathcal{G}$ 来近似每个桶上的均匀哈希行为。只要 $\mathcal{G}$ 足够小，其种子长度 $\log |\mathcal{G}|$ 便合适，且每个子问题的误差也可以控制。
+
+若各桶独立选取哈希函数，总种子长度将为 $\ell \cdot \log |\mathcal{G}|$。为了控制总误差，我们需增大 $\ell$，故该长度仍不可接受。我们希望可以共享桶之间哈希函数选取的随机性，为此，将各桶的选择建模为一个空间受限计算模型——单次只读分支程序（可参见 \cref{def:ROBP}）。具体地，构造一个长度为 $\ell$、宽度为 $2$、输入字母表为 $\mathcal{G}$ 的单次只读分支程序，其第 $i$ 步读取第 $i$ 个桶的哈希函数，状态记录“当前是否已出现 $\le \theta$ 的 $X$ 中元素哈希值”，以及读完第 $j$ 个桶后再记录“$y$ 的哈希值是不是 $\theta$”。
+
+为了压缩种子，我们采用单层 Nisan-Zuckerman 伪随机生成器框架 \cite{NZ96_Nisan_Zuckerman_PRG}。该框架维护一个长度为 $C \log N$ 的公共随机源 $w$，并为每个桶分配一个短种子 $s_1, \ldots, s_\ell$。第 $i$ 个桶的哈希函数由随机性提取器（可参见 \cref{def:extractor}）输出 $z_i = \Ext(w, s_i)$ 索引生成。由于单次只读分支程序的读取是单向的，前序桶对 $w$ 的信息泄露有限，因此单层 Nisan-Zuckerman 伪随机生成器的经典分析表明每个 $z_i$ 仍近似均匀分布。
+
+引入该结构后，\eqnref{eq:bucket_decomp} 的近似形式变为：
+\begin{align*}
+    \left( \Pr_{\sigma_j \sim \mathcal{G}}[\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta] \pm \ExtErr \right) \times \prod_{i \ne j} \left( \Pr_{\sigma_i \sim \mathcal{G}}[\min \sigma_i(B_i) > \theta] \pm \ExtErr \right),
+\end{align*}
+其中 $\ExtErr$ 为提取器引入的加法误差。对于 $i \ne j$ 的普通桶，其概率 $\Pr_{\sigma_i \sim \mathcal{G}}[\min \sigma_i(B_i) > \theta]$ 通常远离 $0$，加法误差 $\ExtErr$ 转化为乘法误差后影响可控。
+
+然而，含目标元素 $y$ 的第 $j$ 个桶面临严峻挑战。不妨假定 $\mathcal{G}$ 是常数次独立的，进而在每个分量的边缘分布都是均匀的，则该桶对应的事件概率满足
+$$
+\Pr_{\sigma_j \sim \mathcal{G}}[\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta] \le \Pr_{\sigma_j \sim \mathcal{G}}[\sigma_j(y) = \theta] = 1 / M.
+$$
+若直接加上提取器误差 $\ExtErr$，在还原为乘法误差时，误差将被放大为 $\ExtErr \cdot M$。由于 $M$ 是多项式大小，而 $\ExtErr$ 为了控制种子长度只能做到 $N^{-o(1)}$，这将彻底破坏乘法误差界。这也正是导致先前方法种子长度无法降至 $O(\log N)$ 的核心症结。
+
+为解决这一瓶颈，我们利用单层 Nisan-Zuckerman 伪随机生成器的两个关键性质：
+\begin{enumerate}
+    \item \textbf{对称性与顺序无关性：} 单层 Nisan-Zuckerman 伪随机生成器的输出块 $(z_1, \ldots, z_\ell)$ 在结构上是对称的，单次只读分支程序的读取顺序可任意置换而不影响其统计性质。因此，我们可自由调整桶的处理顺序。
+    \item \textbf{归纳分析的首项零熵损失：} 单层 Nisan-Zuckerman 伪随机生成器的经典误差分析是归纳进行的。在分析第 $k$ 个输出时，需以第 $1$ 至 $k - 1$ 个输出为条件，此时 $w$ 的条件熵会逐步下降。但\textbf{第一个输出}不需要任何前置条件，此时 $w$ 保持完整的均匀分布，熵无损失。
+\end{enumerate}
+基于此，我们将含 $y$ 的第 $j$ 个桶\textbf{强制置于单次只读分支程序的第一步读取}。进一步，我们构造一类特殊的提取器，满足以下性质：当输入源 $w$ 服从均匀分布时，对任意固定种子 $s$，输出 $\Ext(w, s)$ 在目标空间 $\mathcal{G}$ 上\textbf{严格服从均匀分布}（而非仅是统计接近）。
+
+这一性质直接导致：第一步（即桶 $j$）的提取误差为 $0$。换言之，$\Pr_{\sigma_j \sim \mathcal{G}}[\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta]$ 被精确还原，不携带 $\ExtErr$ 项。后续 $\ell-1$ 个桶虽仍引入加法误差，但由于它们不包含 $1/M$ 因子，累积误差经精细分析后可被严格控制在 $o(\delta/M)$ 量级，从而保证总和 \eqnref{eq:overview_decomp} 的乘法误差界。
+
+最后，我们希望可以继续增加桶数 $\ell$，使得总误差更小。但 $\ell$ 很大时，独立生成 $\ell$ 个种子会超出预算。为此，我们调用一个针对组合矩形的伪随机生成器来联合生成单层 Nisan-Zuckerman 伪随机生成器用的 $\ell$ 个种子 $s_1, \ldots, s_\ell$。该伪随机生成器能以 $O(\log N)$ 种子生成高度伪随机的种子向量，我们使用组合矩形伪随机生成器中的域缩减技术，可以使得总误差进一步降至 $2^{-O\left(\frac{\log N}{\log \log N}\right)}$。结合上述分桶乘积展开与首项零误差特性，对 $\theta$ 求和后即可得到定理所述的乘法误差界。
+
+但上述构造直接扩展到 $k$-最小哈希族上会有一点问题。回顾 $k$-最小哈希族的定义（可参见 \cref{def:k_min_wise}），其要求对任何满足 $|Y| \le k$ 与 $X \cap Y = \varnothing$ 的 $X, Y \subseteq [N]$，都有：
+$$
+\Pr_{h \sim \mathcal{H}}[\max h(Y) < \min h(X)] = \frac{1 \pm \delta}{\binom{|X| + |Y|}{|Y|}}.
+$$
+
+不妨只考虑 $|Y| = k > 1$ 的情形。现在 $Y$ 中元素被分配到了指标在 $J := \{g(y) : y \in Y\}$ 中的桶。之前的框架对于不包括 $Y$ 中元素的桶 $B_i\ (i \notin J)$ 还是可以分析得到项 $\Pr_{\sigma_i \sim \mathcal{G}}[\min \sigma_i(B_i) > \theta] \pm \ExtErr$。但对于与 $Y$ 有关的那些桶，如果 $Y$ 中元素被分配到了不同的桶中，即 $|J| > 1$，则之前保证 $\Ext(U, s) = U$ 的提取器没有办法保证所有与 $Y$ 的桶都没有加法误差，之前提到的概率太小导致加法向乘法误差转换爆炸的问题又会出现。
+
+为解决这一新的问题，我们考虑一种直和结构：我们最终的哈希函数是一 $\Theta(k)$ 次独立函数与单层 Nisan-Zuckerman 伪随机生成器的直和。注意到我们使用单层 Nisan-Zuckerman 伪随机生成器，分析若干个事件的合取，实际上是在对一个条件期望链式展开的式子做去随机化：
+\begin{align*}
+    \Pr_h[\max h(Y) = \theta \wedge \min h(X) > \theta] & =  \Pr_h[ \max h(Y) = \theta \wedge \min h(B_J) > \theta ] \\
+     & \cdot \Pr_{\sigma_{i \notin J}}[\min \sigma_i(B_i) > \theta,\ \forall i \notin J \mid \max h(Y) = \theta \wedge \min h(B_J) > \theta].
+\end{align*}
+
+因为 $h$ 中包含一个 $\Theta(k)$ 次独立函数，对于与 $Y$ 相关桶的事件，其可以完美地将 $\{\max h(Y) = \theta\}$ 提取出来。同时，又因为单层 Nisan-Zuckerman 伪随机生成器的特性（对于它已经读取过的输出，实际上它只能“记住” $\log w$ 量级的信息），前面与 $Y$ 有关的 $|J|$ 个桶的事件实际上对公用随机源 $w$ 的熵影响不大，具体而言，只会影响至多常数量级。所以对于后续的桶，单层 Nisan-Zuckerman 伪随机生成器的分析仍然适用，可以得到 $\Pr_{\sigma_i \sim \mathcal{G}}[\min \sigma_i(B_i) > \theta] \pm \ExtErr$ 的近似形式。这样就可以保证所有桶的事件都不会引入过大的加法误差，从而保证最终的乘法误差界。
+
+\subsection{具体构造与证明}\label{sec:construction}
+
+本节我们详细描述我们最小哈希族的显式构造，并完成 \cref{thm:min_wise_log_seed} 的证明。先在此重述主定理：
+
+\MinWiseLogSeed*
+
+我们哈希族 $\mathcal{H} = \{h : [N] \to [M]\}$ 的具体构造如下。
+
+\begin{tcolorbox}[breakable]
+    \textbf{最小哈希族：种子长度 $O_C(\log N)$，乘法误差 $2^{-C \cdot \frac{\log N}{\log \log N}}$}
+    \begin{enumerate}
+        \item 设 $\ell := 2^t$，其中 $t := \frac{\log N}{\log \log N}$，并选取足够大的常数 $C_e$、$C_s$ 和 $C_g$ 使得 $C_e > C_s > C_g > C$。
+        
+        \item 采样一个 $C_g$ 次独立函数 $g : [N] \to [\ell]$，作为将 $[N]$ 分配到 $\ell$ 个桶的分组函数。
+    
+        \item 应用定理 \cref{thm:PRG_comb_rect} 中的组合矩形伪随机生成器 $\PRG_1$（种子长度为 $O(\log N)$，加法误差为 $2^{- (C_s+C_e) \cdot t - 2}$），生成 $\ell$ 个伪随机种子 $s_1, \ldots, s_\ell \in \{0, 1\}^{C_e \cdot t}$。
+        
+        \item 采样随机源 $w \sim \{0, 1\}^{C_e \cdot \log N}$，并将 \cref{lem:extractor_unif} 中的 $(0.6 C_e \cdot \log N, \ExtErr)$-提取器 $\Ext : \{0, 1\}^{C_e \cdot \log N} \times \{0, 1\}^{C_e \cdot t} \to \{0,1\}^{0.3 C_e \cdot \log N}$（其中 $\ExtErr = 2^{-C_s \cdot t}$），应用于 $w$ 和 $s_1, \ldots, s_\ell$。对每个 $i \in [\ell]$，令 $z_i := \Ext(w, s_i)$。
+        
+        \item 定义大小为 $N^{0.3 C_e}$ 的哈希族 $\mathcal{G} = \{ G_1, \ldots, G_{N^{0.3 C_e}} : [N] \to [M] \}$，它是一个从 $[N]$ 到 $[M]$ 的 $(C_s + 1)$ 次独立函数，与 \cref{cor:almost_poly_small_error} 中误差为 $2^{-C_s \cdot t}$ 的组合矩形伪随机生成器 $\PRG_2$ 的直和。
+        
+        \item 使用 $z_i$ 从 $\mathcal{G}$ 中选取一个函数，记为 $\sigma_i := G_{z_i}$。
+        
+        \item 最后，对任意 $x \in [N]$，定义哈希函数 $h(x) = \sigma_{g(x)}(x)$。
+    \end{enumerate}
+\end{tcolorbox}
+
+对于种子长度，分组函数 $g$ 需要 $O(C_g \cdot \log N) = O_C(\log N)$ 的种子长度；组合矩形伪随机生成器 $\PRG_1$ 需要 $O_{C_s, C_e}(\log N) = O_C(\log N)$ 的种子长度；提取器 $\Ext$ 的公用随机源 $w$ 需要 $C_e \cdot \log N = O_C(\log N)$ 的种子长度；哈希族 $\mathcal{G}$ 需要 $O((C_s + C_e) \cdot \log N) + O_{C_s, C_e}(\log N) = O_C(\log N)$ 的种子长度。总的来说，整个构造的种子长度为 $O_C(\log N)$。构造的显式性则是显然的。本节剩余部分我们将着重分析该构造的误差。
+
+\paragraph{分组函数的负载均衡性质.}
+
+首先，从分组函数 $g$ 中可以得到以下性质。为表述方便，在下文中记 $j := g(y)$ 且 $B_i:=\{x \in X : g(x) = i\}$。
+
+\begin{lemma}\label{lem:allocation_small_error}
+    设 $C_g$ 是相对于 $C$ 足够大的常数。则 $C_g$ 次独立函数 $g:[N] \rightarrow [\ell]$ 保证：
+    \begin{enumerate}
+        \item 当 $|X| \le \ell^{0.9}$ 时，以概率 $1 - 1 / \ell^{3 C}$，对所有 $i \in [\ell]$ 有 $|B_i| \le C_g$。
+
+        \item 当 $|X| \in (\ell^{0.9}, \ell^{1.1})$ 时，以概率 $1 - 1 / \ell^{3 C}$，所有桶满足 $|B_i| \le 2 \ell^{0.1}$。
+        
+        \item 当 $|X| \ge \ell^{1.1}$ 时，以概率 $1-|X|^{-3 C}$，所有桶满足 $|B_i| = (1 \pm 0.1) \cdot |X| / \ell$。
+    \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+    为证明方便，在本证明中设 $r := |X|$。我们分三种情况分别证明。再次强调 $C_g$ 是远大于 $C$ 的常数。
+    \begin{enumerate}
+        \item 当 $|X| \le \ell^{0.9}$ 时，有
+        $$
+        \Pr_{g : \text{$C_g$-wise}}[|B_i| \ge C_g] \le {r \choose C_g} \cdot (1 / \ell)^{C_g} \le (r / \ell)^{C_g} \le 1 / \ell^{0.1 C_g} \le 1 / \ell^{3 C + 1},\ \forall i \in [\ell].
+        $$
+        通过联合界，以概率 $1 - 1 / \ell^{3 C}$，对所有桶有 $|B_i| \le C_g$。
+
+        \item 当 $|X| \in (\ell^{0.9}, \ell^{1.1})$ 时，固定一个桶 $i \in [\ell]$ 并定义 $Z_x := \mathbf{1}(g(x) = i)$。于是 $|B_i| = \sum_{x \in X} Z_x$，且 $\E[|B_i|] = r / \ell$。不妨假设 $C_g \ge 4$ 是偶数，则由 \cref{lem:tail_bound_t_wise_BR94}，有
+        \begin{align*}
+              & \Pr_{g : \text{$C_g$-wise}}[|B_i| - \E[|B_i|] \ge \ell^{0.1}] \le 8 \left( \frac{C_g \cdot r / \ell + C_g^2}{(\ell^{0.1})^2} \right)^{C_g / 2} \\
+            = & \frac{(O_{C_g}(r / \ell))^{C_g / 2}}{\ell^{0.1 C_g}} \le \frac{(O_{C_g}(\ell^{0.1}))^{C_g / 2}}{\ell^{0.1 C_g}} \le \frac{1}{\ell^{3 C + 1}}.
+        \end{align*}
+        经过联合界，以概率 $1 - 1 / \ell^{3 C}$，对所有 $i$ 有 $|B_i| \le \ell^{0.1} + \E[|B_i|] \le 2 \ell^{0.1}$。
+
+        \item 当 $|X| \ge \ell^{1.1}$ 时。我们有 $r / \ell \ge r^{0.05}$。类似第二种情况的分析，固定 $i \in [\ell]$ 并定义 $Z_x := \mathbf{1}(g(x) = i)$。由 \cref{lem:tail_bound_t_wise_BR94}，有
+        \begin{align*}
+              & \Pr_{g : \text{$C_g$-wise}}[|B_i| - \E[|B_i|] \ge 0.1 \cdot r / \ell] \le 8 \left( \frac{C_g \cdot r / \ell + C_g^2}{(0.1 \cdot r / \ell)^2} \right)^{C_g / 2} \\
+            = & \frac{O_{C_g}(1)}{(r / \ell)^{C_g / 2}} \le \frac{O_{C_g}(1)}{(r^{0.05})^{C_g / 2}} \le \frac{1}{r^{3 C + 1}}.
+        \end{align*}
+        使用联合界，以概率 $1 - r^{-3 C}$，对每个 $i \in [\ell]$ 有 $|B_i| = (1 \pm 0.1) \cdot r / \ell$。
+    \end{enumerate}
+\end{proof}
+
+关键在于，由于 $\ell = 2^t = 2^{\frac{\log N}{\log \log N}}$，每种情况的失败概率相对于误差 $\delta / (|X| + 1) = 2^{-C \cdot \frac{\log N}{\log \log N}} / (|X| + 1)$ 都足够小。因此，在证明中，我们可以假设 \cref{lem:allocation_small_error} 中的所有性质均成立，来保证 $B_1, \ldots, B_\ell$ 的良好负载均衡性质。
+
+\paragraph{概率分解为组合矩形.}
+
+接下来我们开始正式分析概率。对于任意的 $X \subseteq [N]$ 与 $y \in [N] \setminus X$，为计算 $\Pr_{h \sim \mathcal{H}}[h(y)<\min h(X)]$，我们将其表示为
+\begin{align}
+    \Pr_{h \sim \mathcal{H}}[h(y) < \min h(X)] & = \sum_{\theta \in [M]} \Pr_{h \sim \mathcal{H}} [h(y)=\theta \wedge \min h(X)>\theta] \notag \\
+      & = \sum_{\theta \in [M]} \E_{g : \text{$C_g$-wise}} \left[\Pr_{w, s_{1 \sim \ell}} \left[ h(y) = \theta \wedge \min h(X) > \theta \right]  \right], \label{eq:minwise_over_theta}
+\end{align}
+我们的分析将界定 \eqnref{eq:minwise_over_theta} 中的每一项。
+
+\begin{remark}[嵌套期望、固定分组与测度记号约定]
+    为简化表述并保证推导严谨，本节统一作如下约定：
+    \begin{enumerate}
+        \item \textbf{嵌套期望次序：} 形如 $\E_x[\E_y[Z]]$ 的记号严格规定了积分次序：内层期望 $\E_y[\cdot]$ 始终将 $x$ 视为固定参数进行计算，外层再对 $x$ 的分布求期望。此约定贯穿所有条件概率分解与链式展开。因为这里大部分变量都是互相独立的，所以内层不需要是条件期望。
+
+        \item \textbf{固定分组函数 $g$：} 下文分析中，若无特殊提及，均默认 $g$ 已固定（此时 $j=g(y)$ 与各桶 $B_i$ 为确定量，相关事件可建模为单次只读分支程序）。最终概率将利用全期望公式对 $g$ 求和，并由 \cref{lem:allocation_small_error} 保证坏分组函数的贡献可忽略。
+        
+        \item \textbf{种子采样测度：} 在 $\Pr$ 或 $\E$ 的下标中：$s_{1 \sim \ell}$（不带任何其他描述）表示由 $\PRG_1$ 正常生成；$s_{1 \sim \ell} \sim U$ 表示独立均匀采样；$s_j, s_{i \ne j} \sim U$ 表示仅 $s_j$ 来自 $\PRG_1$，而其余种子替换为独立均匀变量（严格而言，可视为先由 $\PRG_1$ 生成完整序列 $(s'_1,\ldots,s'_\ell)$，仅保留 $s_j = s'_j$，同时独立采样 $s_{i \ne j} \sim U$ 替代其余位置）。若下标仅列出部分种子，则隐含当前事件与未列出的种子独立，其生成方式不影响概率值。
+    \end{enumerate}
+\end{remark}
+
+\paragraph{组合矩形伪随机生成器的域缩减.}
+
+固定分组函数 $g$ 后，我们只需分析 \eqnref{eq:minwise_over_theta} 中期望符号内部的概率项。回忆 分组 $j := g(y), B_i := \{x \in X : g(x) = i\}$，函数 $\sigma_i := G_{z_i}, z_i := \Ext(w, s_i)$，而最终哈希函数为 $h(x) = \sigma_{g(x)}(x)$，故目标概率可展开为
+\begin{align}
+      & \Pr_{w, s_{1 \sim \ell}}[h(y) = \theta \wedge \min h(X) > \theta] \notag \\
+    = & \Pr_{w, s_{1 \sim \ell}} \left[ (\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \ne j) \right] \notag \\
+    = & \sum_\alpha \E_w\left[ \Pr_{s_{1 \sim \ell}}\left[ (s_j = \alpha \wedge \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \ne j) \right] \right], \label{eq:before_domain_reduction_1}
+\end{align}
+其中 $\alpha$ 取遍 $\{0, 1\}^{C_e \cdot t}$。
+
+接下来对每个固定的 $w$ 与 $\alpha$ 处理内部的概率。根据条件概率链式法则，原式本应“分解”为
+\begin{align*}
+     & \Pr_{s_j}[s_j = \alpha \wedge \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta] \\
+     & \cdot \Pr_{s_{1 \sim \ell}}[ \min \sigma_i(B_i) > \theta,\ \forall i \ne j \mid s_j = \alpha \wedge \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta].
+\end{align*}
+然而，直接如此写可能面临条件事件 $\{s_j = \alpha \wedge \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta\}$ 概率为零的退化情形。我们注意到，对于任意固定的 $w$ 与 $\alpha$，事件 $\{s_j = \alpha\}$ 与 $\{\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta\}$ 的关系仅有两种可能：要么二者互斥，要么 $\{s_j = \alpha\} \subseteq \{\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta\}$。若互斥，则概率为零，该项对求和无贡献；若严格包含，则 $\{s_j = \alpha\} \wedge \{\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta\} = \{s_j = \alpha\}$。因此，我们可以安全地将条件简化为仅依赖于 $\{s_j = \alpha\}$（可以证明对于任何固定的 $w$ 和 $\alpha$，有 $\Pr_{s_j}[s_j = \alpha] > 0$，故不会退化，这是由 $\PRG_1$ 的性质保证的，具体可参见 \cref{lem:PRG_CR_LOG} 的证明），即
+\begin{align}
+    & \Pr_{s_{1 \sim \ell}}\left[ (s_j = \alpha \wedge \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \ne j) \right] \notag \\
+  = & \Pr_{s_j}[s_j = \alpha \wedge \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta] \cdot \Pr_{s_{1 \sim \ell}}[ \min \sigma_i(B_i) > \theta,\ \forall i \ne j \mid s_j = \alpha ]. \label{eq:before_domain_reduction_2}
+\end{align}
+
+现在考察 \eqnref{eq:before_domain_reduction_2} 中的条件概率项。对于固定的 $w$，第一个事件 $\{\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta\}$ 因 $s_j = \alpha$ 固定而被确定。对于剩余事件 $\mathbf{1}(\min \sigma_i(B_i) > \theta,\ \forall i \ne j)$，注意到 $\sigma_i = G_{z_i}$ 且 $z_i = \Ext(w, s_i)$，故其构成了关于 $s_1, \ldots, s_\ell$ 的组合矩形。我们利用组合矩形伪随机生成器 $\PRG_1$ 的性质进行域缩减。下面这一引理说明了这一条件概率项，与 $s_{i \ne j}$ 独立均匀选取时的概率，之间的误差至多为 $2^{-C_s \cdot t}$。
+
+\begin{lemma}\label{lem:PRG_CR_LOG}
+    由 $\PRG_1$ 生成的随机种子 $s_1, \ldots, s_\ell$ 满足：对任意固定的 $j \in [\ell]$ 与 $\alpha \in \{0, 1\}^{C_e \cdot t}$，以及任意 $\ell$ 个函数 $f_1, \ldots, f_\ell : \{0, 1\}^{C_e \cdot t} \to \{0, 1\}$，有
+    $$
+    \E_{s_{1 \sim \ell}}\left[ \prod_{i \ne j}f_i(s_i)\ \middle|\ s_j=\alpha \right] = \prod_{i \ne j} \E_{s_i \sim U}[f_i(s_i)] \pm 2^{-C_s \cdot t}.
+    $$
+\end{lemma}
+
+\begin{proof}
+    注意到 $\mathbf{1}(s_j = \alpha)$ 和 $\mathbf{1}(s_j = \alpha) \cdot \prod_{i \ne j} f_i(s_i)$ 都是 $\left( \{0, 1\}^{C_e \cdot t} \right)^\ell$ 中的组合矩形。根据 $\PRG_1$ 的性质，我们有
+    $$
+    \Pr_{s_j}[s_j = \alpha] = 2^{-C_e \cdot t} \pm 2^{-(C_s + C_e) \cdot t - 2} > 0, \text{\ 以及}
+    $$
+    $$
+    \E_{s_{1 \sim \ell}}\left[ \mathbf{1}(s_j = \alpha) \cdot \prod_{i \ne j} f_i(s_i) \right] = \E_{s_{1 \sim \ell} \sim U}\left[ \mathbf{1}(s_j = \alpha) \cdot \prod_{i \ne j} f_i(s_i) \right] \pm 2^{-(C_s + C_e) \cdot t - 2}.
+    $$
+
+    因此可将条件期望表示为
+    \begin{align*}
+        \E_{s_{1 \sim \ell}}\left[ \prod_{i \ne j}f_i(s_i)\ \middle|\ s_j=\alpha \right] & = \frac{\E_{s_{1 \sim \ell}}\left[ \mathbf{1}(s_j = \alpha) \cdot \prod_{i \ne j}f_i(s_i) \right]}{\Pr_{s_j}[s_j = \alpha]} \\
+         & = \frac{\prod_{i \ne j} \E_{s_i \sim U}[f_i(s_i)] \pm 2^{-C_s \cdot t - 2}}{1 \pm 2^{-C_s \cdot t - 2}}.
+    \end{align*}
+
+    注意到 $\prod_{i \ne j} \E_{s_i \sim U}[f_i(s_i)] \le 1$，这表明加法误差至多为
+    $$
+    \frac{\prod_{i \ne j} \E_{s_i \sim U}[f_i(s_i)] + 2^{-C_s \cdot t - 2}}{1 - 2^{-C_s \cdot t - 2}} - \prod_{i \ne j} \E_{s_i \sim U}[f_i(s_i)] \le \left( \frac{1}{1 - 2^{-C_s \cdot t - 2}} - 1 \right) + \frac{2^{-C_s \cdot t - 2}}{1 - 2^{-C_s \cdot t - 2}} \le 2^{-C_s \cdot t}.
+    $$
+
+    特别地，我们得到：
+    \begin{equation}
+        \Pr_{s_{1 \sim \ell}} [ \min \sigma_i(B_i) > \theta,\ \forall i \ne j \mid s_j = \alpha ] = \prod_{i \ne j}\Pr_{s_i \sim U}[\min \sigma_i(B_i) > \theta ] \pm 2^{-C_s \cdot t}. \label{eq:applying_domain_reduction}
+    \end{equation}
+\end{proof}
+
+将 \eqnref{eq:before_domain_reduction_2} 与 \eqnref{eq:applying_domain_reduction} 代回 \eqnref{eq:before_domain_reduction_1}，并对所有 $\alpha$ 求和。由此可得
+\begin{align}
+      & \Pr_{w, s_{1 \sim \ell}} \left[ (\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \ne j) \right] \notag \\
+    = & \sum_\alpha \E_w \left[ \Pr_{s_j} [ s_j = \alpha \wedge \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta  ] \cdot \left( \prod_{i \ne j}\Pr_{s_i \sim U}[\min \sigma_i(B_i) > \theta] \pm 2^{-C_s \cdot t} \right) \right] \notag \\
+    = & \sum_\alpha \Pr_{w, s_j, s_{i \ne j} \sim U}\left[ (s_j = \alpha \wedge \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \ne j) \right] \notag \\
+      & \pm \sum_\alpha \Pr_{w, s_j}\left[ s_j = \alpha \wedge \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta \right] \cdot 2^{-C_s \cdot t} \notag \\
+    = & \Pr_{w, s_j, s_{i \ne j} \sim U}\left[ (\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \ne j) \right] \label{eq:domain_reduction_result} \\
+      & \pm \Pr_{w, s_j}\left[ \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta \right] \cdot 2^{-C_s \cdot t}. \label{eq:domain_reduction_error}
+\end{align}
+
+\paragraph{单层 Nisan-Zuckerman 伪随机生成器的连乘积分析.}
+
+经过组合矩形伪随机生成器的域缩减，我们已成功将除 $s_j$ 之外的所有种子替换为独立均匀分布。现在我们利用单层 Nisan-Zuckerman 伪随机生成器框架与 \cref{lem:extractor_unif} 中提取器 $\Ext$ 的特殊性质，分析域缩减后的主体部分 \eqnref{eq:domain_reduction_result}。
+
+给定固定的分组函数 $g$ 与阈值 $\theta$，考虑一个宽度为 $2$、长度为 $\ell$ 的单次只读分支程序，其输入字母表对应提取器输出 $z_1, \ldots, z_\ell$，计算的是如下 $\ell$ 个事件的合取：
+$$
+( \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta ) \wedge (\min \sigma_1(B_1) > \theta) \wedge \cdots \wedge (\min \sigma_\ell(B_\ell) > \theta),
+$$
+其中 $\sigma_i := G_{z_i},\ \forall i \in [\ell]$。
+
+利用单层 Nisan-Zuckerman 伪随机生成器的对称性，我们调整输入读取顺序，使第 $j$ 个桶对应的 $z_j$ 作为第一个输入被读取，其余输入按原顺序紧随其后。记重排后的事件序列为 $A_1, \ldots, A_\ell$，其中 $A_1 = \{ \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta \}$，$A_2, \ldots, A_\ell$ 依次对应其余桶满足 $\min \sigma_i(B_i) > \theta$ 的条件。此时 \eqnref{eq:domain_reduction_result}可重写为
+$$
+\Pr_{w, s_j, s_{i \ne j} \sim U}\left[ (\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \ne j) \right]
+$$
+\begin{equation}
+    = \Pr_{w, s_j, s_{i \ne j} \sim U}\left[ A_1 \wedge A_2 \wedge \cdots \wedge A_\ell \right]. \label{eq:robp_joint}
+\end{equation}
+
+首先分析 $A_1$。由于 $w$ 服从均匀分布且与 $s_j$ 独立，根据 \cref{lem:extractor_unif} 中提取器 $\Ext$ 的额外性质，提取器输出 $z_j = \Ext(w, s_j)$ 在目标空间上严格服从均匀分布。因此第一个函数 $\sigma_j = G_{z_j}$ 完全等价于从 $\mathcal{G}$ 中均匀采样，不引入任何提取器误差：
+$$
+\Pr_{w, s_j, s_{i \ne j} \sim U}[A_1] = \Pr_{\sigma \sim \mathcal{G}}[\sigma(y) = \theta \wedge \min \sigma(B_j) > \theta].
+$$
+
+接下来对剩余事件进行归纳分析。设第 $\beta$ 步读取的桶指标为 $i_\beta$（满足 $i_1 = j$ 且 $\{i_2, \ldots, i_\ell\} = [\ell] \setminus j$）。类似于单层 Nisan-Zuckerman 伪随机生成器的分析，对每个 $\beta = 2, 3, \ldots, \ell$ 分两种情况讨论：
+\begin{itemize}
+    \item 若 $\Pr_{w, s_j, s_{i \ne j} \sim U}[A_1 \wedge \cdots \wedge A_{\beta - 1}] \ge 2^{-0.4 C_e \cdot \log N}$，考虑条件于 $A_1 \wedge \cdots \wedge A_{\beta - 1}$ 下 $w$ 的分布。该条件仅使 $w$ 每个取值的概率增加至多 $2^{0.4 C_e \cdot \log N}$ 倍，因此该条件分布的最小熵仍至少为 $0.6 C_e \cdot \log N$。由提取器的性质，我们有
+    $$
+    \Pr_{w, s_j, s_{i \ne j} \sim U}[A_\beta \mid A_1 \wedge \cdots \wedge A_{\beta - 1}] = \Pr_{z_{i_\beta} \sim U}[A_\beta] \pm \ExtErr = \Pr_{\sigma \sim \mathcal{G}}[\min \sigma(B_{i_\beta}) > \theta] \pm \ExtErr.
+    $$
+
+    因此
+    \begin{align*}
+        \Pr_{w, s_j, s_{i \ne j} \sim U}[A_1 \wedge \cdots \wedge A_\beta] & = \Pr_{w, s_j, s_{i \ne j} \sim U}[A_1 \wedge \cdots \wedge A_{\beta - 1}] \cdot \Pr_{w, s_j, s_{i \ne j} \sim U}[A_\beta \mid A_1 \wedge \cdots \wedge A_{\beta - 1}] \\
+         & = \Pr_{w, s_j, s_{i \ne j} \sim U}[A_1 \wedge \cdots \wedge A_{\beta - 1}] \cdot \left( \Pr_{\sigma \sim \mathcal{G}}[\min \sigma(B_{i_\beta}) > \theta] \pm \ExtErr \right).
+    \end{align*}
+
+    \item 若 $\Pr_{w, s_j, s_{i \ne j} \sim U}[A_1 \wedge \cdots \wedge A_{\beta - 1}] < 2^{-0.4 C_e \cdot \log N}$，则直接意味着
+    $$
+    \Pr_{w, s_j, s_{i \ne j} \sim U}[A_1 \wedge \cdots \wedge A_\beta] \le 2^{-0.4 C_e \cdot \log N}.
+    $$
+\end{itemize}
+
+综合两种情况，前 $\beta$ 个事件被接受的概率可写为
+\begin{align*}
+    \Pr_{w, s_j, s_{i \ne j} \sim U}[A_1 \wedge \cdots \wedge A_\beta] = & \Pr_{w, s_j, s_{i \ne j} \sim U}[A_1 \wedge \cdots \wedge A_{\beta - 1}] \\
+     & \cdot \left( \Pr_{\sigma \sim \mathcal{G}}[\min \sigma(B_{i_\beta}) > \theta] \pm \ExtErr \right) \pm 2^{-0.4 C_e \cdot \log N}.
+\end{align*}
+
+通过对 $\beta$ 进行归纳 展开，\eqnref{eq:robp_joint} 中的概率可表示为
+$$
+\Pr_{\sigma \sim \mathcal{G}}\left[ \sigma(y) = \theta \wedge \min \sigma(B_j) > \theta \right] \cdot \prod_{i \ne j} \left( \Pr_{\sigma \sim \mathcal{G}}\left[ \min \sigma(B_i) > \theta \right] \pm \ExtErr \right) \pm \ell \cdot N^{-0.4 C_e}. 
+$$
+
+最后，利用 $\mathcal{G}$ 的 $(C_s + 1)$ 次独立性，及其作为组合矩形伪随机生成器的性质（误差为 $2^{-C_s \cdot t}$），我们有
+$$
+\Pr_{\sigma \sim \mathcal{G}}[\sigma(y) = \theta \wedge \min \sigma(B_j) > \theta] = \frac{1}{M} \Pr_{\sigma : C_s\text{-wise}}[\min \sigma(B_j) > \theta],
+$$
+且对 $i \ne j$，
+$$
+\Pr_{\sigma \sim \mathcal{G}}[\min \sigma(B_i) > \theta] \pm \ExtErr = (1 - \theta / M)^{|B_i|} \pm 2^{-C_s \cdot t} \pm \ExtErr = (1 - \theta / M)^{|B_i|} \pm 2 \cdot 2^{-C_s \cdot t}.
+$$
+代入上述乘积式，即得 \eqnref{eq:domain_reduction_result} 的完整展开：
+\begin{align}
+      & \Pr_{w, s_j, s_{i \ne j} \sim U}\left[ (\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \ne j) \right] \notag \\
+    = & \frac{1}{M} \Pr_{\sigma : C_s\text{-wise}}[\min \sigma(B_j) > \theta] \cdot \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} \pm 2 \cdot 2^{-C_s \cdot t} \right) \pm \ell \cdot N^{-0.4 C_e}. \label{eq:final_product_expansion}
+\end{align}
+
+\paragraph{误差项分析与汇总.}
+
+我们最后要将域缩减的主项 \eqnref{eq:domain_reduction_result} 与误差项 \eqnref{eq:domain_reduction_error} 对所有阈值 $\theta \in [M]$ 及分组函数 $g$ 求和，以此界定最后结果。
+
+对于主项 \eqnref{eq:domain_reduction_result}，我们已经将其化为了 \eqnref{eq:final_product_expansion}，其关于 $\theta$ 与 $g$ 的求和分析计算较为复杂繁琐，且与本文核心构造逻辑无关。为保持行文连贯，我们将主项求和的完整证明移至 \ref{sec:omitted_calculation}。此处仅陈述结论：
+
+\begin{restatable}{lemma}{MinWiseMainTermSummation}\label{lem:minwise_main_term_summation}
+    我们有：
+    \begin{align*}
+          & \sum_{\theta \in [M]} \E_{g : \text{$C_g$-wise}} \left[ \Pr_{w, s_j, s_{i \ne j} \sim U}\left[ (\sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \ne j) \right]  \right] \\
+        = & \sum_{\theta \in [M]} \E_{g : \text{$C_g$-wise}} \left[ \frac{1}{M} \Pr_{\sigma : C_s\text{-wise}}[\min \sigma(B_j) > \theta] \cdot \prod_{i \ne j} \left( (1 - \theta / M)^{|B_i|} \pm 2 \cdot 2^{-C_s \cdot t} \right) \pm \ell \cdot N^{-0.4 C_e} \right] \\
+        = & (1 \pm 2^{-2.5 C \cdot t}) \cdot \Pr_{\sigma \sim U}[\sigma(y) < \min \sigma(X)] \pm \frac{2^{-2.5 C \cdot t}}{|X| + 1} = \frac{1 \pm (\delta / 2 + 2^{-2 C \cdot t})}{|X| + 1}.
+    \end{align*}
+\end{restatable}
+
+接下来重点处理误差项。固定 $g$ 后，同此前对关键桶 $B_j$ 事件 $A_1$ 的分析，有
+$$
+\Pr_{w, s_j}\left[ \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta \right] = \Pr_{\sigma \sim \mathcal{G}}[\sigma(y) = \theta \wedge \min \sigma(B_j) > \theta],
+$$
+故其对 $\theta$ 求和可精确还原为关键桶的最小值事件：
+$$
+\sum_{\theta \in [M]} \Pr_{w, s_j}\left[ \sigma_j(y) = \theta \wedge \min \sigma_j(B_j) > \theta \right] \cdot 2^{-C_s \cdot t} = \Pr_{\sigma \sim \mathcal{G}}[\sigma(y) < \min \sigma(B_j)] \cdot 2^{-C_s \cdot t}.
+$$
+由构造可知，$\mathcal{G}$ 包含一个 $(C_s + 1)$ 独立哈希族。根据 Indyk 的经典结论 \cite{minwise_Indyk}（也即本文中的 \cref{thm:k_log_1_eps_upper_bound} 取 $k = 1$ 的特殊情形），该独立族本身即构成常数误差的最小哈希族。故存在绝对常数 $C_0$，使得
+$$
+\Pr_{\sigma : (C_s + 1)\text{-wise}}[\sigma(y) < \min \sigma(B_j)] \le \frac{C_0}{|B_j| + 1}.
+$$
+
+现对所有 $g$ 取期望，并利用 \cref{lem:allocation_small_error} 分情况讨论 $|X|$ 的量级：
+\begin{itemize}
+    \item 当 $|X| \le 2^{0.5 C_s \cdot t} - 1$ 时，我们直接就有：
+    $$
+    \Pr_{\sigma : (C_s + 1)\text{-wise}}[\sigma(y) < \min \sigma(B_j)] \cdot 2^{-C_s \cdot t} \le 2^{-C_s \cdot t} \le \frac{2^{-0.5 C_s \cdot t}}{|X| + 1}.
+    $$
+
+    所以这时候误差项对乘法误差的贡献不超过 $2^{-0.5 C_s \cdot t} \le 2^{-2 C \cdot t}$。
+
+    \item 当 $|X| \ge 2^{0.5 C_s \cdot t} \ge \ell^{1.1}$ 时，\cref{lem:allocation_small_error} 保证以概率 $1 - 1 / |X|^{3 C}$，对于所有 $i$ 都有 $|B_i| = (1 \pm 0.1) \cdot |X| / \ell$。因此，当分组函数 $g$ 是好的时候，有
+    $$
+    \Pr_{\sigma : (C_s + 1)\text{-wise}}[\sigma(y) < \min \sigma(B_j)] \cdot 2^{-C_s \cdot t} \le \frac{C_0}{(1 - 0.1) \cdot |X| / \ell} \cdot 2^{-C_s \cdot t} = \frac{O(1) \cdot 2^{-(C_s - 1) \cdot t}}{|X| + 1}.
+    $$
+
+    而坏的分组函数 $g$ 则至多贡献
+    $$
+    \frac{1}{|X|^{3 C}} \le \frac{|X|^{-2 C}}{|X| + 1} \le \frac{(\ell^{1.1})^{-2 C}}{|X| + 1} = \frac{2^{-2.2 C \cdot t}}{|X| + 1}.
+    $$
+    
+    综合起来，这种情况下误差项对乘法误差的贡献不超过 $O(1) \cdot 2^{-(C_s - 1) \cdot t} + 2^{-2.2 C \cdot t} \le 2^{-2 C \cdot t}$。
+\end{itemize}
+
+综合主项与误差项界定，我们最终得到乘法误差至多是 $\delta / 2 + 2^{-2 C \cdot t} + 2^{-2 C \cdot t} \le \delta = 2^{-C \cdot \frac{\log N}{\log \log N}}$，完成证明。
+
+\subsection{往 $k$-最小哈希族的扩展}\label{sec:extending_to_k_minwise}
+
+在本节中我们将构造扩展到 $k$-最小哈希族上，完成 \cref{thm:k_min_wise_klog_seed} 的证明。定理重述如下：
+
+\KMinWiseKLogSeed*
+
+由于 $k$-最小哈希族构造与上一节中的最小哈希族构造在整体框架上高度相似，我们将仅对两者的差异部分进行详细说明。对于与上一节较为相似的部分，我们将省略若干推导细节甚至直接给出结论而不证明。
+
+首先是哈希族 $\mathcal{H} = \{h : [N] \to [M]\}$ 的具体构造：
+
+\begin{tcolorbox}[breakable]
+    \textbf{$k$-最小哈希族：$k = \log^{O(1)} N$，种子长度 $O_C(k \log N)$，乘法误差 $2^{-C \cdot \frac{\log N}{\log \log N}}$}
+
+    \begin{enumerate}
+        \item 设 $\ell := 2^{t}$，其中 $t := \frac{\log N}{\log \log N}$，并选取足够大的常数 $C_e$、$C_s$ 和 $C_g$ 满足 $C_e > C_s > C_g > C$。
+        
+        \item 采样一个 $C_g \cdot k$ 次独立函数 $g : [N] \to [\ell]$，作为将 $[N]$ 分配到 $\ell$ 个桶中的分组函数。
+        
+        \item 应用 \cref{thm:PRG_comb_rect} 中的组合矩形伪随机生成器 $\PRG_1$，其种子长度为 $O_C(k \log N)$，可以生成 $\ell$ 个种子 $s_1, \ldots, s_{\ell}$，每个种子长度为 $C_e \cdot t$，误差为 $2^{-(C_s+C_e) \cdot t \cdot k - 2}$。
+        
+        \item 采样一个随机源 $w \sim \{0, 1\}^{k \cdot C_e \log N}$，并应用 \cref{lem:extractor_unif} 中的 $(0.6 k \cdot C_e \log N, \ExtErr)$-提取器 $\Ext:\{0, 1\}^{k \cdot C_e \log N} \times \{0, 1\}^{C_e \cdot t} \to \{0, 1\}^{C_e \cdot \log N}$，其中误差为 $\ExtErr = 2^{-C_s \cdot t}$，将 $w$ 与 $s_1, \ldots, s_\ell$ 作为输入：令 $z_i := \Ext(w, s_i), \forall i \in [\ell]$。
+        
+        \item 设 $\sigma_i := \PRG_2(z_i)$，其中 $\PRG_2$ 是 \cref{cor:almost_poly_small_error} 中的组合矩形伪随机生成器，误差为 $2^{-C_s \cdot t}$。
+        
+        \item 对于每个 $x \in [N]$，定义 $\varphi(x) := \sigma_{g(x)}(x)$。
+        
+        \item 采样一个 $(C_e + 1) \cdot k$ 次独立哈希函数 $\psi : [N] \to [M]$。
+            
+        \item 最后的哈希函数被定义为两个部分加起来 $h := \varphi + \psi$。实际上，假设 $\psi$ 是从 $(C_e + 1) \cdot k$ 次独立哈希函数族 $\Psi$ 得来的，而 $\varphi$ 的构造对应另一个哈希函数组 $\Phi$，那么最后的哈希函数族被定义为这两个的直和 $\mathcal{H} := \Phi \oplus \Psi$。
+    \end{enumerate}
+\end{tcolorbox}
+
+值得注意的是 $k = \log^{O(1)} N$ 是为了保证第三步中的 $\PRG_1$ 的种子长度为 $O_C(k \log N)$，从而使得整体构造的种子长度仍为 $O_C(k \log N)$。
+
+对于误差分析，我们首先关注的还是分组函数 $g$ 的性质。我们设 $J := \{g(y) : y \in Y\}$，$B_i := \{g(x) : x \in X\},\ \forall i \in [\ell]$，而 $B_J := \bigcup_{j \in J} B_j$。下面引理的证明与 \cref{lem:allocation_small_error} 高度相似，我们省略细节的论证。
+
+\begin{restatable}{lemma}{AllocationKMinWise}\label{lem:allocation_k_min_wise}
+    设 $C_g$ 是相较于 $C$ 足够大的常数。则分组函数 $g$ 满足：
+    \begin{enumerate}
+        \item 当 $|X| \le \ell^{0.9}$ 时，以概率 $1 - \frac{1}{\ell^{3 C} \cdot |X|^{k}}$，对于所有 $i \in [\ell]$ 都有 $|B_i| \le C_g + 10 \cdot \frac{k \log |X|}{\log N / \log \log N}$ 且 $|B_J| \le C_g \cdot k$。
+        
+        \item 当 $|X| \in (\ell^{0.9}, \ell^{1.1})$ 时，以概率 $1 - 1 / \ell^{3 C \cdot k}$，最大负载 $\max_{i \in [\ell]} |B_i| \le 2 \ell^{0.1}$。
+        
+        \item 当 $|X| \ge \ell^{1.1}$ 时，以概率 $1-|X|^{-3 C \cdot k}$，所有桶满足 $|B_i| = (1 \pm 0.1) \cdot |X| / \ell$。
+    \end{enumerate}
+\end{restatable}
+
+概率也有一样的分解：
+\begin{align*}
+      & \Pr_{h \sim \mathcal{H}}[\max h(Y) < \min h(X)] = \sum_{\theta \in [M]} \Pr_{h \sim \mathcal{H}}[\max h(Y) = \theta \wedge \min h(X) > \theta] \\
+    = & \sum_{\theta \in [M]} \E_{g : \text{$C_g \cdot k$-wise}} \left[\Pr_{\psi : (C_e + 1) \cdot k\text{-wise}, w, s_{1 \sim \ell}} \left[ (\max h(Y) = \theta \wedge \min h(B_J) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \notin J)  \right]  \right],
+\end{align*}
+其中有关 $J$ 的项不写明 $\sigma_{j \notin J}$ 而是直接偷懒用记号 $h$ 来表示，是因为与 $J$ 相关的函数有若干个，每个函数行为各不相同，并不好写。更加严格的表述方式是先枚举 $Y$ 的非空子集 $Y'$，严格规定 $\{h(Y') = \theta \wedge \max h(Y \setminus Y') < \theta\}$，然后对于与 $Y'$ 和 $Y \setminus Y'$ 有关的桶分别规定其函数的要求，这样写起来非常麻烦，此处省略掉了。 
+
+而对于里面的概率项，我们同样先使用 $\PRG_1$ 的性质进行域缩减。下面的分析先固定 $\psi$ 是因为这样才能使得事件是一个关于 $s_1, \ldots, s_\ell$ 的组合矩形，而记号 $s_J$ 则表示 $s_{j \in J}$，$\alpha_J$ 同理：
+\begin{align*}
+      & \Pr_{\psi : (C_e + 1) \cdot k\text{-wise}, w, s_{1 \sim \ell}} \left[ (\max h(Y) = \theta \wedge \min h(B_J) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \notin J)  \right] \\
+    = & \sum_{\alpha_J} \E_{\psi, w} \left[ \Pr_{s_J} [ s_J = \alpha_J \wedge \max h(Y) = \theta \wedge \min h(B_J) > \theta ] \cdot \Pr_{s_{1 \sim \ell}} [\min \sigma_i(B_i) > \theta,\ \forall i \notin J \mid s_J = \alpha_J]  \right] \\
+    = & \sum_{\alpha_J} \E_{\psi, w} \left[ \Pr_{s_J} [ s_J = \alpha_J \wedge \max h(Y) = \theta \wedge \min h(B_J) > \theta ] \cdot \left( \prod_{i \notin J} \Pr_{s_i \sim U}[\min \sigma_i(B_i) > \theta] \pm 2^{-C_s \cdot t \cdot k} \right) \right] \\
+    = & \Pr_{\psi : (C_e + 1) \cdot k\text{-wise}, w, s_J, s_{i \notin J} \sim U}\left[ (\max h(Y) = \theta \wedge \min h(B_J) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \notin J)  \right] \\
+      & \pm \Pr_{\psi : (C_e + 1) \cdot k\text{-wise}, w, s_J}\left[ \max h(Y) = \theta \wedge \min h(B_J) > \theta  \right] \cdot 2^{-C_s \cdot t \cdot k}.
+\end{align*}
+
+对于主项，我们先固定 $\psi$，而后便同样可以用单层 Nisan-Zuckerman 伪随机生成器的框架进行分析。我们还是把与 $Y$ 有关的事件放到头 $|J|$ 个输入上，然后我们的归纳这一次从 $\beta = |J| + 1$ 开始。分类讨论 $\Pr_{s_J, s_{i \notin J} \sim U}[A_1 \wedge \cdots \wedge A_{\beta - 1}]$ 是否大于 $2^{-0.4 k \cdot C_e \log N}$，分析与之前完全相同。最终我们得到
+\begin{align*}
+      & \Pr_{\psi : (C_e + 1) \cdot k\text{-wise}, w, s_J, s_{i \notin J} \sim U}\left[ (\max h(Y) = \theta \wedge \min h(B_J) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \notin J)  \right] \\
+    = & \E_{\psi}\left[ \Pr_{w, s_J, s_{i \notin J} \sim U}\left[ (\max h(Y) = \theta \wedge \min h(B_J) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \notin J) \right] \right] \\
+    = & \E_{\psi}\left[ \Pr_{w, s_J}[ \max h(Y) = \theta \wedge \min h(B_J) > \theta ] \cdot \prod_{i \notin J} \left( (1 - \theta / M)^{|B_i|} \pm 2 \cdot 2^{-C_s \cdot t} \right) \pm \ell \cdot N^{-0.4 C_e \cdot k} \right] \\
+    = & \Pr_{\psi : (C_e + 1) \cdot k\text{-wise}, w, s_J}[ \max h(Y) = \theta \wedge \min h(B_J) > \theta ] \cdot \prod_{i \notin J} \left( (1 - \theta / M)^{|B_i|} \pm 2 \cdot 2^{-C_s \cdot t} \right) \pm \ell \cdot N^{-0.4 C_e \cdot k}.
+\end{align*}
+
+一个值得注意的点是，现在遗留下来的加法误差是 $\ell \cdot N^{-0.4 C_e \cdot k}$，这样才可以保证其关于均匀概率 $1 / \binom{|X| + |Y|}{|Y|}$ 的乘法误差可控。这也解释了为什么 $\Ext$ 的输入源长度与最小熵阈值要是 $O_C(k \log N)$ 级别的。
+
+现在来到了 $k$-最小哈希与经典的最小哈希构造相比\underline{\emph{差别最大的部分}}。我们看与 $Y$ 有关事件的概率：
+$$
+\Pr_{\psi : (C_e + 1) \cdot k\text{-wise}, w, s_J}[ \max h(Y) = \theta \wedge \min h(B_J) > \theta ].
+$$
+
+同此前一样，我们也希望 $\{\max h(Y) = \theta\}$ 这一部分和完全随机时一致，这样才可以避免其概率过小所导致的过大乘法误差。但现在，\cref{lem:extractor_unif} 中提取器 $\Ext$ 的性质就不够用了，因为现在 $Y$ 中的元素可能被分配到若干个不同的桶中，也就是 $|J| > 1$。这也是我们最后需要在外面直和上一个 $(C_e + 1) \cdot k$ 次独立哈希函数 $\psi$ 的原因。现在我们反过来先固定 $w$ 和 $s_J$，利用 $\psi$ 的性质将 $\{\max h(Y) = \theta\}$ 这一部分的概率还原为完全随机时的概率：
+\begin{align*}
+      & \Pr_{\psi : (C_e + 1) \cdot k\text{-wise}, w, s_J}[ \max h(Y) = \theta \wedge \min h(B_J) > \theta ] \\
+    = & \E_{w, s_J}\left[ \Pr_{\psi : (C_e + 1) \cdot k\text{-wise}}[ \max h(Y) = \theta \wedge \min h(B_J) > \theta ] \right] \\
+    = & \E_{w, s_J}\left[ \frac{\theta^k - (\theta - 1)^k}{M^k} \cdot \Pr_{\sigma : C_e \cdot k\text{-wise}}[ \min \sigma(B_J) > \theta ] \right] \\
+    = & \frac{\theta^k - (\theta - 1)^k}{M^k} \cdot \Pr_{\sigma : C_e \cdot k\text{-wise}}[ \min \sigma(B_J) > \theta ].
+\end{align*}
+
+这种直和结构实际上可以看作一种针对条件概率的去随机化。
+
+最后求和汇总，误差项的分析和上一节类似，此处省略；主项的分析同样较为繁琐，且与最小哈希的情况有不少相似之处，此处直接省略。这样我们便完成了证明。
+
+\subsection{总结}
+
+本章围绕最小哈希族的构造，在种子长度与近似精度的权衡上取得了关键突破。我们证明：在最优种子长度 $O(\log N)$ 下，可以实现亚常数乘法误差 $\delta = 2^{-O\left(\frac{\log N}{\log \log N}\right)}$，并将该结果推广至 $k$-最小哈希族，在 $k = \log^{O(1)}N$ 时达到种子长度 $O(k \log N)$ 与同量级误差。这一结果同时规避了有限次独立性方法在 $\delta = o(1)$ 时种子长度不优，以及组合矩形伪随机生成器方法中不可避免的 $\log \log N$ 种子长度损失。
+
+在技术上，核心在于绕过概率极小导致从加法误差转换为乘法误差代价过大这一瓶颈。我们通过分桶哈希将全局事件分解为桶级事件的乘积结构，并用单次只读分支程序刻画桶间依赖，再借助单层 Nisan-Zuckerman 伪随机生成器实现随机性的跨桶复用，从而压缩种子长度。关键改进在于构造具有均匀性的提取器，使得关键桶的分布完全精确，从而避免 $1/M$ 级别的小概率事件带来的误差灾难性放大；而其余桶的加法误差由于对应概率远离零，可以在乘法意义下被有效控制。进一步结合组合矩形伪随机生成器的域缩减技术，实现整体误差的精细累积分析。
+
+在推广到 $k$-最小哈希情形时，我们通过与 $\Theta(k)$ 次独立哈希函数做直和，精确处理涉及目标集合 $Y$ 的小概率事件，同时保持对后续桶的伪随机分析不受显著影响，从而完成整体构造。总体而言，本章最优种子长度下实现了接近多项式级的小误差，不仅填补了最小哈希构造中的关键空白，也提出了一种针对乘法误差与条件期望的精细去随机化方法。

@@ -1,0 +1,483 @@
+\begin{thebibliography}{60}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{#1}
+\expandafter\ifx\csname urlstyle\endcsname\relax\else
+  \urlstyle{same}\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \DeclareUrlCommand\doi{\urlstyle{rm}}
+  \def\eprint#1#2{#2}
+\else
+  \def\doi#1{\href{https://doi.org/#1}{\nolinkurl{#1}}}
+  \let\eprint\href
+\fi
+
+\bibitem[Alon et~al.(2004)Alon and Spencer]{The_Probabilistic_Method}
+ALON N, SPENCER J, 2004.
+\newblock {The Probabilistic Method, Second Edition}\allowbreak[M/OL].
+\newblock wiley.
+\newblock DOI: \doi{10.1002/0471722154}.
+
+\bibitem[Alon et~al.(1986)Alon, Babai, and Itai]{ABI86_construction_t_wise}
+ALON N, BABAI L, ITAI A, 1986.
+\newblock {A fast and simple randomized parallel algorithm for the maximal
+  independent set problem}\allowbreak[J/OL].
+\newblock Journal of Algorithms, 7\allowbreak (4): 567-583.
+\newblock
+  \url{https://www.sciencedirect.com/science/article/pii/0196677486900192}.
+\newblock DOI: \doi{https://doi.org/10.1016/0196-6774(86)90019-2}.
+
+\bibitem[Armoni et~al.(1996)Armoni, Saks, Wigderson, and
+  Zhou]{ASWZ96_PRG_rect_comb}
+ARMONI R, SAKS M, WIGDERSON A, et~al., 1996.
+\newblock {Discrepancy sets and pseudorandom generators for combinatorial
+  rectangles}\allowbreak[C]//\allowbreak
+FOCS '96: Proceedings of the 37th Annual Symposium on Foundations of Computer
+  Science.
+\newblock USA: IEEE Computer Society: 412.
+
+\bibitem[Bellare et~al.(1994)Bellare and Rompel]{Bellare_Rompel_94}
+BELLARE M, ROMPEL J, 1994.
+\newblock {Randomness-efficient oblivious
+  sampling}\allowbreak[C/OL]//\allowbreak
+Proceedings 35th Annual Symposium on Foundations of Computer Science.
+\newblock 276-287.
+\newblock DOI: \doi{10.1109/SFCS.1994.365687}.
+
+\bibitem[Blum et~al.(1984)Blum and Micali]{Blum_Micali_crypto_pseudorandom}
+BLUM M, MICALI S, 1984.
+\newblock {How to Generate Cryptographically Strong Sequences of Pseudorandom
+  Bits}\allowbreak[J/OL].
+\newblock SIAM Journal on Computing, 13\allowbreak (4): 850-864.
+\newblock \url{https://doi.org/10.1137/0213053}.
+
+\bibitem[Broder et~al.(1998)Broder, Charikar, Frieze, and Mitzenmacher]{BCFM98}
+BRODER A~Z, CHARIKAR M, FRIEZE A~M, et~al., 1998.
+\newblock {Min-wise independent permutations}\allowbreak[C]//\allowbreak
+Proceedings of the thirtieth annual ACM symposium on Theory of computing.
+\newblock 327-336.
+
+\bibitem[Celis et~al.(2013)Celis, Reingold, Segev, and
+  Wieder]{CRSW_gradually_increased_independence}
+CELIS L~E, REINGOLD O, SEGEV G, et~al., 2013.
+\newblock {Balls and Bins: Smaller Hash Families and Faster
+  Evaluation}\allowbreak[J/OL].
+\newblock SIAM J. Comput., 42\allowbreak (3): 1030–1050.
+\newblock \url{https://doi.org/10.1137/120871626}.
+
+\bibitem[Chen(2019)]{xue_load_balancing}
+CHEN X, 2019.
+\newblock {Derandomized balanced allocation}\allowbreak[C]//\allowbreak
+SODA '19: Proceedings of the Thirtieth Annual ACM-SIAM Symposium on Discrete
+  Algorithms.
+\newblock USA: Society for Industrial and Applied Mathematics: 2513–2526.
+
+\bibitem[Chen et~al.(2026)Chen, Huang, and Li]{xue_shengtang_xin_min_wise}
+CHEN X, HUANG S, LI X, 2026.
+\newblock {Explicit Min-wise Hash Families with Optimal
+  Size}\allowbreak[C]//\allowbreak
+Proceedings of the 2026 Annual ACM-SIAM Symposium on Discrete Algorithms
+  (SODA).
+\newblock SIAM: 2512-2539.
+
+\bibitem[Cheng et~al.(2026)Cheng and Wu]{Cheng_Wu_WPRG}
+CHENG K, WU R, 2026.
+\newblock {Weighted Pseudorandom Generators for Read-Once Branching Programs
+  via Weighted Pseudorandom Reductions}\allowbreak[M/OL].
+\newblock 3423-3458.
+\newblock \url{https://epubs.siam.org/doi/abs/10.1137/1.9781611978971.124}.
+
+\bibitem[Cheraghchi(2011)]{Cheraghchi11_phd_thesis}
+CHERAGHCHI M, 2011.
+\newblock {Applications of Derandomization Theory in Coding}\allowbreak[J/OL].
+\newblock CoRR, abs/1107.4709.
+\newblock \url{http://arxiv.org/abs/1107.4709}.
+
+\bibitem[Chor et~al.(1985)Chor and Goldreich]{CG_block_source}
+CHOR B, GOLDREICH O, 1985.
+\newblock {Unbiased bits from sources of weak randomness and probabilistic
+  communication complexity}\allowbreak[C/OL]//\allowbreak
+SFCS '85: Proceedings of the 26th Annual Symposium on Foundations of Computer
+  Science.
+\newblock USA: IEEE Computer Society: 429–442.
+\newblock \url{https://doi.org/10.1109/SFCS.1985.62}.
+
+\bibitem[Cohen(2016)]{Cohen2016}
+COHEN E, 2016.
+\newblock {Min-Hash Sketches}\allowbreak[M/OL].
+\newblock New York, NY: Springer New York: 1282-1287.
+\newblock \url{https://doi.org/10.1007/978-1-4939-2864-4_573}.
+
+\bibitem[Cohen et~al.(2001)Cohen, Datar, Fujiwara, Gionis, Indyk, Motwani,
+  Ullman, and Yang]{CDF+01}
+COHEN E, DATAR M, FUJIWARA S, et~al., 2001.
+\newblock {Finding Interesting Associations without Support
+  Pruning}\allowbreak[J/OL].
+\newblock IEEE Trans. on Knowl. and Data Eng., 13\allowbreak (1): 64–78.
+\newblock \url{https://doi.org/10.1109/69.908981}.
+
+\bibitem[Cormode et~al.(2014)Cormode and Firmani]{CF14}
+CORMODE G, FIRMANI D, 2014.
+\newblock {A unifying framework for $\ell_0$-sampling
+  algorithms}\allowbreak[J/OL].
+\newblock Distrib. Parallel Databases, 32\allowbreak (3): 315–335.
+\newblock \url{https://doi.org/10.1007/s10619-013-7131-9}.
+
+\bibitem[Datar et~al.(2002)Datar and Muthukrishnan]{DM02}
+DATAR M, MUTHUKRISHNAN S, 2002.
+\newblock {Estimating Rarity and Similarity over Data Stream
+  Windows}\allowbreak[C]//\allowbreak
+M{\"O}HRING R, RAMAN R.
+\newblock Algorithms --- ESA 2002.
+\newblock Berlin, Heidelberg: Springer Berlin Heidelberg: 323-335.
+
+\bibitem[Doron et~al.(2019)Doron, Hatami, and Hoza]{DHH_read_once_DNF_PRG}
+DORON D, HATAMI P, HOZA W~M, 2019.
+\newblock {Near-Optimal Pseudorandom Generators for Constant-Depth Read-Once
+  Formulas}\allowbreak[C/OL]//\allowbreak
+SHPILKA A.
+\newblock Leibniz International Proceedings in Informatics (LIPIcs): volume
+  137\quad 34th Computational Complexity Conference (CCC 2019).
+\newblock Dagstuhl, Germany: Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r
+  Informatik: 16:1-16:34.
+\newblock
+  \url{https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.CCC.2019.16}.
+
+\bibitem[Doron et~al.(2020)Doron, Hatami, and Hoza]{DHH_iterated_restrictions}
+DORON D, HATAMI P, HOZA W~M, 2020.
+\newblock {Log-seed pseudorandom generators via iterated
+  restrictions}\allowbreak[C/OL]//\allowbreak
+CCC '20: Proceedings of the 35th Computational Complexity Conference.
+\newblock Dagstuhl, DEU: Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik.
+\newblock \url{https://doi.org/10.4230/LIPIcs.CCC.2020.6}.
+
+\bibitem[Erd{\H{o}}s(1947)]{Erdos_Ramsey_prob_method}
+ERD{\H{O}}S P, 1947.
+\newblock {Some remarks on the theory of graphs}\allowbreak[J].
+\newblock Bulletin of the American Mathematical Society, 53\allowbreak (4): 292
+  - 294.
+
+\bibitem[Feigenblat et~al.(2011)Feigenblat, Porat, and Shiftan]{minwise_FPS11}
+FEIGENBLAT G, PORAT E, SHIFTAN A, 2011.
+\newblock {Exponential time improvement for min-wise based
+  algorithms}\allowbreak[J/OL].
+\newblock Inf. Comput., 209\allowbreak (4): 737–747.
+\newblock DOI: \doi{10.1016/j.ic.2011.01.005}.
+
+\bibitem[Goldreich(2000)]{Goldreich_crypto_book_1}
+GOLDREICH O, 2000.
+\newblock {Foundations of Cryptography: Basic Tools}\allowbreak[M].
+\newblock USA: Cambridge University Press.
+
+\bibitem[Goldreich(2004)]{Goldreich_crypto_book_2}
+GOLDREICH O, 2004.
+\newblock {Foundations of Cryptography: Volume 2, Basic
+  Applications}\allowbreak[M].
+\newblock USA: Cambridge University Press.
+
+\bibitem[Goldwasser et~al.(1984)Goldwasser and Micali]{GOLDWASSER1984270}
+GOLDWASSER S, MICALI S, 1984.
+\newblock {Probabilistic encryption}\allowbreak[J/OL].
+\newblock Journal of Computer and System Sciences, 28\allowbreak (2): 270-299.
+\newblock
+  \url{https://www.sciencedirect.com/science/article/pii/0022000084900709}.
+\newblock DOI: \doi{https://doi.org/10.1016/0022-0000(84)90070-9}.
+
+\bibitem[Gopalan et~al.(2020)Gopalan and Yehudayoff]{GY20_PRG_CR_SOTA}
+GOPALAN P, YEHUDAYOFF A, 2020.
+\newblock {Concentration for Limited Independence via Inequalities for the
+  Elementary Symmetric Polynomials}\allowbreak[J/OL].
+\newblock Theory Comput., 16: 1-29.
+\newblock \url{https://doi.org/10.4086/toc.2020.v016a017}.
+\newblock DOI: \doi{10.4086/TOC.2020.V016A017}.
+
+\bibitem[Gopalan et~al.(2012)Gopalan, Meka, Reingold, Trevisan, and
+  Vadhan]{GMRTV}
+GOPALAN P, MEKA R, REINGOLD O, et~al., 2012.
+\newblock {Better Pseudorandom Generators from Milder Pseudorandom
+  Restrictions}\allowbreak[C]//\allowbreak
+53rd Annual {IEEE} Symposium on Foundations of Computer Science, {FOCS} 2012.
+\newblock 120-129.
+
+\bibitem[Gopalan et~al.(2018)Gopalan, Kane, and Meka]{GKM_Fourier_shape}
+GOPALAN P, KANE D~M, MEKA R, 2018.
+\newblock {Pseudorandomness via the Discrete Fourier
+  Transform}\allowbreak[J/OL].
+\newblock SIAM J. Comput., 47\allowbreak (6): 2451–2487.
+\newblock \url{https://doi.org/10.1137/16M1062132}.
+
+\bibitem[Guruswami et~al.(2009)Guruswami, Umans, and Vadhan]{GUV_extractor}
+GURUSWAMI V, UMANS C, VADHAN S, 2009.
+\newblock {Unbalanced expanders and randomness extractors from Parvaresh--Vardy
+  codes}\allowbreak[J/OL].
+\newblock J. ACM, 56\allowbreak (4).
+\newblock \url{https://doi.org/10.1145/1538902.1538904}.
+
+\bibitem[Hatami et~al.(2023)Hatami and Hoza]{Hatami_Hoza_PRG_survey}
+HATAMI P, HOZA W, 2023.
+\newblock {Theory of unconditional pseudorandom
+  generators}\allowbreak[C]//\allowbreak
+Electron. Colloquium Comput. Complex., TR23-019: volume~1.
+\newblock 1.
+
+\bibitem[Haveliwala et~al.(2002)Haveliwala, Gionis, Klein, and Indyk]{HGKI02}
+HAVELIWALA T~H, GIONIS A, KLEIN D, et~al., 2002.
+\newblock {Evaluating strategies for similarity search on the
+  web}\allowbreak[C/OL]//\allowbreak
+WWW '02: Proceedings of the 11th International Conference on World Wide Web.
+\newblock New York, NY, USA: Association for Computing Machinery: 432–442.
+\newblock \url{https://doi.org/10.1145/511446.511502}.
+
+\bibitem[Henzinger(2006)]{Hen06}
+HENZINGER M, 2006.
+\newblock {Finding near-duplicate web pages: a large-scale evaluation of
+  algorithms}\allowbreak[C/OL]//\allowbreak
+SIGIR '06: Proceedings of the 29th Annual International ACM SIGIR Conference on
+  Research and Development in Information Retrieval.
+\newblock New York, NY, USA: Association for Computing Machinery: 284–291.
+\newblock \url{https://doi.org/10.1145/1148170.1148222}.
+
+\bibitem[Hoza(2021)]{Hoza_RANDOM21_L_1_5_sqrt}
+HOZA W~M, 2021.
+\newblock {Better Pseudodistributions and Derandomization for Space-Bounded
+  Computation}\allowbreak[C/OL]//\allowbreak
+WOOTTERS M, SANIT{\`{A}} L.
+\newblock Leibniz International Proceedings in Informatics (LIPIcs): volume
+  207\quad Approximation, Randomization, and Combinatorial Optimization.
+  Algorithms and Techniques (APPROX/RANDOM 2021).
+\newblock Dagstuhl, Germany: Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r
+  Informatik: 28:1-28:23.
+\newblock
+  \url{https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.APPROX/RANDOM.2021.28}.
+
+\bibitem[Impagliazzo et~al.(1989)Impagliazzo, Levin, and
+  Luby]{ILL89_leftover_hash_lemma}
+IMPAGLIAZZO R, LEVIN L~A, LUBY M, 1989.
+\newblock {Pseudo-random generation from one-way
+  functions}\allowbreak[C/OL]//\allowbreak
+STOC '89: Proceedings of the Twenty-First Annual ACM Symposium on Theory of
+  Computing.
+\newblock New York, NY, USA: Association for Computing Machinery: 12–24.
+\newblock \url{https://doi.org/10.1145/73007.73009}.
+
+\bibitem[Impagliazzo et~al.(1997)Impagliazzo and
+  Wigderson]{IW97_worst_case_to_PRG}
+IMPAGLIAZZO R, WIGDERSON A, 1997.
+\newblock {P = BPP if E requires exponential circuits: derandomizing the XOR
+  lemma}\allowbreak[C/OL]//\allowbreak
+STOC '97: Proceedings of the Twenty-Ninth Annual ACM Symposium on Theory of
+  Computing.
+\newblock New York, NY, USA: Association for Computing Machinery: 220–229.
+\newblock \url{https://doi.org/10.1145/258533.258590}.
+
+\bibitem[Impagliazzo et~al.(1994)Impagliazzo, Nisan, and Wigderson]{INW94_PRG}
+IMPAGLIAZZO R, NISAN N, WIGDERSON A, 1994.
+\newblock {Pseudorandomness for network
+  algorithms}\allowbreak[C/OL]//\allowbreak
+STOC '94: Proceedings of the Twenty-Sixth Annual ACM Symposium on Theory of
+  Computing.
+\newblock New York, NY, USA: Association for Computing Machinery: 356–364.
+\newblock \url{https://doi.org/10.1145/195058.195190}.
+
+\bibitem[Indyk(2001)]{minwise_Indyk}
+INDYK P, 2001.
+\newblock {A Small Approximately Min-Wise Independent Family of Hash
+  Functions}\allowbreak[J/OL].
+\newblock J. Algorithms, 38\allowbreak (1): 84–90.
+\newblock DOI: \doi{10.1006/jagm.2000.1131}.
+
+\bibitem[Indyk(2006)]{Indyk_PRG_streaming}
+INDYK P, 2006.
+\newblock {Stable distributions, pseudorandom generators, embeddings, and data
+  stream computation}\allowbreak[J/OL].
+\newblock J. ACM, 53\allowbreak (3): 307–323.
+\newblock \url{https://doi.org/10.1145/1147954.1147955}.
+
+\bibitem[Kapralov et~al.(2017)Kapralov, Nelson, Pachocki, Wang, Woodruff, and
+  Yahyazadeh]{KNP+17}
+KAPRALOV M, NELSON J, PACHOCKI J, et~al., 2017.
+\newblock {Optimal Lower Bounds for Universal Relation, and for Samplers and
+  Finding Duplicates in Streams}\allowbreak[C/OL]//\allowbreak
+UMANS C.
+\newblock 58th {IEEE} Annual Symposium on Foundations of Computer Science,
+  {FOCS} 2017, Berkeley, CA, USA, October 15-17, 2017.
+\newblock {IEEE} Computer Society: 475-486.
+\newblock \url{https://doi.org/10.1109/FOCS.2017.50}.
+
+\bibitem[Kim et~al.(2020)Kim, Chung, Gil, and Shon]{MinHash_Clustering}
+KIM B, CHUNG J, GIL J~M, et~al., 2020.
+\newblock {Parallel Graph Clustering Based on
+  Minhash}\allowbreak[C]//\allowbreak
+PARK J~J, PARK D~S, JEONG Y~S, et~al.
+\newblock Advances in Computer Science and Ubiquitous Computing.
+\newblock Singapore: Springer Singapore: 393-395.
+
+\bibitem[Linial et~al.(1997)Linial, Luby, Saks, and Zuckerman]{LLSZ95}
+LINIAL N, LUBY M, SAKS M, et~al., 1997.
+\newblock {Efficient construction of a small hitting set for combinatorial
+  rectangles in high dimension}\allowbreak[J/OL].
+\newblock Combinatorica, 17\allowbreak (3): 215–234.
+\newblock DOI: \doi{10.1007/BF01200907}.
+
+\bibitem[Lu(2002)]{Lu02_domain_reduction}
+LU C~J, 2002.
+\newblock {Improved Pseudorandom Generators for Combinatorial Rectangles
+  }\allowbreak[J/OL].
+\newblock Combinatorica, 22\allowbreak (3): 417-433.
+\newblock DOI: \doi{10.1007/s004930200021}.
+
+\bibitem[Lyu(2022)]{Lyu_AC0_PRG}
+LYU X, 2022.
+\newblock {Improved pseudorandom generators for $\mathsf{AC}^0$
+  circuits}\allowbreak[C/OL]//\allowbreak
+CCC '22: Proceedings of the 37th Computational Complexity Conference.
+\newblock Dagstuhl, DEU: Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik.
+\newblock \url{https://doi.org/10.4230/LIPIcs.CCC.2022.34}.
+
+\bibitem[McGregor(2014)]{McG14}
+MCGREGOR A, 2014.
+\newblock {Graph stream algorithms: a survey}\allowbreak[J/OL].
+\newblock SIGMOD Rec., 43\allowbreak (1): 9–20.
+\newblock \url{https://doi.org/10.1145/2627692.2627694}.
+
+\bibitem[Meka et~al.(2019)Meka, Reingold, and Tal]{MRT_width_3_ROBP}
+MEKA R, REINGOLD O, TAL A, 2019.
+\newblock {Pseudorandom generators for width-3 branching
+  programs}\allowbreak[C/OL]//\allowbreak
+STOC 2019: Proceedings of the 51st Annual ACM SIGACT Symposium on Theory of
+  Computing.
+\newblock New York, NY, USA: Association for Computing Machinery: 626–637.
+\newblock \url{https://doi.org/10.1145/3313276.3316319}.
+
+\bibitem[Mitzenmacher et~al.(2005)Mitzenmacher and
+  Upfal]{Mitzenmacher_Upfal_Probability_and_Computing}
+MITZENMACHER M, UPFAL E, 2005.
+\newblock {Probability and Computing: Randomized Algorithms and Probabilistic
+  Analysis}\allowbreak[M].
+\newblock Cambridge University Press.
+
+\bibitem[Naor et~al.(1993)Naor and Naor]{NN93_almost_k_wise}
+NAOR J, NAOR M, 1993.
+\newblock {Small-Bias Probability Spaces: Efficient Constructions and
+  Applications}\allowbreak[J/OL].
+\newblock SIAM Journal on Computing, 22\allowbreak (4): 838-856.
+\newblock \url{https://doi.org/10.1137/0222053}.
+
+\bibitem[Nisan(1990)]{Nisan90_PRG}
+NISAN N, 1990.
+\newblock {Pseudorandom generators for space-bounded
+  computations}\allowbreak[C/OL]//\allowbreak
+STOC '90: Proceedings of the Twenty-Second Annual ACM Symposium on Theory of
+  Computing.
+\newblock New York, NY, USA: Association for Computing Machinery: 204–212.
+\newblock \url{https://doi.org/10.1145/100216.100242}.
+
+\bibitem[Nisan et~al.(1994)Nisan and
+  Wigderson]{Nisan_Wigderson_Hardness_vs_randomness}
+NISAN N, WIGDERSON A, 1994.
+\newblock {Hardness vs randomness}: volume~49\allowbreak[M/OL].
+\newblock USA: Academic Press, Inc.: 149–167.
+\newblock \url{https://doi.org/10.1016/S0022-0000(05)80043-1}.
+
+\bibitem[Nisan et~al.(1996)Nisan and Zuckerman]{NZ96_Nisan_Zuckerman_PRG}
+NISAN N, ZUCKERMAN D, 1996.
+\newblock {Randomness is Linear in Space}\allowbreak[J/OL].
+\newblock J. Comput. Syst. Sci., 52\allowbreak (1): 43–52.
+\newblock \url{https://doi.org/10.1006/jcss.1996.0004}.
+
+\bibitem[P{\u{a}}tra{\c{s}}cu et~al.(2016)P{\u{a}}tra{\c{s}}cu and
+  Thorup]{PT_lb_t_wise_min_wise}
+P{\u{A}}TRA{\c{S}}CU M, THORUP M, 2016.
+\newblock {On the \emph{k}-Independence Required by Linear Probing and Minwise
+  Independence}\allowbreak[J/OL].
+\newblock {ACM} Trans. Algorithms, 12\allowbreak (1): 8:1-8:27.
+\newblock DOI: \doi{10.1145/2716317}.
+
+\bibitem[Radhakrishnan et~al.(2000)Radhakrishnan and Ta-Shma]{RT_siam00}
+RADHAKRISHNAN J, TA-SHMA A, 2000.
+\newblock {Bounds for Dispersers, Extractors, and Depth-Two
+  Superconcentrators}\allowbreak[J/OL].
+\newblock SIAM Journal on Discrete Mathematics, 13\allowbreak (1): 2-24.
+\newblock \url{https://doi.org/10.1137/S0895480197329508}.
+
+\bibitem[Reingold et~al.(2006)Reingold, Shaltiel, and
+  Wigderson]{RSW06_condenser_def}
+REINGOLD O, SHALTIEL R, WIGDERSON A, 2006.
+\newblock {Extracting Randomness via Repeated Condensing}\allowbreak[J/OL].
+\newblock SIAM J. Comput., 35\allowbreak (5): 1185–1209.
+\newblock \url{https://doi.org/10.1137/S0097539703431032}.
+
+\bibitem[Reingold et~al.(2014)Reingold, Rothblum, and
+  Wieder]{RWW_Pseudorandom_graph_in_DS}
+REINGOLD O, ROTHBLUM R~D, WIEDER U, 2014.
+\newblock {Pseudorandom Graphs in Data Structures}\allowbreak[C]//\allowbreak
+ESPARZA J, FRAIGNIAUD P, HUSFELDT T, et~al.
+\newblock Automata, Languages, and Programming.
+\newblock Berlin, Heidelberg: Springer Berlin Heidelberg: 943-954.
+
+\bibitem[Saks et~al.(1999{\natexlab{a}})Saks and Zhou]{Saks_Zhou_BPL_L_1_5}
+SAKS M, ZHOU S, 1999{\natexlab{a}}.
+\newblock {$\text{BP}_{\text{H}}\text{SPACE}(S) \subseteq
+  \text{DSPACE}(S^{3/2})$}\allowbreak[J/OL].
+\newblock J. Comput. Syst. Sci., 58\allowbreak (2): 376–403.
+\newblock \url{https://doi.org/10.1006/jcss.1998.1616}.
+
+\bibitem[Saks et~al.(1999{\natexlab{b}})Saks, Srinivasan, Zhou, and
+  Zuckerman]{SSZZ00_connection_CR_min_wise}
+SAKS M~E, SRINIVASAN A, ZHOU S, et~al., 1999{\natexlab{b}}.
+\newblock {Low Discrepancy Sets Yield Approximate Min-Wise Independent
+  Permutation Families}\allowbreak[C]//\allowbreak
+RANDOM-APPROX '99: Proceedings of the Third International Workshop on
+  Approximation Algorithms for Combinatorial Optimization Problems:
+  Randomization, Approximation, and Combinatorial Algorithms and Techniques.
+\newblock Berlin, Heidelberg: Springer-Verlag: 11–15.
+
+\bibitem[Tzur(2009)]{tzur2009notions}
+TZUR Y, 2009.
+\newblock {Notions of weak pseudorandomness and
+  $\mathrm{GF}(2^n)$-polynomials}\allowbreak[J/OL].
+\newblock Master's thesis, Weizmann Institute of Science.
+\newblock
+  \url{https://eccc.weizmann.ac.il/static/books/Notions_of_Weak_Pseudorandomness/}.
+
+\bibitem[Vadhan(2012)]{Vadhan12_survey_pseudorandomness}
+VADHAN S~P, 2012.
+\newblock {Pseudorandomness}\allowbreak[J/OL].
+\newblock Foundations and Trends in Theoretical Computer Science, 7\allowbreak
+  (1-3): 1-336.
+\newblock \url{https://doi.org/10.1561/0400000010}.
+
+\bibitem[Viola(2009)]{Viola2009_low_degree_poly_PRG}
+VIOLA E, 2009.
+\newblock {The Sum of D Small-Bias Generators Fools Polynomials of Degree
+  D}\allowbreak[J/OL].
+\newblock computational complexity, 18\allowbreak (2): 209-217.
+\newblock \url{https://doi.org/10.1007/s00037-009-0273-5}.
+
+\bibitem[Wegman et~al.(1981)Wegman and Carter]{WC_bounded_independence}
+WEGMAN M~N, CARTER J, 1981.
+\newblock {New hash functions and their use in authentication and set
+  equality}\allowbreak[J/OL].
+\newblock Journal of Computer and System Sciences, 22\allowbreak (3): 265-279.
+\newblock
+  \url{https://www.sciencedirect.com/science/article/pii/0022000081900337}.
+\newblock DOI: \doi{https://doi.org/10.1016/0022-0000(81)90033-7}.
+
+\bibitem[Welke et~al.(2016)Welke, Horv{\'{a}}th, and
+  Wrobel]{MinHash_Graph_Similarity}
+WELKE P, HORV{\'{A}}TH T, WROBEL S, 2016.
+\newblock {Min-Hashing for Probabilistic Frequent Subtree Feature
+  Spaces}\allowbreak[C/OL]//\allowbreak
+Discovery Science: 19th International Conference, DS 2016, Bari, Italy, October
+  19–21, 2016, Proceedings.
+\newblock Berlin, Heidelberg: Springer-Verlag: 67–82.
+\newblock \url{https://doi.org/10.1007/978-3-319-46307-0_5}.
+
+\bibitem[Yao(1982)]{Yao_PRG}
+YAO A~C, 1982.
+\newblock {Theory and application of trapdoor
+  functions}\allowbreak[C/OL]//\allowbreak
+23rd Annual Symposium on Foundations of Computer Science (SFCS 1982).
+\newblock 80-91.
+\newblock DOI: \doi{10.1109/SFCS.1982.45}.
+
+\end{thebibliography}
