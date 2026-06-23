@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2024.11.17)  19 MAY 2026 23:26
+This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2024.11.17)  23 JUN 2026 23:01
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -1049,24 +1049,24 @@ LaTeX Font Info:    Font shape `TU/TeXGyrePagellaX(0)/b/sc' will be
 Requested font "[TeXGyrePagellaX-Bold.otf]/OT:script=latn;language=dflt;-ss05;+tnum;+lnum;+smcp;+pcap;mapping=tex-text;" at 17.28pt
  -> c:/texlive/2022/texmf-dist/fonts/opentype/public/newpx/TeXGyrePagellaX-Bold.otf
 LaTeX Font Info:    Font shape `TU/TeXGyrePagellaX(0)/b/n' will be
-(Font)              scaled to size 12.0pt on input line 123.
+(Font)              scaled to size 12.0pt on input line 124.
 Requested font "[TeXGyrePagellaX-Bold.otf]/OT:script=latn;language=dflt;-ss05;+tnum;+lnum;mapping=tex-text;" at 12.0pt
  -> c:/texlive/2022/texmf-dist/fonts/opentype/public/newpx/TeXGyrePagellaX-Bold.otf
 LaTeX Font Info:    Font shape `TU/TeXGyrePagellaX(0)/m/it' will be
-(Font)              scaled to size 12.0pt on input line 123.
+(Font)              scaled to size 12.0pt on input line 124.
 Requested font "[TeXGyrePagellaX-Italic.otf]/OT:script=latn;language=dflt;-ss05;+tnum;+lnum;mapping=tex-text;" at 12.0pt
  -> c:/texlive/2022/texmf-dist/fonts/opentype/public/newpx/TeXGyrePagellaX-Italic.otf
 [1
 
 ]
-Overfull \hbox (5.88106pt too wide) in paragraph at lines 178--179
+Overfull \hbox (5.88106pt too wide) in paragraph at lines 179--180
 []\TU/TeXGyrePagellaX(0)/b/n/12 Qiangwei Yuanzhi Scholarship: \TU/TeXGyrePagellaX(0)/m/n/12 Awarded in Oct. 2024, this university-level scholarship is granted
  []
 
 Requested font "SimHei/OT:script=hani;language=dflt;" at 12.0pt
  -> C:/windows/fonts/simhei.ttf
 
-Overfull \hbox (53.77863pt too wide) in paragraph at lines 264--265
+Overfull \hbox (53.77863pt too wide) in paragraph at lines 265--266
 [][] 
  []
 
@@ -1097,7 +1097,7 @@ Package logreq Info: Writing requests to 'CV.run.xml'.
 Here is how much of TeX's memory you used:
  25787 strings out of 476179
  527005 string characters out of 5813071
- 1316743 words of memory out of 5000000
+ 1318743 words of memory out of 5000000
  46170 multiletter control sequences out of 15000+600000
  480297 words of font info for 76 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
