@@ -11,7 +11,7 @@
 
 相比于完全随机哈希需要的 $\Theta(|\mathcal{U}| \cdot \log |\mathcal{R}|)$ 个随机比特，$t$ 次独立哈希族仅需 $\Theta\big(t \cdot (\log |\mathcal{U}| + \log |\mathcal{R}|)\big)$ 个随机比特，并且实现十分简单（具体构造可参见如 Alon、Babai 和 Itai \cite{ABI86_construction_t_wise}），在理论推导与实际系统实现中均具有重要价值。
 
-$t$ 次独立性实际上也是一种伪随机生成器。具体地，它是所有 \emph{$t$-集团函数}的伪随机生成器，并且误差为 $0$。这里的 $t$-集团函数是指所有依赖于至多 $t$ 个输入位置的布尔函数。由于 $t$-集团函数族的大小为 $2^{O(|\mathcal{U}|^t)}$，因此 $t$ 次独立哈希族作为其伪随机生成器的种子长度至少为 $\Omega(t \cdot \log |\mathcal{U}|)$，而上述构造的种子长度也正好匹配了这一下界。
+$t$ 次独立性实际上也是一种伪随机生成器。具体地，它是所有 \emph{$t$-集团函数}的伪随机生成器，并且误差为 $0$。这里的 $t$-集团函数是指所有依赖于至多 $t$ 个输入位置的布尔函数。
 
 本章聚焦于如何利用有限次独立哈希族来构造 $k$-最小哈希族。我们首先建立独立次数需求的紧致边界：在 \ref{sec:upper_bound} 中，我们证明仅需 $O(k + \log 1 / \delta)$ 次独立性即可将乘法误差控制在 $\delta$ 以内；在 \ref{sec:lower_bound} 中，我们则又反过来证明了 $\Omega(k + \log 1 / \delta)$ 次独立性是不可避免的。最后，在 \ref{sec:affine_hash} 中，我们深入分析一类具体且广泛使用的有限次独立构造——随机仿射哈希族 $h(x) = Ax \oplus b$，揭示其代数结构导致的相关性将不可避免地引入 $\Omega(\log n)$ 的乘法误差，从而无法胜任高精度的 $k$-最小哈希任务。
 
@@ -194,7 +194,7 @@ $$
     \frac{1}{\binom{s + k}{k}} \left( 1 - \frac{s + k}{M} \right) \le P \le \frac{1}{\binom{s+k}{k}},
     $$
     
-    特别地，由于 $s+k \le N$，当 $M \ge \frac{N}{\delta}$ 时，误差至多是 $\delta$。
+    特别地，由于 $s + k \le N$，当 $M \ge \frac{N}{\delta}$ 时，误差至多是 $\delta$。
 \end{lemma}
 
 \begin{proof}
@@ -232,22 +232,115 @@ $$
 
 \subsection{下界的证明}\label{sec:lower_bound}
 
-在这一节我们继续来探讨下界的论述，证明：使用有限独立哈希族来构造 $k$-最小哈希，所需的独立性次数至少为 $\Omega(k + \log 1 / \delta)$。这和我们上一节得到的上界是相吻合的。
+本节证明，为了仅依靠有限次独立性得到误差为 $\delta$ 的 $k$-最小哈希族，所需独立次数至少为
+$$
+    \Omega\left(k+\log\frac{1}{\delta}\right).
+$$
 
-证明分为两步。首先我们证明，任何 $k$-最小哈希严格地至少需要 $k$ 次独立性。为了看出这一点，假设 $X$ 独立均匀分布在 $[0, 1/2)$ 中，而 $Y$ 均匀分布在 $[0, 1)$ 中，但条件是其落入 $[1/2, 1)$ 的元素个数为奇数。这个条件保持了 $Y$ 的 $(k-1)$ 次独立性，然而它却确定性地迫使 $Y$ 中至少有一个元素落入 $[1/2, 1)$。由于 $X$ 的所有元素严格在 $[0, 1/2)$ 中，概率 $\Pr[\max h(Y) < \min h(X)] = 0$，产生 $100\%$ 的乘法误差。
+首先证明 $\Omega(k)$ 下界。任取不相交的集合 $X,Y$，其中 $|X|=s$、$|Y|=k$，这里 $s$ 可以是任意正整数。先令哈希值取自 $[0,1)$。$X$ 中所有元素的哈希值相互独立且均匀分布。对于 $Y$，先随机生成其中 $k-1$ 个元素的哈希值，再生成最后一个元素，使得 $Y$ 中落入上半区 $[1/2,1)$ 的元素个数为偶数；在确定其落入上半区或下半区后，再在相应半区内均匀取值。$X$ 与 $Y$ 的哈希值相互独立。
 
-其次，我们将此与 P{\u{a}}tra{\c{s}}cu 和 Thorup \cite{PT_lb_t_wise_min_wise} 为最小哈希建立的下界相结合：
+该分布是精确的 $(k-1)$ 次独立分布，因为偶数约束只决定全部 $k$ 个元素之间的联合关系，任意至多 $k-1$ 个元素仍然相互独立且均匀分布。这种通过固定上下半区落点个数奇偶性的构造方式，在 Pătraşcu 和 Thorup~\cite{PT_lb_t_wise_min_wise} 对最小哈希族下界的证明中也有用到。
+
+考虑事件 $E=\{\max h(Y)<\min h(X)\}$，并记 $\mathcal P$ 为“$Y$ 中落入上半区的元素个数为偶数”这一事件。上述分布正是完全随机分布条件于 $\mathcal P$ 后得到的，并且 $\Pr[\mathcal P]=1/2$。在完全随机哈希下，
+$$
+    \Pr[E]=\binom{s+k}{k}^{-1}.
+$$
+
+令 $n=s+k$，并令 $Z$ 表示 $X\cup Y$ 中落入下半区 $[0,1/2)$ 的元素个数。完全随机哈希可以等价地按如下两步生成：先独立均匀地抽取 $n$ 个数并将其从小到大排列，再将 $X\cup Y$ 中的 $n$ 个元素均匀随机地分配到这 $n$ 个位置上。由于所有元素的哈希值独立同分布，后一随机排列与前一步抽取到的有序数值相互独立。
+
+事件 $E$ 只要求最小的 $k$ 个位置恰好由 $Y$ 中元素占据，而 $Z$ 只取决于这 $n$ 个有序数值中有多少个小于 $1/2$。因此，条件于 $E$ 不会改变 $Z$ 的分布，即
+$$
+    Z\mid E\sim\operatorname{Bin}\left(n,\frac12\right).
+$$
+
+在事件 $E$ 下，若 $Z=j<k$，则 $Y$ 中恰有 $j$ 个元素落入下半区，因而有 $k-j$ 个元素落入上半区；若 $Z\ge k$，则 $Y$ 中所有元素均落入下半区。因此
+\begin{align*}
+    \Pr[\mathcal P\mid E]
+    &=
+    \frac{1}{2^n}
+    \left(
+        \sum_{j = k - 2, k - 4, \ldots}
+        \binom{n}{j}
+        +
+        \sum_{j=k}^{n}\binom{n}{j}
+    \right)\\
+    &=
+    \frac12\left(
+        1+
+        \frac{1}{2^{n-1}}
+        \sum_{j=k}^{n-1}\binom{n-1}{j}
+    \right)\\
+    &=
+    \frac12\left(
+        1+
+        \Pr\left[
+            \operatorname{Bin}\left(n-1,\frac12\right)\ge k
+        \right]
+    \right).
+\end{align*}
+
+由于上述 $(k-1)$ 次独立分布正是完全随机分布条件于 $\mathcal P$ 后得到的，并且 $\Pr[\mathcal P]=1/2$，由贝叶斯公式可得
+\begin{align*}
+    \Pr[E\mid\mathcal P]
+    &=
+    \frac{\Pr[E]\Pr[\mathcal P\mid E]}
+         {\Pr[\mathcal P]}\\
+    &=
+    \left(
+        1+
+        \Pr\left[
+            \operatorname{Bin}\left(s+k-1,\frac12\right)\ge k
+        \right]
+    \right)
+    \binom{s+k}{k}^{-1}.
+\end{align*}
+
+因此，该 $(k-1)$ 次独立分布产生的乘法误差恰好为
+$$
+    \varepsilon_{k,s}
+    =
+    \Pr\left[
+        \operatorname{Bin}\left(s+k-1,\frac12\right)\ge k
+    \right].
+$$
+该公式对任意 $s$ 都成立。当 $s\ge k$ 时，$\varepsilon_{k,s}\ge 1/2$；而当 $s\to\infty$ 时，$\varepsilon_{k,s}\to1$。因此，对于任意 $\delta<1$，总可以选取足够大的 $X$，使得 $\varepsilon_{k,s}>\delta$。这说明 $(k-1)$ 次独立性不足以保证误差为 $\delta$ 的 $k$-最小哈希性质，从而所需独立次数至少为 $\Omega(k)$。
+
+上述构造也可以直接离散化到充分大的偶数值域 $[M]$：先决定元素落入值域的上半区或下半区，再在相应半区内均匀取值。随着 $M$ 增大，严格次序事件的概率任意接近上述连续情形，因此下界保持成立。
+
+另一方面，Pătraşcu 和 Thorup \cite{PT_lb_t_wise_min_wise} 证明了普通最小哈希在有限次独立性下的如下下界。
 
 \begin{theorem}[\cite{PT_lb_t_wise_min_wise} 中的定理 3.1]\label{thm:PT_lb_t_wise_min_wise}
-    存在一个常数 $c > 0$，对于任意大小为 $n$ 的键集 $X$ 和另一个键 $y$，存在一个 $t$ 次独立的哈希族 $\mathcal{H} = \{h : X \cup \{y\} \to [0, 1)\}$ 使得
+    对于任意大小为 $n$ 的键集 $X$ 和另一个键 $y$，存在一个 $t$ 次独立哈希族
     $$
-    \Pr_{h \sim \mathcal{H}}[h(y) < \min h(X)] = \frac{1 + 2^{-c t}}{n + 1}.
+        \mathcal H=\{h:X\cup\{y\}\to[0,1)\},
+    $$
+    使得
+    $$
+        \Pr_{h\sim\mathcal H}[h(y)<\min h(X)]
+        =
+        \frac{1+2^{-O(t)}}{n+1}.
     $$
 \end{theorem}
 
-这个定理本质上要求了，使用有限次独立哈希族来做最小哈希，所需的独立次数至少是 $\Omega(\log 1 / \delta)$。由于 $k$-最小哈希是比标准的最小哈希更强的性质，为了达到乘法误差 $\delta$，它必然继承这个 $\Omega(\log 1 / \delta)$ 次独立性的下界。
-
-结合这两个约束，我们得到 $k$-最小哈希的所需的独立次数下界为 $\Omega(\max\{k, \log 1 / \delta\}) = \Omega(k + \log 1 / \delta)$。
+由于 $k$-最小哈希的定义包含 $|Y|=1$ 的普通最小哈希情形，为了将乘法误差控制在 $\delta$ 以内，必须有
+$$
+    t=\Omega\left(\log\frac{1}{\delta}\right).
+$$
+结合上述 $\Omega(k)$ 下界可得
+$$
+    t
+    =
+    \Omega\left(
+        \max\left\{
+            k,\log\frac{1}{\delta}
+        \right\}
+    \right)
+    =
+    \Omega\left(
+        k+\log\frac{1}{\delta}
+    \right).
+$$
+具体而言，当 $\delta<2^{-k}$ 时，$\log 1/\delta$ 项主导；当 $\delta\ge2^{-k}$ 时，$k$ 项主导。
 
 \subsection{随机仿射哈希族}\label{sec:affine_hash}
 
@@ -292,7 +385,7 @@ $$
 
 本章系统研究了利用有限次独立哈希族构造 $k$-最小哈希族的理论边界与具体构造的局限性，主要结论与技术路线可归纳为以下三个方面：
 
-首先，我们确立了有限次独立性与 $k$-最小哈希之间紧致的定量关系。\cref{thm:k_log_1_eps_upper_bound} 的上界证明，与下界分析共同表明，为实现 $k$-最小哈希，$\Theta(k + \log 1 / \delta)$ 次独立性是足够且必要的，完整刻画了独立次数与近似精度之间的最优权衡。在技术层面，上界证明将目标概率按哈希值阈值分解，并分别控制；下界证明则通过构造保持对抗分布，结合 P{\u{a}}tra{\c{s}}cu 与 Thorup \cite{PT_lb_t_wise_min_wise}的经典结果（ \cref{thm:PT_lb_t_wise_min_wise}），完成了必要性论证。这样紧致的上下界结果，大大改进了此前 Feigenblat、Porat 和 Shiftan \cite{minwise_FPS11} 给出的 $O(\log 1 / \delta + k \log \log 1 / \delta)$ 的上界。
+首先，我们确立了有限次独立性与 $k$-最小哈希之间紧致的定量关系。\cref{thm:k_log_1_eps_upper_bound} 的上界证明，与下界分析共同表明，为实现 $k$-最小哈希，$\Theta(k + \log 1 / \delta)$ 次独立性是足够且必要的，完整刻画了独立次数与近似精度之间的最优权衡。在技术层面，上界证明将目标概率按哈希值阈值分解，并分别控制；下界证明则通过构造保持对抗分布，结合 P{\u{a}}tra{\c{s}}cu 与 Thorup \cite{PT_lb_t_wise_min_wise}的经典结果（\cref{thm:PT_lb_t_wise_min_wise}），完成了必要性论证。这样紧致的上下界结果，大大改进了此前 Feigenblat、Porat 和 Shiftan \cite{minwise_FPS11} 给出的 $O(\log 1 / \delta + k \log \log 1 / \delta)$ 的上界。
 
 其次，我们对随机仿射哈希族这一经典代数构造进行了理论分析。尽管该族在有限域 $\F_2$ 上具备优良的代数性质，\cref{thm:min_wise_random_affine_not_good} 严格证明了其用于最小哈希族时存在 $\Omega(\log n)$ 的固有乘法误差。证明过程中，我们通过高斯消元提取标准阶梯形基，将最小值事件转化为对最高有效位集合大小的精确计数，最终完成误差下界的定量刻画。
 

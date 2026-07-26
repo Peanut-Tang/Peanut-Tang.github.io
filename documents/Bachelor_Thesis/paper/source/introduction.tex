@@ -70,7 +70,7 @@ $$
 
 然而，这一方法仍存在两个主要局限。首先，对于 $k$-最小哈希，上述结果给出的所需独立次数的上下界之间仍存在差距。其次，当误差为亚常数 $\delta = o(1)$ 时，由于 $t$ 次独立哈希族需要 $\Theta(t \log NM)$ 比特随机性，该方法无法达到最优的种子长度 $O(\log (NM / \delta))$（对于 $k$-最小哈希则是 $O(k \log NM + \log 1 / \delta)$）。
 
-另一方面，Saks、Srinivasan、Zhou 和 Zuckerman \cite{SSZZ00_connection_CR_min_wise} 首先将最小哈希的构造归约为组合矩形（combinatorial rectangle）的伪随机生成器问题，并基于该规约给出了种子长度为 $O(\log^{3/2} NM)$ 的构造。此后，针对组合矩形的伪随机生成器经历了长期的发展与改进，目前最好的结果是 Gopalan 与 Yehudayoff \cite{GY20_PRG_CR_SOTA} 的构造，这给出了 $O(\log NM \cdot \log \log NM)$ 的最小哈希构造。
+另一方面，Saks、Srinivasan、Zhou 和 Zuckerman \cite{SSZZ00_connection_CR_min_wise} 首先将最小哈希的构造归约为组合矩形（combinatorial rectangle）的伪随机生成器问题，并基于该归约给出了种子长度为 $O(\log^{3/2} NM)$ 的构造。此后，针对组合矩形的伪随机生成器经历了长期的发展与改进，目前最好的结果是 Gopalan 与 Yehudayoff \cite{GY20_PRG_CR_SOTA} 的构造，这给出了 $O(\log NM \cdot \log \log NM)$ 的最小哈希构造。
 
 然而，这一路线的核心瓶颈在于：最小哈希要求形如 $\delta/|X|$ 的乘法误差，这对应于极小的加法误差。即使 $\delta$ 为常数，当 $|X| = \Omega(N)$ 时，该误差也达到 $1/N$ 量级，使得种子长度必须超过 $O(\log N M)$。因此，尽管该方向在加法误差意义下已取得显著进展，但仍难以直接得到具有最优种子长度的最小哈希族。
 
@@ -127,7 +127,7 @@ $$
 $$
 同样地，对于两个向量 $f, g \in [M]^N$，$f + g$ 表示对应位置的加法。
 
-对于两个哈希函数族 $\mathcal{H}, \mathcal{G}$，定义它们的\emph{直和}（direct sum）为
+对于两个哈希函数族 $\mathcal{H}, \mathcal{G}$，定义它们的\emph{直和}（direct sum）为一\emph{可重集}
 $$
 \mathcal{H} \oplus \mathcal{G} := \{h + g : h \in \mathcal{H},\ g \in \mathcal{G}\}.
 $$

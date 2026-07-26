@@ -19,13 +19,13 @@
 我们使用来自 Cheraghchi 博士论文 \cite{Cheraghchi11_phd_thesis} 的一个显式强凝结器构造，该构造修改自 Guruswami、Umans 和 Vadhan \cite{GUV_extractor} 中的强凝结器构造，并多了一个线性性质。
 
 \begin{lemma}[\cite{Cheraghchi11_phd_thesis} 中的 推论 2.23]\label{cor:linear_condenser_not_full_rank}
-    设 $\alpha>0$ 为任意常数。对任意 $n \in \N$、$k \le n$ 与误差 $\varepsilon > 0$，存在显式的 $(k, k,\varepsilon)$-强凝结器 $\Con : \F_2^n \times \F_2^d \to \F_2^m$，满足 $d = (1 + 1 / \alpha) \cdot \log (n k / \varepsilon) + O(1)$ 且 $m = d + (1 + \alpha)k$。并且对于任意固定的种子 $s \in \F_2^d$，$\Con(\cdot, s)$ 是 $\F_2$ 上的线性函数。
+    设 $\alpha>0$ 为任意常数。对任意 $n \in \N$、$k \le n$ 与误差 $\varepsilon > 0$，存在显式的 $(k, k,\varepsilon)$-强凝结器 $\Con : \F_2^n \times \F_2^d \to \F_2^m$，满足 $d = (1 + 1 / \alpha) \cdot (\log (n k / \varepsilon) + O(1))$ 且 $m = d + (1 + \alpha)k$。并且对于任意固定的种子 $s \in \F_2^d$，$\Con(\cdot, s)$ 是 $\F_2$ 上的线性函数。
 \end{lemma}
 
 对于线性函数，我们可以通过很简单的修改使得其满足均匀性性质。
 
 \begin{corollary}\label{cor:linear_condenser}
-    设 $\alpha>0$ 为任意常数。对任意 $n \in \N$、$k \le n$ 与误差 $\varepsilon > 0$，存在显式的 $(k, k,\varepsilon)$-凝结器 $\Con : \F_2^n \times \F_2^d \to \F_2^m$，满足 $d = (1 + 1 / \alpha) \cdot \log (n k / \varepsilon) + O(1)$ 且 $m = d + (1 + \alpha)k$。更进一步，对于任意固定的种子 $s \in \F_2^d$，$\Con(\cdot, s)$ 是 $\F_2$ 上的线性函数，且 $\Con(U_n, s) = U_m$。
+    设 $\alpha>0$ 为任意常数。对任意 $n \in \N$、$k \le n$ 与误差 $\varepsilon > 0$，存在显式的 $(k, k,\varepsilon)$-凝结器 $\Con : \F_2^n \times \F_2^d \to \F_2^m$，满足 $d = (1 + 1 / \alpha) \cdot (\log (n k / \varepsilon) + O(1))$ 且 $m = d + (1 + \alpha)k$。更进一步，对于任意固定的种子 $s \in \F_2^d$，$\Con(\cdot, s)$ 是 $\F_2$ 上的线性函数，且 $\Con(U_n, s) = U_m$。
 \end{corollary}
 
 \begin{proof}
@@ -44,7 +44,7 @@
 
     构造 $\F_2^d \times \F_2^m$ 上的分布 $W$，定义为
     $$
-    \Pr[W = x'] = \Pr[Z = x'] \cdot \frac{\Pr[(U_d, \Con'(X, U_d)) = x']}{\Pr[(U_d, \Con(X, U_d)) = g(x')]}.
+    \Pr[W = x'] = \Pr[Z = g(x')] \cdot \frac{\Pr[(U_d, \Con'(X, U_d)) = x']}{\Pr[(U_d, \Con(X, U_d)) = g(x')]}.
     $$
     可验证 $g(W) = Z$，从而 $\Hmin(W) \ge \Hmin(Z) \ge k + d$。并且
     $$
@@ -147,8 +147,7 @@ $$
 
 直接迭代上述构造会导致种子每次都几乎翻倍，这不可接受。利用前述凝结器与分块提取技术，可以在每一步将种子长度减少任意常数，从而在迭代过程中保证种子长度保持不变。
 
-此外，由于本构造还需满足均匀性性质，不能直接对同一随机源重复应用提取器。为此，将利用线性结构与正交投影，将已提取的部分与剩余部分解耦，从而实现多轮提取，同时保持均匀性。
-
+此外，由于本构造还需满足均匀性性质，不能直接对同一随机源重复应用提取器。为此，将利用线性结构与线性补空间分解，将已提取的部分与剩余部分解耦，从而实现多轮提取，同时保持均匀性。
 
 \begin{proof}[\cref{lem:extractor_unif} 的证明]
     固定 $n \in \N$ 和 $\varepsilon_0 > 0$。设 $d = c \log (n / \varepsilon_0)$，其中 $c$ 是足够大的常数（以下所有 $O(\cdot)$ 均隐藏与 $c$ 无关的常数）。对于任意 $k = 0,1,\ldots,n$，设 $i(k)$ 为满足 $k \le 2^i \cdot 8d$ 的最小整数 $i$，注意 $i(k) \le \log k \le \log n$。
@@ -176,30 +175,29 @@ $$
 
     (2) 构造 $\Ext_{(n', k)}$。首先使用 $\overline{\Ext}_{(n', k)}$ 提取 $m_1 = k/6$ 比特。设 $\overline{\Ext}_{(n', k)}(x, s_1) = M_1 \cdot x$，其中 $M_1$ 为满秩矩阵。
 
-    此时已提取的随机性为 $M_1 \cdot X$。为保持均匀性，接下来在正交补空间上进行提取。定义 $\overline{X} := M_1^\bot \cdot X \in \F_2^{n' - m_1}$。取
+    由于 $M_1$ 满秩，可以通过高斯消元显式选取矩阵 $L_1 \in \F_2^{(n' - m_1) \times n'}$，使得 $Q_1 := \begin{pmatrix} M_1 \\ L_1 \end{pmatrix} \in \F_2^{n' \times n'}$ 为可逆矩阵。换言之，$L_1$ 的行空间是 $M_1$ 的行空间的一个线性补空间。定义 $\overline{X} := L_1 \cdot X \in \F_2^{n' - m_1}$。取
     $$
     \Ext_2 = \overline{\Ext}_{(n' - m_1, k - m_1 - \log 1 / \varepsilon_0)},
     $$
     即对 $\overline{X}$ 使用对应参数的提取器。设 $\Ext_2(x, s_2) = M_2 \cdot x$，其中 $m_2 = (k - m_1 - \log 1 / \varepsilon_0) / 6$ 且 $M_2 \in \F_2^{m_2 \times (n' - m_1)}$ 满秩，则最终构造为
     $$
-    \Ext(X, (s_1, s_2)) = (M_1 \cdot X,\; M_2 M_1^\bot \cdot X).
+    \Ext(X, (s_1, s_2)) = (M_1 \cdot X,\; M_2 L_1 \cdot X).
     $$
 
-    由线性代数可知 $\begin{pmatrix} M_1 \\ M_2 M_1^\bot \end{pmatrix} \in \F_2^{(m_1 + m_2) \times n'}$ 为满秩矩阵，从而保持均匀性。
+    由于 $Q_1$ 可逆且 $M_2$ 满秩，
+    $$
+    \begin{pmatrix} M_1 \\ M_2 L_1 \end{pmatrix}
+    = \begin{pmatrix} I_{m_1} & 0 \\ 0 & M_2 \end{pmatrix} Q_1
+    $$
+    为满秩矩阵，从而保持均匀性。
 
-    在熵分析中，对任意 $v \in \F_2^{m_1}$，有
+    在熵分析中，由于 $Q_1$ 可逆，对任意 $v \in \F_2^{m_1}$ 以及任意 $u \in \F_2^{n' - m_1}$，有
     $$
     \Pr[\overline{X} = u \mid M_1 \cdot X = v]
-    = \frac{\Pr[M_1^\bot \cdot X = u,\; M_1 \cdot X = v]}{\Pr[M_1 \cdot X = v]},\ \forall u \in \F_2^{n' - m_1}.
+    = \frac{\Pr\left[X = Q_1^{-1} \cdot \begin{pmatrix} v \\ u \end{pmatrix}\right]}{\Pr[M_1 \cdot X = v]}.
     $$
 
-    记 $M = \begin{pmatrix} M_1 \\ M_1^\bot \end{pmatrix} \in \F_2^{n' \times n'}$，则由正交补的定义，$M$ 为可逆矩阵，从而
-    $$
-    \Pr[\overline{X} = u \mid M_1 \cdot X = v]
-    = \frac{\Pr\left[X = M^{-1} \cdot \begin{pmatrix} v \\ u \end{pmatrix}\right]}{\Pr[M_1 \cdot X = v]},\ \forall u.
-    $$
-
-    由 $M$ 可逆可得 $\Hmin(\overline{X} \mid M_1 \cdot X = v) = \Hmin(X \mid M_1 \cdot X = v)$，因此剩余随机性仍可用于提取。类似 \cref{lem:two_ext} 的分析可得，该构造为一个 $(k, 2 \varepsilon_{i(k)}/6 + \varepsilon_0)$-提取器，并额外提取出至少 $(k - m_1 - \log 1 / \varepsilon_0)/6 \le (5k/6 - \log 1 / \varepsilon_0)/6$ 比特的随机性。
+    由 $Q_1$ 可逆可得 $\Hmin(\overline{X} \mid M_1 \cdot X = v) = \Hmin(X \mid M_1 \cdot X = v)$，因此剩余随机性仍可用于提取。类似 \cref{lem:two_ext} 的分析可得，该构造为一个 $(k, 2 \varepsilon_{i(k)}/6 + \varepsilon_0)$-提取器，并额外提取出至少 $(k - m_1 - \log 1 / \varepsilon_0)/6 \le (5k/6 - \log 1 / \varepsilon_0)/6$ 比特的随机性。
 
     重复该过程四次，则未提取的熵至多为 $(5/6)^4 k + O(\log 1 / \varepsilon_0) \le k/2$，从而得到输出长度为 $k/2$ 的提取器。此时种子长度为 $4 \cdot (d/8 + O(\log(n/\varepsilon))) \le d$（当 $c$ 足够大时成立）。
 

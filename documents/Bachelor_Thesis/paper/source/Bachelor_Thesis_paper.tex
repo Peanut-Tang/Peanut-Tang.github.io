@@ -53,6 +53,13 @@
     }
 } % 节标题格式
 
+% % 修复 thmtools 与 TeX Live 2026 的兼容性问题
+% \makeatletter
+% \renewcommand\thmt@autorefsetup{%
+%   \@xa\def\csname\thmt@envname autorefname\@xa\endcsname\@xa{\thmt@thmname}%
+% }
+% \makeatother
+
 
 \begin{document}
 \pagestyle{fancy}

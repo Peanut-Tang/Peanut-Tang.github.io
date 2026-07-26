@@ -71,7 +71,7 @@
     $$
 \end{theorem}
 
-该定理的一个直接推论是：存在一个种子长度为 $O(\log NM)$ 且误差几乎为多项式级小 $2^{-O\left(\frac{\log NM}{\log \log NM}\right)}$ 的组合矩形伪随机生成器。该结果基于 Lu \cite{Lu02_domain_reduction} 在组合矩形伪随机生成器之间的归约。具体而言，Lu 通过一系列归约构造了组合矩形的伪随机生成器。\cite{Lu02_domain_reduction} 的第 3 章中，Lu 使用 $O(\log (N M / \varepsilon))$ 个随机比特，在误差 $\varepsilon$ 内将原始问题归约到 $[1/\varepsilon^{O(1)}]^{1/\varepsilon^{O(1)}}$ 上的问题。在这一规约后的问题上使用 \cref{thm:PRG_comb_rect}，可以得到一个种子长度为 $O(\log  1/\varepsilon \log \log 1/\varepsilon)$ 的组合矩形伪随机生成器。故若 $\varepsilon = 2^{-O\left(\frac{\log NM}{\log \log NM}\right)}$，种子长度便只有 $O(\log NM)$。
+该定理的一个直接推论是：存在一个种子长度为 $O(\log NM)$ 且误差几乎为多项式级小 $2^{-O\left(\frac{\log NM}{\log \log NM}\right)}$ 的组合矩形伪随机生成器。该结果基于 Lu \cite{Lu02_domain_reduction} 在组合矩形伪随机生成器之间的归约。具体而言，Lu 通过一系列归约构造了组合矩形的伪随机生成器。\cite{Lu02_domain_reduction} 的第 3 章中，Lu 使用 $O(\log (N M / \varepsilon))$ 个随机比特，在误差 $\varepsilon$ 内将原始问题归约到 $[1/\varepsilon^{O(1)}]^{1/\varepsilon^{O(1)}}$ 上的问题。在这一归约后的问题上使用 \cref{thm:PRG_comb_rect}，可以得到一个种子长度为 $O(\log  1/\varepsilon \log \log 1/\varepsilon)$ 的组合矩形伪随机生成器。故若 $\varepsilon = 2^{-O\left(\frac{\log NM}{\log \log NM}\right)}$，种子长度便只有 $O(\log NM)$。
 
 \begin{corollary}\label{cor:almost_poly_small_error}
     对于任意常数 $C$ 和误差 $\varepsilon = 2^{-C \cdot \frac{\log NM}{\log \log NM}}$，均存在一个显式的误差为 $\varepsilon$ 的组合矩形伪随机生成器，其种子长度为 $O_C(\log NM)$。
@@ -91,7 +91,7 @@
 对于我们最小哈希族的构造，随机性提取器需要有一个额外的特殊性质：对于任何固定的种子 $s$，均有 $\Ext(U_n, s) = U_m$，其证明推迟至 \ref{sec:extractor}。
 
 \begin{restatable}{lemma}{ExtractorUniform}\label{lem:extractor_unif}
-    给定任意的 $n$，熵 $k \le n$ 与 $m \ge k / 2$，和任意误差 $\varepsilon$，均存在一个显式的 $(k, \varepsilon)$-提取器 $\Ext : \{0, 1\}^n \times \{0, 1\}^d \to \{0, 1\}^m$，满足 $d = O(\log (n / \varepsilon))$。此外，$\Ext$ 满足一个额外性质：对于任意固定种子 $s \in \{0, 1\}^d$，均有 $\Ext(U_n, s) = U_m$。 
+    给定任意的 $n$，熵 $k \le n$ 与 $m \le k / 2$，和任意误差 $\varepsilon$，均存在一个显式的 $(k, \varepsilon)$-提取器 $\Ext : \{0, 1\}^n \times \{0, 1\}^d \to \{0, 1\}^m$，满足 $d = O(\log (n / \varepsilon))$。此外，$\Ext$ 满足一个额外性质：对于任意固定种子 $s \in \{0, 1\}^d$，均有 $\Ext(U_n, s) = U_m$。 
 \end{restatable}
 
 下面我们正式阐述单层 Nisan-Zuckerman 伪随机生成器的定义：
@@ -108,7 +108,7 @@ Nisan 和 Zuckerman 基于类似 \cref{lem:extractor_unif} 的显式提取器构
 \begin{lemma}[\cite{Hatami_Hoza_PRG_survey} 中的 引理 3.4.9]
     对于任意误差 $\varepsilon$，若 \cref{def:NZ_PRG} 中的 $\Ext$ 是一个 $(2 \log w, \varepsilon / (3 \ell))$-提取器，$d = O(\log (n / \varepsilon))$，并且计算 $\Ext$ 的输出只需要 $O(\log (w / \varepsilon))$ 的空间。则对于 $\{0, 1\}$ 上长度为 $n$、宽度为 $w$ 的单次只读分支程序，$G$ 是一个误差为 $\varepsilon$ 的显式伪随机生成器，并且种子长度为
     $$
-    O\left( \log w + \frac{\log (n / \varepsilon)}{\log w} \right).
+    O\left( \log w + \frac{n \log (n / \varepsilon)}{\log w} \right).
     $$
     而且更进一步，计算 $G(x, s_1, \ldots, s_\ell)$ 只需要空间 $O(\log (n / \varepsilon))$，并且只需要读取输入 $x, s_1, \ldots, s_\ell$ 一次。
 \end{lemma}
@@ -119,7 +119,7 @@ Nisan 和 Zuckerman 基于类似 \cref{lem:extractor_unif} 的显式提取器构
 
 \subsection{方法概述}\label{sec:overview}
 
-本节将详细阐述构造显式最小哈希族的核心技术路线。我们的构造可将种子长度压缩至最优的 $O(\log N)$，同时保持次常数级的乘法误差 $\delta = 2^{-O\left(\frac{\log N}{\log \log N}\right)}$。
+本节将详细阐述构造显式最小哈希族的核心技术路线。我们的构造可将种子长度压缩至最优的 $O(\log N)$，同时保持亚常数级的乘法误差 $\delta = 2^{-O\left(\frac{\log N}{\log \log N}\right)}$。
 
 回顾最小哈希族的定义（可参见 \cref{def:k_min_wise}），其要求对任意集合 $X \subseteq [N]$ 和任意目标元素 $y \in [N] \setminus X$，满足
 $$
@@ -494,7 +494,7 @@ $$
 
 值得注意的是 $k = \log^{O(1)} N$ 是为了保证第三步中的 $\PRG_1$ 的种子长度为 $O_C(k \log N)$，从而使得整体构造的种子长度仍为 $O_C(k \log N)$。
 
-对于误差分析，我们首先关注的还是分组函数 $g$ 的性质。我们设 $J := \{g(y) : y \in Y\}$，$B_i := \{g(x) : x \in X\},\ \forall i \in [\ell]$，而 $B_J := \bigcup_{j \in J} B_j$。下面引理的证明与 \cref{lem:allocation_small_error} 高度相似，我们省略细节的论证。
+对于误差分析，我们首先关注的还是分组函数 $g$ 的性质。我们设 $J := \{g(y) : y \in Y\}$，$B_i := \{x \in X : g(x) = i\},\ \forall i \in [\ell]$，而 $B_J := \bigcup_{j \in J} B_j$。下面引理的证明与 \cref{lem:allocation_small_error} 高度相似，我们省略细节的论证。
 
 \begin{restatable}{lemma}{AllocationKMinWise}\label{lem:allocation_k_min_wise}
     设 $C_g$ 是相较于 $C$ 足够大的常数。则分组函数 $g$ 满足：
@@ -512,9 +512,11 @@ $$
       & \Pr_{h \sim \mathcal{H}}[\max h(Y) < \min h(X)] = \sum_{\theta \in [M]} \Pr_{h \sim \mathcal{H}}[\max h(Y) = \theta \wedge \min h(X) > \theta] \\
     = & \sum_{\theta \in [M]} \E_{g : \text{$C_g \cdot k$-wise}} \left[\Pr_{\psi : (C_e + 1) \cdot k\text{-wise}, w, s_{1 \sim \ell}} \left[ (\max h(Y) = \theta \wedge \min h(B_J) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \notin J)  \right]  \right],
 \end{align*}
-其中有关 $J$ 的项不写明 $\sigma_{j \notin J}$ 而是直接偷懒用记号 $h$ 来表示，是因为与 $J$ 相关的函数有若干个，每个函数行为各不相同，并不好写。更加严格的表述方式是先枚举 $Y$ 的非空子集 $Y'$，严格规定 $\{h(Y') = \theta \wedge \max h(Y \setminus Y') < \theta\}$，然后对于与 $Y'$ 和 $Y \setminus Y'$ 有关的桶分别规定其函数的要求，这样写起来非常麻烦，此处省略掉了。 
+其中有关 $J$ 的项不写明 $\sigma_j$ 而是直接用记号 $h$ 来表示，这是因为与 $J$ 相关的桶中同时包含 $Y$ 中元素和 $X$ 中元素，其函数行为由 $\varphi+\psi$ 共同决定。严格地说，可以先枚举 $Y$ 中取得最大哈希值的非空子集 $Y'$，并分别规定与 $Y'$ 以及 $Y \setminus Y'$ 有关桶的函数要求。由于这一表述会引入较多额外记号，以下仍采用上述简化写法。
 
-而对于里面的概率项，我们同样先使用 $\PRG_1$ 的性质进行域缩减。下面的分析先固定 $\psi$ 是因为这样才能使得事件是一个关于 $s_1, \ldots, s_\ell$ 的组合矩形，而记号 $s_J$ 则表示 $s_{j \in J}$，$\alpha_J$ 同理：
+对于不包含 $Y$ 中元素的桶，即 $i\notin J$，我们可以暂时忽略外加的 $(C_e+1)k$ 次独立函数 $\psi$。原因在于：固定 $\psi$ 后，$\psi$ 在每个桶中只是对哈希值进行了一个固定平移，而组合矩形函数族对于这种平移保持封闭。因此，关于种子 $s_i$ 的事件仍然可以直接使用 $\PRG_1$ 的伪随机性质进行分析。等价地，我们可以将 $\psi$ 吸收到阈值中，并继续分析 $\sigma_i(B_i)$。而对于与 $Y$ 有关的桶，由于需要精确恢复 $Y$ 中元素之间的联合顺序关系，不能简单忽略 $\psi$，这也是后续需要额外添加 $\psi$ 的根本原因。
+
+而对于里面的概率项，我们同样先使用 $\PRG_1$ 的性质进行域缩减。下面的分析先固定 $\psi$ 是因为这样才能使得事件是一个关于 $s_1, \ldots, s_\ell$ 的组合矩形，而记号 $s_J$ 则表示 $s_{j\in J}$，$\alpha_J$ 同理：
 \begin{align*}
       & \Pr_{\psi : (C_e + 1) \cdot k\text{-wise}, w, s_{1 \sim \ell}} \left[ (\max h(Y) = \theta \wedge \min h(B_J) > \theta) \wedge (\min \sigma_i(B_i) > \theta,\ \forall i \notin J)  \right] \\
     = & \sum_{\alpha_J} \E_{\psi, w} \left[ \Pr_{s_J} [ s_J = \alpha_J \wedge \max h(Y) = \theta \wedge \min h(B_J) > \theta ] \cdot \Pr_{s_{1 \sim \ell}} [\min \sigma_i(B_i) > \theta,\ \forall i \notin J \mid s_J = \alpha_J]  \right] \\
@@ -548,7 +550,7 @@ $$
 
 这种直和结构实际上可以看作一种针对条件概率的去随机化。
 
-最后求和汇总，误差项的分析和上一节类似，此处省略；主项的分析同样较为繁琐，且与最小哈希的情况有不少相似之处，此处直接省略。这样我们便完成了证明。
+最后求和汇总，误差项的分析与上一节完全类似；主项的分析也可以通过相同的分段求和方法完成。由于其计算过程与上一节高度重复，且不会引入新的技术困难，此处省略具体展开。这样我们便完成了证明。
 
 \subsection{总结}
 
