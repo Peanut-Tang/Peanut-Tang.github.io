@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.7.19)  29 JUL 2026 20:45
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.7.19)  29 JUL 2026 20:41
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -941,7 +941,7 @@ Package fontspec Info:
 
 \@quotelevel=\count476
 \@quotereset=\count477
- (./CV.aux)
+ (build/CV.aux)
 \openout1 = `CV.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 84.
@@ -1074,7 +1074,7 @@ Package biblatex Info: ... file 'CV.bbl' found.
 Package biblatex Info: Reference section=0 on input line 84.
 Package biblatex Info: Reference segment=0 on input line 84.
 Package hyperref Info: Link coloring ON on input line 84.
- (./CV.out) (./CV.out)
+ (build/CV.out) (build/CV.out)
 \@outlinefile=\write4
 \openout4 = `CV.out'.
 
@@ -1094,7 +1094,7 @@ Overfull \hbox (53.77863pt too wide) in paragraph at lines 273--274
 [][] 
  []
 
-[2] (./CV.aux)
+[2] (build/CV.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2020/03/25>
@@ -1118,12 +1118,12 @@ Package logreq Info: Writing requests to 'CV.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 26000 strings out of 467814
- 536348 string characters out of 5427169
+ 26001 strings out of 467814
+ 536406 string characters out of 5427169
  1448342 words of memory out of 5000000
  54735 multiletter control sequences out of 15000+600000
  635730 words of font info for 87 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  93i,8n,111p,1191b,850s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on CV.pdf (2 pages).
+Output written on build/CV.pdf (2 pages).
